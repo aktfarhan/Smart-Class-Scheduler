@@ -18,56 +18,65 @@
 
 ## Database Tables
 
-### 1. `courses`
+### 1. `departments`
 
-| Column        | Type       | Description                |
-| ------------- | ---------- | -------------------------- |
-| `id`          | Integer PK | Unique identifier          |
-| `code`        | Text       | Course code (e.g., CS220)  |
-| `title`       | Text       | Course title               |
-| `description` | Text       | Course description         |
-| `credits`     | Integer    | Number of credits          |
-| `department`  | Text       | Department code (e.g., CS) |
+| Column  | Type       | Description                |
+| ------- | ---------- | -------------------------- |
+| `id`    | Integer PK | Unique identifier          |
+| `code`  | Text       | Department code (e.g., CS) |
+| `title` | Text       | Department title           |
 
 ---
 
-### 2. `sections`
+### 2. `courses`
 
-| Column           | Type       | Description                                  |
-| ---------------- | ---------- | -------------------------------------------- |
-| `id`             | Integer PK | Unique identifier                            |
-| `course_id`      | Integer FK | Reference to `courses.id`                    |
-| `section_number` | Text       | Section identifier (e.g., 01, A)             |
-| `instructor_id`  | Integer FK | Reference to `instructors.id`                |
-| `term`           | Text       | Semester or term (e.g., Fall 2025)           |
-| `modality`       | Text       | Instruction mode (in-person, online, hybrid) |
-| `seats`          | Integer    | Number of available seats                    |
+| Column          | Type       | Description                   |
+| --------------- | ---------- | ----------------------------- |
+| `id`            | Integer PK | Unique identifier             |
+| `code`          | Text       | Course code (e.g., CS220)     |
+| `title`         | Text       | Course title                  |
+| `department_id` | Integer FK | Reference to `departments.id` |
 
 ---
 
-### 3. `meetings`
+### 3. `sections`
+
+| Column           | Type       | Description                        |
+| ---------------- | ---------- | ---------------------------------- |
+| `id`             | Integer PK | Unique identifier                  |
+| `section_number` | Text       | Section identifier (e.g., 01, A)   |
+| `class_number`   | Text       | Class identifier                   |
+| `term`           | Text       | Semester or term (e.g., Fall 2025) |
+| `is_async`       | boolean    | If no scheduled meetings (TBA)     |
+| `course_id`      | Integer FK | Reference to `courses.id`          |
+| `instructor_id`  | Integer FK | Reference to `instructors.id`      |
+
+---
+
+### 4. `meetings`
 
 | Column       | Type       | Description                        |
 | ------------ | ---------- | ---------------------------------- |
 | `id`         | Integer PK | Unique identifier                  |
-| `section_id` | Integer FK | Reference to `sections.id`         |
 | `day`        | Text       | Day of the week (M, T, W, R, F)    |
 | `start_time` | Time       | Start time of the meeting          |
 | `end_time`   | Time       | End time of the meeting            |
 | `location`   | Text       | Location or room number (optional) |
+| `section_id` | Integer FK | Reference to `sections.id`         |
 
 ---
 
-### 4. `instructors`
+### 5. `instructors`
 
-| Column | Type       | Description          |
-| ------ | ---------- | -------------------- |
-| `id`   | Integer PK | Unique identifier    |
-| `name` | Text       | Full instructor name |
+| Column       | Type       | Description           |
+| ------------ | ---------- | --------------------- |
+| `id`         | Integer PK | Unique identifier     |
+| `first_name` | Text       | Instructor first name |
+| `last_name`  | Text       | Instructor last name  |
 
 ---
 
-### 5. `professor_ratings`
+### 6. `professor_ratings`
 
 | Column          | Type       | Description                     |
 | --------------- | ---------- | ------------------------------- |
