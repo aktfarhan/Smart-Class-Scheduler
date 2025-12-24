@@ -5,5 +5,8 @@ playwright-report/
 playwright/.cache/
 npm-debug.log*
 data.json
-.vscode
+.vscode/
 .DS_Store
+src/generated/prisma
+*.log
+prisma/generated

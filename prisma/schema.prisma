@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Represents an academic department, e.g., Computer Science (CS)
+model Department {
+  id      Int      @id @default(autoincrement()) // Primary key
+  code    String   @unique // Unique department code, e.g., (CS)
+  title   String // Full department name
+  courses Course[] // One-to-many relation to courses
+}
+
+// Represents a course offered by a department, e.g., CS220
+model Course {
+  id           Int       @id @default(autoincrement()) // Primary key
+  code         String // Course code e.g., (100)
+  title        String // Course title
+  departmentId Int // Foreign key to department
+  sections     Section[] // One-to-many relation to sections
+
+  department Department @relation(fields: [departmentId], references: [id])
+
+  @@unique([departmentId, code])
+}
+
+// Represents a section of a course, e.g., 01
+model Section {
+  id            Int       @id @default(autoincrement()) // Primary key
+  sectionNumber String // Section identifier (01)
+  classNumber   String    @unique // Unique class number
+  term          String // Semester e.g., Fall 2025
+  isAsync       Boolean   @default(false) // Indicates if has no meeting times
+  courseId      Int // Foreign key to Course
+  instructorId  Int // Foreign key to Instructor
+  meetings      Meeting[] // One-to-many relation to meetings
+
+  course     Course     @relation(fields: [courseId], references: [id])
+  instructor Instructor @relation(fields: [instructorId], references: [id])
+}
+
+// Represents a scheduled meeting time for a section, e.g., MWF 10:00 - 10:50
+model Meeting {
+  id        Int      @id @default(autoincrement()) // Primary key
+  day       String // Day of the week abbreviation
+  startTime DateTime // Meeting start time in 24h format
+  endTime   DateTime // Meeting end time in 24h format
+  location  String? // Optional location or room number
+  sectionId Int // Foreign key to section
+
+  section Section @relation(fields: [sectionId], references: [id])
+}
+
+// Represents an instructor
+model Instructor {
+  id        Int       @id @default(autoincrement()) // Primary key
+  firstName String // Instructor's first name
+  lastName  String // Instructor's last name
+  sections  Section[] // One-to-many relation to sections they teach
+}
