@@ -9,7 +9,7 @@ import {
     upsertDiscussionGroup,
 } from './index';
 import type { NormalizedData } from '../../types';
-import prisma from '../../prismaClient';
+import prisma from '../../../server/prismaClient';
 import path from 'path';
 import fs from 'fs/promises';
 

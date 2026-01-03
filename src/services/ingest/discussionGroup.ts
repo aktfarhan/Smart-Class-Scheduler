@@ -1,4 +1,4 @@
-import prisma from '../../prismaClient';
+import prisma from '../../../server/prismaClient';
 import { DiscussionGroupInput } from '../../types';
 
 /**

@@ -4,8 +4,6 @@ import { PrismaClient } from '../prisma/generated/prisma/client';
 
 /**
  * PostgreSQL adapter configuration.
- * Uses DATABASE_URL from the environment
- * to establish the database connection.
  */
 const adapter = new PrismaPg({
     connectionString: process.env.DATABASE_URL,
@@ -13,8 +11,6 @@ const adapter = new PrismaPg({
 
 /**
  * Prisma Client instance.
- * Import this client anywhere database
- * access is needed.
  */
 const prisma = new PrismaClient({ adapter });
 
