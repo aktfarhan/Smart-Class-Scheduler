@@ -1,8 +1,10 @@
+export type Day = 'M' | 'Tu' | 'W' | 'Th' | 'F' | 'Sa' | 'Su';
+
 export interface ApiMeeting {
     id: number;
     day: string;
-    startTime: string; // ISO time string
-    endTime: string; // ISO time string
+    startTime: string;
+    endTime: string;
     location: string;
     sectionId: number;
 }

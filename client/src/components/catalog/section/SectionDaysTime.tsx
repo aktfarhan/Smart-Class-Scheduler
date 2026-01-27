@@ -1,22 +1,32 @@
-import { formatTime } from '../../../utils/formatTime';
-import type { ApiSection } from '../../../types';
-import { Clock3 } from 'lucide-react';
 import clsx from 'clsx';
+import { useMemo } from 'react';
+import { Clock3 } from 'lucide-react';
+import { CALENDAR_CONFIG } from '../../../constants';
+import { formatTime } from '../../../utils/formatTime';
+import type { ApiMeeting } from '../../../types';
 
-const DAYS = ['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su'];
+interface SectionDaysTimeProps {
+    meetings: ApiMeeting[];
+}
 
-function SectionDaysTime({ meetings }: { meetings: ApiSection['meetings'] }) {
-    const meetingMap: Record<string, string[]> = {};
-    const timeSet = new Set<string>();
+function SectionDaysTime({ meetings }: SectionDaysTimeProps) {
+    // Transforms raw meeting data into organized UI structures
+    const { meetingMap, uniqueTimes } = useMemo(() => {
+        // map: Groups times by day key for the hover tooltips
+        const map: Record<string, string[]> = {};
 
-    meetings.forEach((m) => {
-        const time = formatTime(m);
-        timeSet.add(time);
-        if (!meetingMap[m.day]) meetingMap[m.day] = [];
-        meetingMap[m.day].push(time);
-    });
+        // timeSet: Filters out duplicate times for the summary list
+        const timeSet = new Set<string>();
 
-    const uniqueTimes = Array.from(timeSet);
+        meetings.forEach((meeting) => {
+            const time = formatTime(meeting);
+            timeSet.add(time);
+            if (!map[meeting.day]) map[meeting.day] = [];
+            map[meeting.day].push(time);
+        });
+
+        return { meetingMap: map, uniqueTimes: Array.from(timeSet) };
+    }, [meetings]);
 
     return (
         <div className="flex flex-row items-center lg:flex-col lg:items-center gap-2">
@@ -25,7 +35,7 @@ function SectionDaysTime({ meetings }: { meetings: ApiSection['meetings'] }) {
             </span>
             <div className="flex flex-col gap-2">
                 <div className="flex justify-start lg:justify-center gap-1">
-                    {DAYS.map((day) => {
+                    {CALENDAR_CONFIG.ALL_DAYS.map((day) => {
                         const timesForDay = meetingMap[day] || [];
                         const isMeetingDay = timesForDay.length > 0;
                         return (
@@ -34,14 +44,14 @@ function SectionDaysTime({ meetings }: { meetings: ApiSection['meetings'] }) {
                                     className={clsx(
                                         'flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-bold transition-all',
                                         isMeetingDay
-                                            ? 'bg-theme-blue text-white shadow-sm'
-                                            : 'border border-gray-200 text-gray-300',
+                                            ? 'text-white shadow-sm bg-theme-blue'
+                                            : 'text-gray-300 border border-gray-200',
                                     )}
                                 >
                                     {day}
                                 </span>
                                 {isMeetingDay && (
-                                    <div className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 flex items-center gap-2 rounded-md bg-gray-100 border border-gray-300 px-3 py-1.5 text-[11px] font-medium text-gray-700 opacity-0 invisible pointer-events-none transition-all duration-200 group-hover/day:opacity-100 group-hover/day:visible z-50 whitespace-nowrap shadow-md">
+                                    <div className="flex items-center gap-2 whitespace-nowrap absolute bottom-full left-1/2 -translate-x-1/2 z-50 mb-2 px-3 py-1.5 rounded-md bg-gray-100 border border-gray-300 shadow-md text-[11px] font-medium text-gray-700 opacity-0 invisible pointer-events-none transition-all duration-200 group-hover/day:opacity-100 group-hover/day:visible">
                                         <Clock3 size={12} className="text-gray-500" />
                                         <span>{timesForDay.join(', ')}</span>
                                         <div className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-gray-300" />
@@ -51,7 +61,7 @@ function SectionDaysTime({ meetings }: { meetings: ApiSection['meetings'] }) {
                         );
                     })}
                 </div>
-                <div className="w-full items-center rounded-md border border-gray-200 bg-gray-50 px-3 py-2 flex flex-col gap-1">
+                <div className="flex flex-col items-center w-full gap-1 px-3 py-2 rounded-md border border-gray-200 bg-gray-50">
                     {uniqueTimes.map((time) => (
                         <div key={time} className="flex items-center gap-2">
                             <Clock3 size={13} className="text-gray-400" />

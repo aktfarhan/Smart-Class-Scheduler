@@ -1,60 +1,66 @@
 import { Settings2, X } from 'lucide-react';
-import CalendarSidebar from '../calendar/calendarsidebar/CalendarSideBar';
+import CalendarSidebar from '../calendar/calendarsidebar/CalendarSidebar';
 import type { AppController } from '../../hooks/useAppController';
 
 interface MobileSettingsDrawerProps {
-    controller: AppController; // Using your AppController
+    data: AppController['data'];
+    state: AppController['state'];
+    actions: AppController['actions'];
+    refs: AppController['refs'];
 }
 
-export default function MobileSettingsDrawer({ controller }: MobileSettingsDrawerProps) {
-    const { state, actions, data } = controller;
-
-    // Only render if the panel is open and we are on the calendar tab (per your Part 2 logic)
+export default function MobileSettingsDrawer({
+    data,
+    state,
+    actions,
+    refs,
+}: MobileSettingsDrawerProps) {
+    // Requirements: Completely gone if not calendar or not open
     if (!state.isPanelOpen || state.activeTab !== 'calendar') return null;
 
     return (
         <div className="fixed inset-0 z-50 2xl:hidden">
-            {/* BACKDROP */}
+            {/* Backdrop: Slightly darkens the screen */}
             <div
-                className="absolute inset-0 bg-black/10 backdrop-blur-[2px]"
+                className="animate-in fade-in absolute inset-0 bg-black/20 backdrop-blur-[2px] duration-300"
                 onClick={() => actions.setIsPanelOpen(false)}
             />
 
-            {/* DRAWER CONTENT */}
-            <div className="absolute top-0 right-0 w-80 h-full bg-white shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 border-l border-gray-200">
-                <div className="p-4 flex justify-between items-center border-b border-gray-100 bg-white">
+            {/* Drawer Panel: Slides in from the right */}
+            <div className="animate-in slide-in-from-right absolute top-0 right-0 flex h-full w-80 flex-col border-l border-gray-200 bg-white shadow-2xl duration-300">
+                <div className="flex items-center justify-between border-b border-gray-100 bg-white p-4">
                     <div className="flex items-center gap-2">
                         <Settings2 size={16} className="text-theme-blue" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-900">
+                        <span className="text-[10px] font-black tracking-widest text-gray-900 uppercase">
                             Settings
                         </span>
                     </div>
                     <button
                         onClick={() => actions.setIsPanelOpen(false)}
-                        className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                        className="rounded-full bg-gray-50 p-2 transition-colors hover:bg-gray-100"
                     >
                         <X size={18} className="text-gray-500" />
                     </button>
                 </div>
 
-                {/* MOBILE CONTROLS (Your Part 2 Logic) */}
-                <div className="p-4 bg-gray-50 border-b border-gray-100 flex gap-2">
-                    <button
-                        onClick={() => actions.setShowWeekend(!state.showWeekend)}
-                        className="flex-1 py-2.5 rounded-xl border-2 border-theme-blue text-theme-blue text-[10px] font-black uppercase tracking-widest hover:bg-theme-blue hover:text-white transition-all"
-                    >
-                        {state.showWeekend ? 'Hide Sat/Sun' : 'Show Sat/Sun'}
-                    </button>
-                    <button
-                        onClick={() => actions.setSelectedSections(new Map())}
-                        className="px-4 py-2.5 rounded-xl border-2 border-gray-200 text-gray-400 text-[10px] font-black uppercase tracking-widest hover:border-red-200 hover:text-red-500 transition-all"
-                    >
-                        Clear
-                    </button>
-                </div>
-
-                <div className="flex-1 overflow-hidden">
-                    <CalendarSidebar controller={controller} />
+                {/* Reuse the Sidebar component */}
+                <div className="flex-1 overflow-y-auto">
+                    <CalendarSidebar
+                        courses={data.courses}
+                        showWeekend={state.showWeekend}
+                        pinnedCourses={state.pinnedCourses}
+                        selectedSections={state.selectedSections}
+                        sectionsByCourseId={data.sectionsByCourseId}
+                        setShowWeekend={actions.setShowWeekend}
+                        setSelectedSections={actions.setSelectedSections}
+                        handleSectionSelect={actions.handleSectionSelect}
+                        sidebar={{
+                            state: state.calendarSidebar,
+                            actions: actions.calendarSidebar,
+                            data: data.calendarSidebar,
+                            refs: refs.calendarSidebar,
+                        }}
+                    />
                 </div>
             </div>
         </div>

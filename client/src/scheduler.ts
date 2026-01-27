@@ -1,84 +1,127 @@
-// 1. Define strict types for your data
-export interface Section {
-    id: string;
-    courseName: string;
-    days: string[]; // e.g., ['Mon', 'Wed']
-    start: number; // Minutes from midnight
-    end: number; // Minutes from midnight
-}
+import type { ApiSectionWithRelations, TimeRange, Day } from './types';
+import type { DayLiteral, AcademicTerm } from './constants';
+import { formatTime, formatTimeToMinutes } from './utils/formatTime';
 
-export interface Course {
-    id: string;
-    name: string;
-    sections: Section[];
-}
+const decimalToMins = (hour: number) => Math.floor(hour * 60);
 
-export interface SchedulerFilters {
-    selectedDays: string[];
-    timeRange: { start: number; end: number };
-    minGap: number;
-}
+function isSectionCompatible(
+    section: ApiSectionWithRelations,
+    currentSchedule: ApiSectionWithRelations[],
+    filters: {
+        selectedDays: DayLiteral[];
+        selectedTerm: AcademicTerm;
+        minimumGap: number;
+        timeRange: TimeRange;
+    },
+): boolean {
+    if (section.term !== filters.selectedTerm) return false;
 
-// 2. The DFS Algorithm
-export function generateSchedules(
-    courses: Course[],
-    filters: SchedulerFilters
-) {
-    const results: { schedule: Section[]; score: number }[] = [];
-    const { selectedDays, timeRange, minGap } = filters;
+    for (const meeting of section.meetings) {
+        const formattedRange = formatTime(meeting);
+        // TBA sections are strictly compatible as they have no time constraints
+        if (formattedRange === 'TBA') continue;
 
-    function solve(courseIndex: number, currentSchedule: Section[]) {
-        if (courseIndex === courses.length) {
-            results.push({
-                schedule: [...currentSchedule],
-                score: calculateScore(currentSchedule),
-            });
-            return;
-        }
+        const parsed = formatTimeToMinutes(formattedRange);
+        if (!parsed) continue;
 
-        const currentCourse = courses[courseIndex];
+        const { startMins, endMins } = parsed;
 
-        for (const section of currentCourse.sections) {
-            // Hard Constraint: Days
-            if (!section.days.every((day) => selectedDays.includes(day)))
-                continue;
+        if (meeting.day && !filters.selectedDays.includes(meeting.day as any)) return false;
 
-            // Hard Constraint: Time Window
-            if (section.start < timeRange.start || section.end > timeRange.end)
-                continue;
+        if (
+            startMins < decimalToMins(filters.timeRange.start) ||
+            endMins > decimalToMins(filters.timeRange.end)
+        )
+            return false;
 
-            // Hard Constraint: Overlap & Min Gap
-            const hasConflict = currentSchedule.some((existing) => {
-                const isSameDay = section.days.some((d) =>
-                    existing.days.includes(d)
-                );
-                if (!isSameDay) return false;
+        for (const scheduledSection of currentSchedule) {
+            for (const sMeeting of scheduledSection.meetings) {
+                const sRange = formatTime(sMeeting);
+                if (sRange === 'TBA' || meeting.day !== sMeeting.day) continue;
 
-                const overlap =
-                    section.start < existing.end &&
-                    section.end > existing.start;
-                const tooClose =
-                    Math.abs(section.start - existing.end) < minGap ||
-                    Math.abs(existing.start - section.end) < minGap;
-                return overlap || tooClose;
-            });
+                const sParsed = formatTimeToMinutes(sRange);
+                if (sParsed) {
+                    const { startMins: sStart, endMins: sEnd } = sParsed;
 
-            if (hasConflict) continue;
+                    // Strict Overlap Check
+                    if (startMins < sEnd && endMins > sStart) return false;
 
-            currentSchedule.push(section);
-            solve(courseIndex + 1, currentSchedule);
-            currentSchedule.pop(); // Backtrack
+                    // Strict Minimum Gap Check
+                    const gap = startMins >= sEnd ? startMins - sEnd : sStart - endMins;
+                    if (gap < filters.minimumGap) return false;
+                }
+            }
         }
     }
-
-    solve(0, []);
-    return results.sort((a, b) => b.score - a.score);
+    return true;
 }
 
-// 3. Scoring Logic
-function calculateScore(schedule: Section[]): number {
-    let score = 100;
-    const activeDays = new Set(schedule.flatMap((s) => s.days));
-    score -= activeDays.size * 5; // Preference for fewer days on campus
-    return score;
+export function generateSchedulesDFS(
+    courses: { id: number; sections: ApiSectionWithRelations[] }[],
+    filters: {
+        selectedDays: DayLiteral[];
+        selectedTerm: AcademicTerm;
+        minimumGap: number;
+        timeRange: TimeRange;
+    },
+    index: number = 0,
+    currentSchedule: ApiSectionWithRelations[] = [],
+): ApiSectionWithRelations[][] {
+    if (index === courses.length) return [currentSchedule];
+
+    const results: ApiSectionWithRelations[][] = [];
+    const currentCourse = courses[index];
+
+    // CRITICAL FIX: Strictly filter out any sections that have 0 meetings.
+    // If a section is asynchronous but has no meeting data, it cannot be scheduled.
+    const termSections = currentCourse.sections.filter(
+        (s) => s.term === filters.selectedTerm && s.meetings.length > 0,
+    );
+
+    const labs = termSections.filter((s) => s.sectionNumber.endsWith('L'));
+    const discs = termSections.filter((s) => s.sectionNumber.endsWith('D'));
+    const lecs = termSections.filter(
+        (s) => !s.sectionNumber.endsWith('D') && !s.sectionNumber.endsWith('L'),
+    );
+
+    if (labs.length > 0 || discs.length > 0) {
+        for (const lecture of lecs) {
+            if (!isSectionCompatible(lecture, currentSchedule, filters)) continue;
+
+            const labsToTry = labs.length > 0 ? labs : [null];
+            const discsToTry = discs.length > 0 ? discs : [null];
+
+            for (const lab of labsToTry) {
+                if (lab && !isSectionCompatible(lab, [...currentSchedule, lecture], filters))
+                    continue;
+
+                for (const disc of discsToTry) {
+                    const validationSet = [...currentSchedule, lecture];
+                    if (lab) validationSet.push(lab);
+                    if (disc && !isSectionCompatible(disc, validationSet, filters)) continue;
+
+                    const combo = [lecture];
+                    if (lab) combo.push(lab);
+                    if (disc) combo.push(disc);
+
+                    const subResults = generateSchedulesDFS(courses, filters, index + 1, [
+                        ...currentSchedule,
+                        ...combo,
+                    ]);
+                    if (subResults.length > 0) results.push(...subResults);
+                }
+            }
+        }
+    } else {
+        for (const section of termSections) {
+            if (isSectionCompatible(section, currentSchedule, filters)) {
+                const subResults = generateSchedulesDFS(courses, filters, index + 1, [
+                    ...currentSchedule,
+                    section,
+                ]);
+                if (subResults.length > 0) results.push(...subResults);
+            }
+        }
+    }
+    return results;
 }

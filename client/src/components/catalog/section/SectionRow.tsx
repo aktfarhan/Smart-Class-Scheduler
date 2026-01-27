@@ -1,26 +1,35 @@
-import type { ApiSectionWithRelations } from '../../../types';
-import { useState } from 'react';
-
+import { useCallback, useState } from 'react';
+import SectionTerm from './SectionTerm';
 import SectionNumber from './SectionNumber';
-import SectionInstructors from './SectionInstructors';
 import SectionDaysTime from './SectionDaysTime';
 import SectionLocation from './SectionLocation';
-import SectionTerm from './SectionTerm';
+import SectionInstructors from './SectionInstructors';
+import type { ApiSectionWithRelations } from '../../../types';
 
-function SectionRow({ section }: { section: ApiSectionWithRelations }) {
+interface SectionRowProps {
+    section: ApiSectionWithRelations;
+}
+
+function SectionRow({ section }: SectionRowProps) {
     const [copiedId, setCopiedId] = useState<string | null>(null);
 
-    const handleCopy = (email: string | null | undefined, id: string) => {
+    const handleCopy = useCallback((email: string | null | undefined, id: string) => {
         if (!email) return;
-        navigator.clipboard.writeText(email);
-        setCopiedId(id);
-        setTimeout(() => setCopiedId(null), 2000);
-    };
+        navigator.clipboard
+            .writeText(email)
+            .then(() => {
+                setCopiedId(id);
+                setTimeout(() => setCopiedId(null), 2000);
+            })
+            .catch((err) => {
+                console.error('Failed to copy email: ', err);
+            });
+    }, []);
 
     const location = section.meetings[0]?.location ?? 'TBA';
 
     return (
-        <div className="relative flex flex-col lg:grid lg:grid-cols-[4rem_2fr_15rem_1.7fr_1fr] gap-y-4 lg:gap-2 py-5 lg:py-3 text-sm px-5 border-t border-gray-100 hover:bg-slate-50/50 transition-colors group/row">
+        <div className="flex flex-col lg:grid lg:grid-cols-[4rem_2fr_15rem_1.7fr_1fr] relative gap-y-4 lg:gap-2 px-5 py-5 lg:py-3 border-t border-gray-100 text-sm transition-colors hover:bg-slate-50/50 group/row">
             <SectionNumber sectionNumber={section.sectionNumber} />
             <SectionInstructors
                 instructors={section.instructors}

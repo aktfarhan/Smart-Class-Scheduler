@@ -4,38 +4,39 @@ import Pagination from '../components/catalog/Pagination';
 import type { AppController } from '../hooks/useAppController';
 
 interface CatalogPageProps {
-    controller: AppController;
+    data: AppController['data'];
+    state: AppController['state'];
+    refs: AppController['refs'];
+    actions: AppController['actions'];
 }
 
-function CatalogPage({ controller }: CatalogPageProps) {
-    const { data, state, refs, actions } = controller;
-
+function CatalogPage({ data, state, refs, actions }: CatalogPageProps) {
     return (
         <div className="flex flex-1 flex-col overflow-hidden">
-            <div className="pt-6 bg-white border-b border-gray-50">
+            <div className="border-b border-gray-50 bg-white pt-6">
                 <SearchBar
+                    lookupData={data.lookupData}
                     searchQuery={state.searchQuery}
                     setSearchQuery={actions.setSearchQuery}
-                    lookupData={data.lookupData}
                 />
             </div>
-            <div ref={refs.scrollContainerRef} className="flex-1 overflow-y-auto">
+            <div ref={refs.scrollContainerRef} className="flex-1 overflow-y-auto pb-4">
                 <CourseList
                     pagedCourses={data.pagedCourses}
                     activeFilters={data.activeFilters}
                     pinnedCourses={state.pinnedCourses}
                     setPinnedCourses={actions.setPinnedCourses}
                     expandedCourseIds={state.expandedCourseIds}
-                    setExpandedCourseIds={actions.setExpandedCourseIds}
                     sectionsByCourseId={data.sectionsByCourseId}
+                    setExpandedCourseIds={actions.setExpandedCourseIds}
                 />
             </div>
             <Pagination
-                currentPage={state.currentPage}
-                totalPages={state.totalPages}
                 jumpValue={state.jumpValue}
-                setCurrentPage={actions.setCurrentPage}
+                totalPages={state.totalPages}
+                currentPage={state.currentPage}
                 setJumpValue={actions.setJumpValue}
+                setCurrentPage={actions.setCurrentPage}
                 handleJumpPage={actions.handleJumpPage}
             />
         </div>

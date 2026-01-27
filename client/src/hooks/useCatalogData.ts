@@ -1,25 +1,14 @@
 import { useEffect, useState, useMemo } from 'react';
+import { ACADEMIC_TERMS } from '../constants';
 import type {
     ApiDepartmentWithRelations,
     ApiCourseWithDepartment,
     ApiSectionWithRelations,
     ApiCourseWithSections,
-} from '../types/index';
-
-/**
- * Academic Semester Chronology for 2026
- */
-const SEMESTER_ORDER: Record<string, number> = {
-    Fall: 1,
-    Winter: 2,
-    Spring: 3,
-    Summer: 4,
-};
+} from '../types';
 
 export function useCatalogData() {
-    const [departments, setDepartments] = useState<
-        ApiDepartmentWithRelations[]
-    >([]);
+    const [departments, setDepartments] = useState<ApiDepartmentWithRelations[]>([]);
     const [courses, setCourses] = useState<ApiCourseWithSections[]>([]);
     const [sections, setSections] = useState<ApiSectionWithRelations[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -62,11 +51,7 @@ export function useCatalogData() {
             // Populate instructor set from department relations
             dept.instructors?.forEach((inst) => {
                 if (inst.firstName && inst.lastName) {
-                    instructorSet.add(
-                        `${inst.firstName} ${inst.lastName}`
-                            .toLowerCase()
-                            .trim()
-                    );
+                    instructorSet.add(`${inst.firstName} ${inst.lastName}`.toLowerCase().trim());
                     instructorSet.add(inst.lastName.toLowerCase().trim());
                 }
             });
@@ -74,9 +59,7 @@ export function useCatalogData() {
 
         // 2. Process Courses (Normalize "CS 110" -> "CS110")
         courses.forEach((course) => {
-            const key = `${course.department.code}${course.code}`
-                .toUpperCase()
-                .replace(/\s/g, '');
+            const key = `${course.department.code}${course.code}`.toUpperCase().replace(/\s/g, '');
             courseMap.set(key, course);
         });
 
@@ -107,9 +90,7 @@ export function useCatalogData() {
 
             // 2. Sort by Semester Chronology
             if (semA !== semB) {
-                return (
-                    (SEMESTER_ORDER[semA] || 0) - (SEMESTER_ORDER[semB] || 0)
-                );
+                return (ACADEMIC_TERMS.ORDER[semA] || 0) - (ACADEMIC_TERMS.ORDER[semB] || 0);
             }
 
             // 3. Sort by Section Number (Natural Sort handles "01" vs "10" correctly)

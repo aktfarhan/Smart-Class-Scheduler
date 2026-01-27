@@ -1,23 +1,32 @@
+import clsx from 'clsx';
 import { CheckSquare } from 'lucide-react';
+import type { DayLiteral } from '../../../../../constants';
 
-export default function ActiveDaysSelector({ days, selectedDays, toggleDay }: any) {
+interface ActiveDaysSelectorProps {
+    days: DayLiteral[];
+    selectedDays: DayLiteral[] | undefined;
+    toggleDay: (day: DayLiteral) => void;
+}
+
+function ActiveDaysSelector({ days, selectedDays, toggleDay }: ActiveDaysSelectorProps) {
     return (
         <div className="space-y-3">
-            <label className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase">
                 <CheckSquare size={12} /> Active Days
-            </label>
+            </div>
             <div className="flex justify-between gap-1">
-                {days.map((day: string) => {
-                    const isActive = selectedDays.includes(day);
+                {days.map((day) => {
+                    const isActive = selectedDays?.includes(day);
                     return (
                         <button
                             key={day}
                             onClick={() => toggleDay(day)}
-                            className={`flex-1 py-2 text-[11px] font-bold rounded-md border transition-all cursor-pointer ${
+                            className={clsx(
+                                'flex-1 cursor-pointer rounded-md border py-2 text-[11px] font-bold transition-all',
                                 isActive
-                                    ? 'bg-theme-blue border-theme-blue text-white shadow-sm'
-                                    : 'bg-white border-gray-200 text-gray-400 hover:border-theme-blue/30'
-                            }`}
+                                    ? 'border-theme-blue bg-theme-blue text-white shadow-md'
+                                    : 'hover:border-theme-blue/40 border-gray-200 bg-gray-100 text-gray-400',
+                            )}
                         >
                             {day}
                         </button>
@@ -27,3 +36,5 @@ export default function ActiveDaysSelector({ days, selectedDays, toggleDay }: an
         </div>
     );
 }
+
+export default ActiveDaysSelector;

@@ -1,33 +1,33 @@
-import WeeklyCalendar from '../components/calendar/WeeklyCalendar';
-import { Sparkles, PanelRightOpen } from 'lucide-react';
 import clsx from 'clsx';
+import { Sparkles, PanelRightOpen } from 'lucide-react';
+import WeeklyCalendar from '../components/calendar/WeeklyCalendar';
 import type { AppController } from '../hooks/useAppController';
 
 interface CatalogPageProps {
-    controller: AppController;
+    data: AppController['data'];
+    state: AppController['state'];
+    actions: AppController['actions'];
+    schedule: () => void;
 }
 
-function CalendarPage({ controller }: CatalogPageProps) {
-    const { data, state, actions } = controller;
-
+function CalendarPage({ data, state, actions, schedule }: CatalogPageProps) {
     return (
-        <div className="flex-1 relative bg-white overflow-hidden">
+        <div className="relative flex-1 overflow-hidden bg-white">
             <WeeklyCalendar
-                courses={data.courses}
                 selectedSections={state.selectedSections}
                 sectionsByCourseId={data.sectionsByCourseId}
                 showWeekend={state.showWeekend}
             />
-            <div className="absolute w-[92%] max-w-sm 2xl:hidden bottom-8 left-1/2 -translate-x-1/2 z-40">
-                <div className="flex items-center border border-white/20 bg-white/80 backdrop-blur-2xl shadow-2xl rounded-3xl p-2.5 gap-2.5 ring-1 ring-black/5">
+            <div className="absolute bottom-8 left-1/2 z-40 w-[92%] max-w-70 -translate-x-1/2 sm:max-w-sm 2xl:hidden">
+                <div className="flex items-center gap-1 rounded-xl border border-white/20 bg-white/80 p-1 shadow-2xl ring-1 ring-black/5 backdrop-blur-2xl">
                     <button
                         disabled={state.pinnedCourses.size === 0}
-                        onClick={actions.handleGenerateSchedule}
+                        onClick={schedule}
                         className={clsx(
-                            'flex-1 h-14 rounded-2xl flex items-center justify-center gap-3 transition-all font-black uppercase text-[11px] tracking-widest',
+                            'flex h-12 flex-1 cursor-pointer items-center justify-center gap-3 rounded-xl text-[11px] font-black tracking-widest uppercase transition-all',
                             state.pinnedCourses.size > 0
-                                ? 'bg-linear-to-r from-theme-blue to-cyan-500 text-white shadow-lg active:scale-95'
-                                : 'bg-gray-100 text-gray-300 cursor-not-allowed',
+                                ? 'from-theme-blue bg-linear-to-r to-cyan-500 text-white shadow-lg active:scale-95'
+                                : 'cursor-not-allowed bg-gray-100 text-gray-300',
                         )}
                     >
                         <Sparkles size={16} />
@@ -35,7 +35,7 @@ function CalendarPage({ controller }: CatalogPageProps) {
                     </button>
                     <button
                         onClick={() => actions.setIsPanelOpen(true)}
-                        className="w-16 h-14 rounded-2xl bg-theme-blue text-white flex items-center justify-center shadow-lg active:rotate-12 transition-all"
+                        className="bg-theme-blue flex h-12 w-14 cursor-pointer items-center justify-center rounded-xl text-white shadow-lg transition-all active:rotate-12"
                     >
                         <PanelRightOpen size={22} />
                     </button>

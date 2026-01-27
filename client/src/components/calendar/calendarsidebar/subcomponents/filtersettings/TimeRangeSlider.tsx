@@ -1,34 +1,36 @@
-import { Clock } from 'lucide-react';
+import { CalendarRange } from 'lucide-react';
+import { formatTimeLabel } from '../../../../../utils/formatTime';
+import type { RefObject } from 'react';
+import type { TimeRange } from '../../../../../types';
 
-export default function TimeRangeSlider({
-    timeRange,
-    formatTimeLabel,
-    sliderRef,
-    min,
-    max,
-    onPointerDown,
-}: any) {
+interface TimeRangeSliderProps {
+    min: number;
+    max: number;
+    timeRange: TimeRange;
+    sliderRef: RefObject<HTMLDivElement | null>;
+    onPointerDown: (thumb: 'start' | 'end') => (e: React.PointerEvent<Element>) => void;
+}
+
+function TimeRangeSlider({ min, max, timeRange, sliderRef, onPointerDown }: TimeRangeSliderProps) {
     const startPercent = ((timeRange.start - min) / (max - min)) * 100;
     const endPercent = ((timeRange.end - min) / (max - min)) * 100;
-
     return (
         <div className="space-y-4">
-            <div className="flex justify-between items-center">
-                <label className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5">
-                    <Clock size={12} /> Preferred Window
-                </label>
-                <span className="text-[11px] font-bold text-theme-blue bg-theme-blue/5 px-2 py-0.5 rounded-md border border-theme-blue/10">
+            <div className="flex justify-between">
+                <div className=" flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest">
+                    <CalendarRange size={12} /> Preferred Time
+                </div>
+                <span className="text-[11px] font-bold text-theme-blue px-2 py-0.5 border rounded-md border-theme-blue/10 bg-theme-blue/5">
                     {formatTimeLabel(timeRange.start)} - {formatTimeLabel(timeRange.end)}
                 </span>
             </div>
-
             <div
                 ref={sliderRef}
-                className="relative h-6 w-full select-none touch-none flex items-center"
+                className="flex items-center w-full h-6 relative select-none touch-none"
             >
-                <div className="absolute w-full h-1.5 bg-gray-200 rounded-full" />
+                <div className="w-full h-1.5 absolute rounded-full bg-gray-200" />
                 <div
-                    className="absolute h-1.5 bg-theme-blue rounded-full"
+                    className="absolute h-1.5 rounded-full bg-theme-blue"
                     style={{
                         left: `${startPercent}%`,
                         width: `${endPercent - startPercent}%`,
@@ -36,15 +38,17 @@ export default function TimeRangeSlider({
                 />
                 <div
                     onPointerDown={onPointerDown('start')}
-                    className="absolute z-20 w-4 h-4 bg-white border-2 border-theme-blue rounded-full shadow-md cursor-grab active:cursor-grabbing hover:scale-110 transition-transform -translate-x-1/2"
+                    className="w-4 h-4 z-20 absolute border-2 rounded-full border-theme-blue cursor-grab active:cursor-grabbing hover:scale-110 shadow-md bg-white transition-transform -translate-x-1/2"
                     style={{ left: `${startPercent}%` }}
                 />
                 <div
                     onPointerDown={onPointerDown('end')}
-                    className="absolute z-20 w-4 h-4 bg-white border-2 border-theme-blue rounded-full shadow-md cursor-grab active:cursor-grabbing hover:scale-110 transition-transform -translate-x-1/2"
+                    className="w-4 h-4 z-20 absolute border-2 rounded-full border-theme-blue cursor-grab active:cursor-grabbing hover:scale-110 shadow-md bg-white transition-transform -translate-x-1/2"
                     style={{ left: `${endPercent}%` }}
                 />
             </div>
         </div>
     );
 }
+
+export default TimeRangeSlider;

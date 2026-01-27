@@ -1,58 +1,65 @@
-import { Timer } from 'lucide-react';
 import clsx from 'clsx';
+import { Clock } from 'lucide-react';
+import type { Dispatch, SetStateAction } from 'react';
 
-const PRESETS = [0, 15, 60, 120];
-const MAX = 300;
+interface MinGapSliderProps {
+    minGap: number;
+    maxGap: number;
+    gapPresets: readonly number[];
+    setMinGap: Dispatch<SetStateAction<number>>;
+}
 
-export default function MinGapSlider({ minGap, setMinGap }: any) {
+function MinGapSlider({ minGap, maxGap, gapPresets, setMinGap }: MinGapSliderProps) {
+    const percentage = (minGap / maxGap) * 100;
     return (
         <div className="space-y-4">
-            <div className="flex justify-between items-center">
-                <label className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5">
-                    <Timer size={12} /> Minimum Gap
-                </label>
-                <span className="text-[11px] font-bold text-theme-blue bg-theme-blue/5 px-2 py-0.5 rounded-md border border-theme-blue/10">
+            <div className="flex justify-between">
+                <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest leading-none">
+                    <Clock size={12} /> Minimum Gap
+                </div>
+                <span className="text-[11px] font-bold text-theme-blue px-2 py-0.5 border rounded-md border-theme-blue/10 bg-theme-blue/5">
                     {minGap >= 60 ? `${Math.floor(minGap / 60)}h ${minGap % 60}m` : `${minGap}m`}
                 </span>
             </div>
-
-            <div className="relative h-6 w-full flex items-center select-none touch-none">
-                <div className="absolute w-full h-1.5 bg-gray-200 rounded-full" />
+            <div className="flex items-center w-full h-6 relative select-none touch-none group">
+                <div className="absolute w-full h-1.5 rounded-full bg-gray-200" />
                 <div
-                    className="absolute h-1.5 bg-theme-blue rounded-full"
-                    style={{ width: `${(minGap / MAX) * 100}%` }}
+                    className="absolute h-1.5 rounded-full bg-theme-blue "
+                    style={{ width: `${percentage}%` }}
                 />
                 <input
                     type="range"
+                    aria-label="Adjust minimum gap"
                     min={0}
-                    max={MAX}
+                    max={maxGap}
                     step={5}
                     value={minGap}
-                    onChange={(e) => setMinGap(parseInt(e.target.value))}
-                    className="absolute w-full h-full appearance-none bg-transparent cursor-pointer z-30 opacity-0"
+                    onChange={(e) => setMinGap(Number(e.target.value))}
+                    className="absolute w-full h-full scale-x-[1.05] appearance-none bg-transparent cursor-grab active:cursor-grabbing opacity-0"
                 />
                 <div
-                    className="absolute z-20 w-4 h-4 bg-white border-2 border-theme-blue rounded-full shadow-md pointer-events-none -translate-x-1/2"
-                    style={{ left: `${(minGap / MAX) * 100}%` }}
+                    className="absolute w-4 h-4 border-2 rounded-full border-theme-blue shadow-md pointer-events-none group-hover:scale-110 bg-white -translate-x-1/2 transition-transform"
+                    style={{ left: `${percentage}%` }}
                 />
             </div>
-
             <div className="flex gap-1.5">
-                {PRESETS.map((val) => (
+                {gapPresets.map((gap) => (
                     <button
-                        key={val}
-                        onClick={() => setMinGap(val)}
+                        key={gap}
+                        onClick={() => setMinGap(gap)}
                         className={clsx(
-                            'flex-1 py-1.5 rounded-lg text-[10px] font-bold border transition-all',
-                            minGap === val
+                            'flex-1 text-[11px] font-bold py-1.5 border rounded-md cursor-pointer transition-all',
+                            minGap === gap
                                 ? 'bg-theme-blue border-theme-blue text-white'
-                                : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200',
+                                : 'text-gray-400 border-gray-200 hover:border-theme-blue/40 bg-gray-100/70',
                         )}
                     >
-                        {val === 0 ? 'None' : val < 60 ? `${val}m` : `${val / 60}h`}
+                        {gap === 0 ? 'None' : gap < 60 ? `${gap}m` : `${gap / 60}h`}
                     </button>
                 ))}
             </div>
         </div>
     );
 }
+
+export default MinGapSlider;

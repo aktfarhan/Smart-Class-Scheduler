@@ -1,48 +1,52 @@
 import type { ApiCourseWithSections, ApiSectionWithRelations } from '../types';
-import type { SearchFilters } from './parseSearchInput';
-import * as CourseRules from './coursePredicates';
-import * as SectionRules from './sectionPredicates';
+import type { SearchFilters } from '../types';
+import * as CourseFilters from './coursePredicates';
+import * as SectionFilters from './sectionPredicates';
 
-// applyFilters.ts
+/**
+ * Filters the course catalog at course-level and section-level.
+ *
+ * @param courses - The list of courses.
+ * @param sections - The list of sections.
+ * @param filters - The current filters.
+ * @returns A filtered array of courses.
+ */
 export function applyFilters(
     courses: ApiCourseWithSections[],
     sections: ApiSectionWithRelations[],
-    filters: SearchFilters
+    filters: SearchFilters,
 ) {
-    // 1. Filter sections first
+    // Find all sections that fit the filters
     const validSections = sections.filter(
         (section) =>
-            SectionRules.sectionMatchesTerm(section, filters.term) &&
-            SectionRules.sectionMatchesInstructor(
-                section,
-                filters.instructorName
-            ) &&
-            SectionRules.sectionMatchesDays(section, filters.days) &&
-            SectionRules.sectionMatchesDuration(section, filters.duration)
+            SectionFilters.sectionMatchesTerm(section, filters.term) &&
+            SectionFilters.sectionMatchesInstructor(section, filters.instructorName) &&
+            SectionFilters.sectionMatchesDays(section, filters.days) &&
+            SectionFilters.sectionMatchesDuration(section, filters.duration),
     );
 
-    const validSectionIds = new Set(validSections.map((s) => s.id));
+    // Create a list of IDs for all sections that passed the schedule filters
+    const validSectionIds = new Set(validSections.map((section) => section.id));
 
+    // Check if the user is filtering by sections; if they aren't, skip checking sections
+    const hasSectionFilters = Boolean(
+        filters.term || filters.instructorName || filters.days?.length || filters.duration,
+    );
+
+    // Filter courses based on metadata
     return courses.filter((course) => {
-        const basicMatch =
-            CourseRules.courseMatchesDept(course, filters.departmentCode) &&
-            CourseRules.courseMatchesCode(course, filters.courseCode) &&
-            CourseRules.courseMatchesText(course, filters.text);
+        // Check for a match on the course name, department, or code
+        const isBasicMatch =
+            CourseFilters.courseMatchesDept(course, filters.departmentCode) &&
+            CourseFilters.courseMatchesCode(course, filters.courseCode) &&
+            CourseFilters.courseMatchesText(course, filters.text);
 
-        if (!basicMatch) return false;
+        if (!isBasicMatch) return false;
 
-        // BUG FIX: If no section-specific filters are active,
-        // don't hide courses just because some sections don't match a "default"
-        const hasSectionFilters = !!(
-            filters.term ||
-            filters.instructorName ||
-            filters.days ||
-            filters.duration
-        );
-
+        // If no scheduling filters are active, filter course-level
         if (!hasSectionFilters) return true;
 
-        // If filters ARE active, ensure the course has at least one matching section
-        return course.sections.some((s) => validSectionIds.has(s.id));
+        // Ensure the course has at least one valid section for the active filters.
+        return course.sections?.some((s) => validSectionIds.has(s.id)) ?? false;
     });
 }

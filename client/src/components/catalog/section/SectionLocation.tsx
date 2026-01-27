@@ -1,6 +1,10 @@
 import { MapPin } from 'lucide-react';
 
-function SectionLocation({ location }: { location: string }) {
+interface SectionLocationProps {
+    location: string;
+}
+
+function SectionLocation({ location }: SectionLocationProps) {
     return (
         <div className="flex flex-row items-center lg:flex-col lg:justify-center gap-2">
             <span className="w-24 lg:hidden text-[10px] font-bold text-gray-400 uppercase shrink-0 tracking-widest">

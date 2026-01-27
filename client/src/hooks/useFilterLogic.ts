@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
-import type { ApiDepartmentWithRelations } from '../types';
+import type { ApiDepartmentWithRelations, FilterType } from '../types';
+import { FILTER_CATEGORIES } from '../constants';
 
 interface UseFilterLogicParams {
     searchQuery: string;
@@ -8,14 +9,6 @@ interface UseFilterLogicParams {
     departmentMap: Map<string, ApiDepartmentWithRelations>;
 }
 
-// Constants defining categories of filters for sidebar filtering logic c
-export const FILTER_CATEGORIES = {
-    DAYS: new Set(['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su']),
-    TERMS: new Set(['2025 Fall', '2026 Winter', '2026 Spring', '2026 Summer']),
-    TYPES: new Set(['Lecture', 'Discussion']),
-    TIMES: new Set(['Morning', 'Afternoon', 'Evening']),
-};
-
 export function useFilterLogic({
     searchQuery,
     setSearchQuery,
@@ -23,46 +16,41 @@ export function useFilterLogic({
     departmentMap,
 }: UseFilterLogicParams) {
     const handleSidebarFilter = useCallback(
-        (type: string, value: string | number) => {
+        (type: FilterType | 'clear', value: string | number) => {
             const valueStr = String(value).trim();
-            const normalizedValue = valueStr.toLowerCase();
 
-            // Clear all filters if requested
             if (type === 'clear') {
                 setSearchQuery('');
                 setCurrentPage(1);
                 return;
             }
 
-            // Parse current search query into tokens
             const currentTokens = searchQuery
                 ? searchQuery
                       .split(',')
-                      .map((token) => token.trim())
+                      .map((t) => t.trim())
                       .filter(Boolean)
                 : [];
 
-            // Normalize tokens for case-insensitive comparison
-            const normalizedTokens = currentTokens.map((token) => token.toLowerCase());
-
-            // Check if the filter token is already selected
-            const isAlreadySelected = normalizedTokens.includes(normalizedValue);
+            if (currentTokens.includes(valueStr)) {
+                setSearchQuery(currentTokens.filter((t) => t !== valueStr).join(', '));
+                return;
+            }
 
             let newTokens: string[];
-            if (isAlreadySelected) {
-                // Remove the token if already selected
-                newTokens = currentTokens.filter((_, i) => normalizedTokens[i] !== normalizedValue);
+
+            if (type === 'day') {
+                newTokens = [...currentTokens, valueStr];
             } else {
-                // Remove tokens in the same category before adding the new one
                 newTokens = currentTokens.filter((token) => {
                     switch (type) {
                         case 'term':
-                            return !FILTER_CATEGORIES.TERMS.has(token);
-                        case 'type':
-                            return !FILTER_CATEGORIES.TYPES.has(token);
-                        case 'time':
-                            return !FILTER_CATEGORIES.TIMES.has(token);
-                        case 'dept':
+                            return !(FILTER_CATEGORIES.TERMS as Set<string>).has(token);
+                        case 'sectionType':
+                            return !(FILTER_CATEGORIES.TYPES as Set<string>).has(token);
+                        case 'timeRange':
+                            return !(FILTER_CATEGORIES.TIMES as Set<string>).has(token);
+                        case 'departmentCode':
                             return !departmentMap.has(token.toUpperCase());
                         default:
                             return true;
@@ -71,7 +59,6 @@ export function useFilterLogic({
                 newTokens.push(valueStr);
             }
 
-            // Update the search query and reset to first page
             setSearchQuery(newTokens.join(', '));
             setCurrentPage(1);
         },

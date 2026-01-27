@@ -1,45 +1,66 @@
-import type { ApiSectionWithRelations } from '../types';
-import type { Day } from './parseSearchInput';
+import type { Day, ApiSectionWithRelations } from '../types';
+import { formatTime, formatTimeToMinutes } from '../utils/formatTime';
 
-export const sectionMatchesTerm = (
-    section: ApiSectionWithRelations,
-    term?: string
-) => {
+/**
+ * Checks if a section belongs to a specific term.
+ *
+ * @param section - The section data with relations.
+ * @param term - The term to match.
+ * @returns True if the term matches or no term is selected.
+ */
+export const sectionMatchesTerm = (section: ApiSectionWithRelations, term?: string) => {
     if (!term) return true;
-
     return section.term.toLowerCase() === term.toLowerCase();
 };
 
-export const sectionMatchesInstructor = (
-    section: ApiSectionWithRelations,
-    name?: string
-) => {
+/**
+ * Searches for a partial match of an instructor's full name.
+ *
+ * @param section - The section data with relations.
+ * @param name - The name to match.
+ * @returns True if any instructor matches the name.
+ */
+export const sectionMatchesInstructor = (section: ApiSectionWithRelations, name?: string) => {
     if (!name) return true;
     const search = name.toLowerCase();
     return section.instructors.some((inst) =>
-        `${inst.firstName} ${inst.lastName}`.toLowerCase().includes(search)
+        `${inst.firstName} ${inst.lastName}`.toLowerCase().includes(search),
     );
 };
 
-export const sectionMatchesDays = (
-    section: ApiSectionWithRelations,
-    filterDays?: Day[]
-) => {
-    if (!filterDays || filterDays.length === 0) return true;
-    const sectionDays = section.meetings.map((m) => m.day);
-    // Section matches if it meets on ALL the days requested (e.g., must have M AND W)
-    return filterDays.every((d) => sectionDays.includes(d));
+/**
+ * Filters a section by their meeting days.
+ *
+ * @param section - The section data with relations.
+ * @param filterDays - An array of days selected.
+ * @returns - True if the class covers every day selected.
+ */
+export const sectionMatchesDays = (section: ApiSectionWithRelations, filterDays?: Day[]) => {
+    if (!filterDays?.length) return true;
+    const sectionDays = new Set(section.meetings.map((m) => m.day));
+    return filterDays.every((d) => sectionDays.has(d));
 };
 
-export const sectionMatchesDuration = (
-    section: ApiSectionWithRelations,
-    duration?: number
-) => {
+/**
+ * Filters a section based on how class meeting duration.
+ *
+ * @param section - The section data with relations.
+ * @param duration - The duration of a class in minutes.
+ * @returns - True if any of the section's meetings match this exact length.
+ */
+export const sectionMatchesDuration = (section: ApiSectionWithRelations, duration?: number) => {
     if (!duration) return true;
-    return section.meetings.some((m) => {
-        const start = new Date(m.startTime).getTime();
-        const end = new Date(m.endTime).getTime();
-        const diffMinutes = (end - start) / (1000 * 60);
-        return Math.abs(diffMinutes - duration) < 2; // Allow small rounding diff
+
+    return section.meetings.some((meeting) => {
+        // 1. Get the raw time range string (e.g., "5:30pm – 8:15pm")
+        const timeRangeStr = formatTime(meeting);
+
+        // 2. Convert that string to minutes
+        const parsed = formatTimeToMinutes(timeRangeStr);
+        if (!parsed) return false;
+
+        // 3. Calculate actual duration
+        const meetingDuration = parsed.endMins - parsed.startMins;
+        return meetingDuration === duration;
     });
 };

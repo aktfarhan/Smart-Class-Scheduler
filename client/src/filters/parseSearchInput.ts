@@ -1,176 +1,137 @@
-export type Day = 'M' | 'Tu' | 'W' | 'Th' | 'F' | 'Sa' | 'Su';
-export type SectionType = 'LECTURE' | 'DISCUSSION';
+import type { SectionType, SearchFilters, Token, LookupData, Day } from '../types';
+import { FILTER_CATEGORIES, DATA_MAPS, type AcademicTerm } from '../constants';
+import { REGEX, DURATION_UNITS } from '../constants';
 
-export interface SearchFilters {
-    departmentCode?: string;
-    courseCode?: string;
-    text?: string;
-    duration?: number; // In minutes
-    term?: string;
-    days?: Day[];
-    timeRange?: { start?: string; end?: string };
-    sectionType?: SectionType;
-    instructorName?: string;
-}
-
-const DAY_MAP: Record<string, Day> = {
-    m: 'M',
-    tu: 'Tu',
-    w: 'W',
-    th: 'Th',
-    f: 'F',
-    sa: 'Sa',
-    su: 'Su',
-};
-
-const PERIOD_MAP: Record<string, { start: string; end: string }> = {
-    morning: { start: '8:00am', end: '11:59am' },
-    afternoon: { start: '12:00pm', end: '4:59pm' },
-    evening: { start: '5:00pm', end: '7:59pm' },
-    night: { start: '8:00pm', end: '11:59pm' },
-};
-
+/**
+ * Parses a raw search string into structured filters and metadata tokens.
+ * It splits input by commas and identifies categories like course codes,
+ * days, times, and terms.
+ *
+ * @param input - The raw search string from the user.
+ * @param lookupData - Pre-loaded maps for validating departments and courses.
+ * @returns An object containing the structured filters and a list of tokens for UI highlighting.
+ */
 export function parseSearchInput(
     input: string,
-    lookupData: {
-        departmentMap: Map<string, any>;
-        departmentTitleToCode: Map<string, string>;
-        courseMap: Map<string, any>;
-    }
-): { filters: SearchFilters; tokens: any[] } {
+    lookupData: LookupData,
+): { filters: SearchFilters; tokens: Token[] } {
+    // Object to store recognized filters
     const filters: SearchFilters = {};
-    const tokenStatuses: any[] = [];
 
-    if (!input.trim()) return { filters, tokens: [] };
+    // Array that holds text, type, and recognition status
+    const tokens: Token[] = [];
 
-    const segments = input
+    // Array that holds unknown input segments
+    const unknownTextParts: string[] = [];
+
+    // Check if input is empty; return no filters if it is
+    const normalizedInput = input.trim();
+    if (!normalizedInput) return { filters, tokens: [] };
+
+    // Split the input by comma, trim spaces, and remove empty segments
+    const segments = normalizedInput
         .split(',')
         .map((s) => s.trim())
         .filter(Boolean);
 
-    segments.forEach((seg) => {
-        const lower = seg.toLowerCase();
-        const upper = seg.toUpperCase();
-        const normalized = upper.replace(/\s/g, '');
+    // Iterate over all segments to find filter types
+    for (const segment of segments) {
+        const lower = segment.toLowerCase();
+        const upper = segment.toUpperCase();
 
-        // 1. DURATION
-        const durationMatch = lower.match(
-            /^(\d+)\s*(min|mins|minutes|hr|hrs|hour|hours)$/i
-        );
-        if (durationMatch) {
-            let mins = parseInt(durationMatch[1], 10);
-            const unit = durationMatch[2].toLowerCase();
-            if (unit.startsWith('hr') || unit.startsWith('hour')) mins *= 60;
-            filters.duration = mins;
-            tokenStatuses.push({
-                text: seg,
-                type: 'duration',
-                isRecognized: true,
-            });
-            return;
+        // Remove spaces for course code matching
+        const cleanUpper = upper.replace(/\s/g, '');
+
+        // --1-- Check if a segment matches a course code
+        if (lookupData.courseMap.has(cleanUpper)) {
+            filters.courseCode = cleanUpper;
+            tokens.push({ text: segment, type: 'courseCode', isRecognized: true });
+            continue;
         }
 
-        // 2. STRICT DAYS
-        const dayMatchRegex = /(tu|th|sa|su|m|w|f)/g;
-        const dayMatches = lower.match(dayMatchRegex);
-        if (dayMatches && dayMatches.join('') === lower.replace(/\s/g, '')) {
-            const mappedDays = dayMatches.map(
-                (d) => DAY_MAP[d as keyof typeof DAY_MAP]
-            );
-            filters.days = Array.from(
-                new Set([...(filters.days || []), ...mappedDays])
-            );
-            tokenStatuses.push({ text: seg, type: 'days', isRecognized: true });
-            return;
-        }
-
-        // 3. TIME PERIODS
-        if (PERIOD_MAP[lower]) {
-            filters.timeRange = PERIOD_MAP[lower];
-            tokenStatuses.push({
-                text: seg,
-                type: 'timeRange',
-                isRecognized: true,
-            });
-            return;
-        }
-
-        // 4. EXACT TIME RANGE
-        const timeMatch = seg.match(
-            /(\d{1,2}(?::\d{2})?\s*[ap]m)\s*(?:-|to)\s*(\d{1,2}(?::\d{2})?\s*[ap]m)/i
-        );
-        if (timeMatch) {
-            filters.timeRange = {
-                start: timeMatch[1].toLowerCase().replace(/\s/g, ''),
-                end: timeMatch[2].toLowerCase().replace(/\s/g, ''),
-            };
-            tokenStatuses.push({
-                text: seg,
-                type: 'timeRange',
-                isRecognized: true,
-            });
-            return;
-        }
-
-        // 5. DEPARTMENT
+        // --2-- Check if a segment matches a department code or title
         const codeFromTitle = lookupData.departmentTitleToCode.get(lower);
         if (lookupData.departmentMap.has(upper) || codeFromTitle) {
             filters.departmentCode = codeFromTitle || upper;
-            tokenStatuses.push({
-                text: seg,
-                type: 'departmentCode',
-                isRecognized: true,
-            });
-            return;
+            tokens.push({ text: segment, type: 'departmentCode', isRecognized: true });
+            continue;
         }
 
-        // 6. COURSE CODE
-        if (lookupData.courseMap.has(normalized)) {
-            const course = lookupData.courseMap.get(normalized);
-            filters.courseCode = normalized;
-            filters.departmentCode = course.department.code;
-            tokenStatuses.push({
-                text: seg,
-                type: 'courseCode',
-                isRecognized: true,
-            });
-            return;
+        // --3-- Check if a segment matches a duration (90min, 2hr)
+        const durationMatch = segment.match(REGEX.DURATION);
+        if (durationMatch) {
+            const [_, value, unit] = durationMatch;
+            const multiplier = DURATION_UNITS.get(unit.toLowerCase()) ?? 1;
+            filters.duration = parseInt(value, 10) * multiplier;
+            tokens.push({ text: segment, type: 'duration', isRecognized: true });
+            continue;
         }
 
-        // 8. TERM (Advanced Multi-format Parsing)
-        const termRegex =
-            /\b(fall|winter|spring|summer)\s*(\d{4})\b|\b(\d{4})\s*(fall|winter|spring|summer)\b/i;
-        const termMatch = seg.match(termRegex);
+        // --4-- Check if a segment matches a day (MWF, TuTh)
+        if (REGEX.DAYS_STRICT.test(cleanUpper)) {
+            const dayMatches = lower.match(REGEX.DAY_SEGMENTS);
+            if (dayMatches) {
+                const mappedDays = dayMatches.map((day) => DATA_MAPS.DAY_MAP[day as Day]);
+                const allDays = [...(filters.days ?? []), ...mappedDays];
+                filters.days = Array.from(new Set(allDays));
+                tokens.push({ text: segment, type: 'day', isRecognized: true });
+                continue;
+            }
+        }
+
+        // --5-- Check if a segment matches a time of day
+        const periodValue = DATA_MAPS.PERIOD_MAP[lower];
+        if (periodValue) {
+            filters.timeRange = periodValue;
+            tokens.push({ text: segment, type: 'timeRange', isRecognized: true });
+            continue;
+        }
+
+        // --6-- Check if a segment matches a specific time range
+        const timeMatch = segment.match(REGEX.TIME_RANGE);
+        if (timeMatch) {
+            const [_, rawStart, rawEnd] = timeMatch;
+            filters.timeRange = {
+                start: rawStart.toLowerCase().replace(/\s+/g, ''),
+                end: rawEnd.toLowerCase().replace(/\s+/g, ''),
+            };
+            tokens.push({ text: segment, type: 'timeRange', isRecognized: true });
+            continue;
+        }
+
+        // --7-- Check if a segment matches an academic term
+        const termMatch = segment.match(REGEX.TERM);
         if (termMatch) {
-            // Extract from either [Season, Year] or [Year, Season] groups
-            const season = termMatch[1] || termMatch[4];
-            const year = termMatch[2] || termMatch[3];
-
-            // Normalize to "YYYY Season" (e.g., "2025 Fall") to match your data format
-            const normalizedTerm = `${year} ${
-                season.charAt(0).toUpperCase() + season.slice(1).toLowerCase()
-            }`;
-
-            filters.term = normalizedTerm;
-            tokenStatuses.push({ text: seg, type: 'term', isRecognized: true });
-            return;
+            const [_, s1, y1, y2, s2] = termMatch;
+            const seasonRaw = s1 || s2;
+            const year = y1 || y2;
+            const season = seasonRaw.charAt(0).toUpperCase() + seasonRaw.slice(1).toLowerCase();
+            const termKey = `${year} ${season}` as AcademicTerm;
+            if (FILTER_CATEGORIES.TERMS.has(termKey)) {
+                filters.term = termKey;
+                tokens.push({ text: segment, type: 'term', isRecognized: true });
+                continue;
+            }
         }
 
-        // 9. SECTION TYPE
-        if (['lecture', 'discussion'].includes(lower)) {
-            filters.sectionType = upper as SectionType;
-            tokenStatuses.push({
-                text: seg,
-                type: 'sectionType',
-                isRecognized: true,
-            });
-            return;
+        // --8-- Check if a segment matches a section type
+        const sectionType = lower.charAt(0).toUpperCase() + lower.slice(1);
+        if (FILTER_CATEGORIES.TYPES.has(sectionType)) {
+            filters.sectionType = sectionType as SectionType;
+            tokens.push({ text: segment, type: 'sectionType', isRecognized: true });
+            continue;
         }
 
-        // 10. FALLBACK
-        tokenStatuses.push({ text: seg, type: 'unknown', isRecognized: false });
-        filters.text = seg;
-    });
+        // --9-- Handles unrecognized segments
+        tokens.push({ text: segment, type: 'unknown', isRecognized: false });
+        unknownTextParts.push(segment);
+    }
 
-    return { filters, tokens: tokenStatuses };
+    // Clean up accumulated text filter
+    if (unknownTextParts.length > 0) {
+        // Join and trim to ensure no leading/trailing whitespace
+        filters.text = unknownTextParts.join(' ').trim();
+    }
+
+    return { filters, tokens };
 }

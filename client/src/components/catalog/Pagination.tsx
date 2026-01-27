@@ -1,133 +1,109 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { clsx } from 'clsx';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import clsx from 'clsx';
 
 interface PaginationProps {
-    currentPage: number;
-    totalPages: number;
     jumpValue: string;
-    setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+    totalPages: number;
+    currentPage: number;
     setJumpValue: React.Dispatch<React.SetStateAction<string>>;
     handleJumpPage: (e: React.FormEvent) => void;
+    setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
 function Pagination({
-    currentPage,
-    totalPages,
     jumpValue,
-    setCurrentPage,
+    totalPages,
+    currentPage,
     setJumpValue,
     handleJumpPage,
+    setCurrentPage,
 }: PaginationProps) {
+    const paginationRange = useMemo(() => {
+        const range: (number | 'dots')[] = [];
+        const pages = new Set<number>();
+        pages.add(1);
+        pages.add(totalPages);
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+            if (i >= 1 && i <= totalPages) {
+                pages.add(i);
+            }
+        }
+        const sorted = Array.from(pages).sort((a, b) => a - b);
+
+        for (let i = 0; i < sorted.length; i++) {
+            range.push(sorted[i]);
+
+            if (i < sorted.length - 1 && sorted[i + 1] - sorted[i] > 1) {
+                range.push('dots');
+            }
+        }
+        return range;
+    }, [currentPage, totalPages]);
+
     return (
-        <div className="fixed bottom-10 left-0 right-0 z-50 pointer-events-none">
-            {/* 
-        Increased padding from px-4 sm:px-6 to px-8 sm:px-16 
-        for a significantly larger margin around the ribbon.
-    */}
-            <div className="max-w-350 w-full min-w-[320px] mx-auto px-8 sm:px-16">
-                {/* This div spans the full width of its parent (max-w-350 minus the new padding) */}
-                <div className="pointer-events-auto bg-white/95 backdrop-blur-md border border-gray-200 py-2.5 px-5 rounded-2xl flex items-center justify-between gap-6 shadow-[0_4px_12px_rgba(0,0,0,0.03)] w-full">
-                    <div className="flex items-center gap-1.5 h-11">
-                        <button
-                            disabled={currentPage === 1}
-                            onClick={() =>
-                                setCurrentPage((page) => Math.max(1, page - 1))
-                            }
-                            className="p-1.5 rounded-xl hover:bg-gray-100 text-gray-600 disabled:opacity-20 cursor-pointer transition-all"
-                        >
-                            <ChevronLeft size={20} strokeWidth={2.5} />
-                        </button>
-                        <div className="flex items-center gap-1">
-                            {[...Array(totalPages)].map((_, i) => {
-                                const page = i + 1;
-                                const isFirst = page === 1;
-                                const isLast = page === totalPages;
-                                const isCurrent = page === currentPage;
-                                const isNeighbor =
-                                    Math.abs(page - currentPage) <= 1;
-
-                                if (
-                                    isFirst ||
-                                    isLast ||
-                                    isCurrent ||
-                                    isNeighbor
-                                ) {
-                                    return (
-                                        <button
-                                            key={page}
-                                            onClick={() => setCurrentPage(page)}
-                                            className={clsx(
-                                                'w-9 h-9 rounded-xl text-xs font-bold transition-all cursor-pointer',
-                                                !isFirst &&
-                                                    !isLast &&
-                                                    !isCurrent &&
-                                                    'hidden md:flex items-center justify-center',
-                                                currentPage === page
-                                                    ? 'bg-[#005a8c] text-white'
-                                                    : 'text-gray-400 hover:bg-gray-50 hover:text-[#005a8c]'
-                                            )}
-                                        >
-                                            {page}
-                                        </button>
-                                    );
-                                }
-                                if (
-                                    page === currentPage - 2 ||
-                                    page === currentPage + 2
-                                ) {
-                                    return (
-                                        <span
-                                            key={page}
-                                            className="text-gray-300 px-0.5 select-none hidden sm:inline text-[10px]"
-                                        >
-                                            ...
-                                        </span>
-                                    );
-                                }
-                                return null;
-                            })}
-                        </div>
-
-                        <button
-                            disabled={currentPage === totalPages}
-                            onClick={() =>
-                                setCurrentPage((p) =>
-                                    Math.min(totalPages, p + 1)
-                                )
-                            }
-                            className="p-1.5 rounded-xl hover:bg-gray-100 text-gray-600 disabled:opacity-20 cursor-pointer transition-all"
-                        >
-                            <ChevronRight size={20} strokeWidth={2.5} />
-                        </button>
+        <nav className="w-full border-t border-gray-100 bg-white/10 py-3">
+            <div className="flex w-full max-w-340 items-center justify-between px-4 sm:px-10">
+                <div className="flex h-11 gap-1.5">
+                    <button
+                        type="button"
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                        className="cursor-pointer rounded-md p-3 text-gray-600 transition-all hover:bg-gray-200 disabled:opacity-30"
+                    >
+                        <ChevronLeft size={20} strokeWidth={2.5} />
+                    </button>
+                    <div className="flex items-center gap-1">
+                        {paginationRange.map((item, i) =>
+                            item === 'dots' ? (
+                                <span
+                                    key={`dots-${i}`}
+                                    className="hidden px-0.5 text-[10px] text-gray-300 sm:inline"
+                                >
+                                    ...
+                                </span>
+                            ) : (
+                                <button
+                                    key={`page-${item}`}
+                                    onClick={() => setCurrentPage(item)}
+                                    className={clsx(
+                                        'h-9 w-9 cursor-pointer rounded-lg text-xs font-bold transition-all',
+                                        currentPage === item
+                                            ? 'bg-theme-blue text-white'
+                                            : 'hover:text-theme-blue text-gray-400 hover:bg-gray-50',
+                                    )}
+                                >
+                                    {item}
+                                </button>
+                            ),
+                        )}
                     </div>
-
-                    {/* Jump to Box */}
-                    <div className="flex items-center gap-3 border-l border-gray-100 pl-4">
-                        <form
-                            onSubmit={handleJumpPage}
-                            className="flex items-center gap-2"
-                        >
-                            <label className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">
-                                Go to
-                            </label>
-                            <input
-                                type="text"
-                                inputMode="numeric"
-                                value={jumpValue}
-                                onChange={(e) =>
-                                    setJumpValue(
-                                        e.target.value.replace(/\D/g, '')
-                                    )
-                                }
-                                placeholder={currentPage.toString()}
-                                className="w-10 h-8 bg-gray-50 border border-gray-200 rounded-lg text-center text-xs font-bold focus:border-[#005a8c] focus:outline-none transition-all placeholder-gray-300"
-                            />
-                        </form>
-                    </div>
+                    <button
+                        type="button"
+                        disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                        className="cursor-pointer rounded-md p-3 text-gray-600 transition-all hover:bg-gray-200 disabled:opacity-30"
+                    >
+                        <ChevronRight size={20} strokeWidth={2.5} />
+                    </button>
+                </div>
+                <div className="flex items-center gap-3 border-l border-gray-200 pl-4">
+                    <form onSubmit={handleJumpPage} className="flex items-center gap-2">
+                        <label className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">
+                            Go to
+                        </label>
+                        <input
+                            type="text"
+                            inputMode="numeric"
+                            value={jumpValue}
+                            onChange={(e) => setJumpValue(e.target.value.replace(/\D/g, ''))}
+                            placeholder={currentPage.toString()}
+                            className="focus:border-theme-blue h-8 w-10 rounded-md border border-gray-200 bg-gray-50 text-center text-xs font-bold text-gray-700 placeholder-gray-300 focus:outline-none"
+                        />
+                    </form>
                 </div>
             </div>
-        </div>
+        </nav>
     );
 }
 

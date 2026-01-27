@@ -1,20 +1,18 @@
 import { useMemo } from 'react';
-import type {
-    ApiCourseWithSections,
-    ApiSectionWithRelations,
-} from '../types/index';
+import type { ApiCourseWithSections, ApiSectionWithRelations } from '../types/index';
 import { parseSearchInput } from '../filters/parseSearchInput';
 import { applyFilters } from '../filters/applyFilters';
+import type { LookupData } from '../types/index';
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 40;
 
 interface useCoursePaginationProps {
     courses: ApiCourseWithSections[];
-    sections: ApiSectionWithRelations[]; // Added for section-level filtering
-    lookupData: any; // Added for high-accuracy parsing
+    sections: ApiSectionWithRelations[]
+    lookupData: LookupData;
     searchQuery: string;
-    pinnedCourses: Set<number>;
     currentPage: number;
+    pinnedCourses: Set<number>;
 }
 
 export function useCoursePagination({
@@ -22,8 +20,8 @@ export function useCoursePagination({
     sections,
     lookupData,
     searchQuery,
-    pinnedCourses,
     currentPage,
+    pinnedCourses,
 }: useCoursePaginationProps) {
     return useMemo(() => {
         // 1. Convert search string into structured filters (Dept, Course, Instructor, etc.)
@@ -46,14 +44,7 @@ export function useCoursePagination({
             pagedCourses: sorted.slice(start, start + PAGE_SIZE),
             totalPages: Math.max(1, Math.ceil(sorted.length / PAGE_SIZE)),
             totalResults: sorted.length,
-            activeFilters: filters, // Useful if you want to highlight matches in the UI
+            activeFilters: filters,
         };
-    }, [
-        courses,
-        sections,
-        lookupData,
-        searchQuery,
-        pinnedCourses,
-        currentPage,
-    ]);
+    }, [courses, sections, lookupData, searchQuery, pinnedCourses, currentPage]);
 }

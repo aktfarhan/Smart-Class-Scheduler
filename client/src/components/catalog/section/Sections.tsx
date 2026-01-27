@@ -1,5 +1,5 @@
-import type { ApiSectionWithRelations } from '../../../types';
 import SectionRow from './SectionRow';
+import type { ApiSectionWithRelations } from '../../../types';
 
 interface SectionProps {
     sections: ApiSectionWithRelations[];
@@ -8,7 +8,7 @@ interface SectionProps {
 function Sections({ sections }: SectionProps) {
     return (
         <div className="w-full">
-            <div className="ml-0 border-x-0.5 border-b-0.5 border-gray-200 rounded-b-sm bg-white shadow-inner overflow-hidden">
+            <div className="border-gray-200 rounded-b-sm bg-white shadow-inner overflow-hidden">
                 <div className="hidden lg:grid grid-cols-[4rem_2fr_15rem_1.7fr_1fr] gap-2 px-6 py-2 bg-gray-50/80 border-b border-gray-100 text-[10px] font-bold text-gray-400 text-center uppercase tracking-widest">
                     <span>Section</span>
                     <span>Instructor</span>

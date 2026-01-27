@@ -1,39 +1,67 @@
 import CourseCard from './CourseCard';
+import { useCallback, useMemo } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import type { AcademicTerm } from '../../../../constants';
 import type { ApiCourseWithSections } from '../../../../types';
+import type { ApiSectionWithRelations } from '../../../../types';
 
-export default function CourseList({
-    pinnedData,
+interface CourseListProps {
+    expandedId: number | null;
+    selectedTerm: AcademicTerm;
+    selectedSections: Set<number>;
+    pinnedCourses: ApiCourseWithSections[];
+    sectionsByCourseId: Map<number, ApiSectionWithRelations[]>;
+    setExpandedId: Dispatch<SetStateAction<number | null>>;
+    onSectionSelect: (courseId: number, sectionId: number) => void;
+}
+
+function CourseList({
     expandedId,
-    setExpandedId,
-    selectedSections,
-    sectionsByCourseId,
     selectedTerm,
+    selectedSections,
+    pinnedCourses,
+    sectionsByCourseId,
+    setExpandedId,
     onSectionSelect,
-    formatMeetingTime,
-}: any) {
+}: CourseListProps) {
+    const handleExpand = useCallback(
+        (courseId: number) => {
+            setExpandedId((prev) => (prev === courseId ? null : courseId));
+        },
+        [setExpandedId],
+    );
+
+    const filteredSectionsMap = useMemo(() => {
+        const map = new Map<number, ApiSectionWithRelations[]>();
+        pinnedCourses.forEach((course) => {
+            const sections = sectionsByCourseId.get(course.id) || [];
+            map.set(
+                course.id,
+                sections.filter((s) => s.term === selectedTerm),
+            );
+        });
+        return map;
+    }, [pinnedCourses, sectionsByCourseId, selectedTerm]);
+
     return (
         <>
-            {pinnedData.map((course: ApiCourseWithSections) => {
-                console.log(course);
+            {pinnedCourses.map((course: ApiCourseWithSections) => {
                 const isExpanded = expandedId === course.id;
-                const activeSectionId = selectedSections.get(course.id);
-                const sections = (sectionsByCourseId.get(course.id) || []).filter(
-                    (s: any) => s.term === selectedTerm,
-                );
-
+                const sections = filteredSectionsMap.get(course.id)!;
                 return (
                     <CourseCard
                         key={course.id}
                         course={course}
-                        isExpanded={isExpanded}
-                        activeSectionId={activeSectionId}
                         sections={sections}
-                        onToggle={() => setExpandedId(isExpanded ? null : course.id)}
+                        isExpanded={isExpanded}
+                        selectedSections={selectedSections}
                         onSectionSelect={onSectionSelect}
-                        formatMeetingTime={formatMeetingTime}
+                        onExpandCourse={() => handleExpand(course.id)}
                     />
                 );
             })}
         </>
     );
 }
+
+export default CourseList;

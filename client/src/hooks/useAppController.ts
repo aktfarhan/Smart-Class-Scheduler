@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useCatalogData } from './useCatalogData';
 import { useFilterLogic } from './useFilterLogic';
 import { useCoursePagination } from './useCoursePagination';
-import type { ApiSectionWithRelations } from '../types';
+import { useCalendarSidebar } from '../components/calendar/calendarsidebar/useCalendarSidebar';
 
 export function useAppController() {
     // Fetch core catalog data
@@ -23,8 +23,15 @@ export function useAppController() {
     // ----- Data State -----
     // Tracking user selections: pinned courses, selected sections per course, expanded course IDs
     const [pinnedCourses, setPinnedCourses] = useState<Set<number>>(new Set());
-    const [selectedSections, setSelectedSections] = useState<Map<number, number>>(new Map());
+    const [selectedSections, setSelectedSections] = useState<Set<number>>(new Set());
     const [expandedCourseIds, setExpandedCourseIds] = useState<Set<number>>(new Set());
+
+    // Calendar side bar
+    const calendarSidebar = useCalendarSidebar({
+        sectionsByCourseId,
+        setSelectedSections,
+        pinnedCourses,
+    });
 
     // Apply search + filters + pagination to catalog data
     const pagination = useCoursePagination({
@@ -54,17 +61,42 @@ export function useAppController() {
      * Toggle section selection for a given course.
      * If the section is already selected, deselect it; otherwise select it.
      */
-    const handleSectionSelect = useCallback((courseId: number, sectionId: number) => {
-        setSelectedSections((prev) => {
-            const newMap = new Map(prev);
-            if (newMap.get(courseId) === sectionId) {
-                newMap.delete(courseId);
-            } else {
-                newMap.set(courseId, sectionId);
-            }
-            return newMap;
-        });
-    }, []);
+    const handleSectionSelect = useCallback(
+        (courseId: number, sectionId: number) => {
+            setSelectedSections((prev) => {
+                const next = new Set(prev);
+
+                const courseSections = sectionsByCourseId.get(courseId) || [];
+                const targetSection = courseSections.find((s) => s.id === sectionId);
+
+                if (!targetSection) return prev;
+
+                // 1. Determine Category: 'L' for Lab, 'D' for Discussion, 'LEC' for everything else
+                const getCategory = (secNum: string) => {
+                    if (secNum.endsWith('L')) return 'LAB';
+                    if (secNum.endsWith('D')) return 'DISC';
+                    return 'LEC';
+                };
+
+                const targetCategory = getCategory(targetSection.sectionNumber);
+
+                // 2. Clear out existing sections of the SAME CATEGORY for this course
+                courseSections.forEach((s) => {
+                    if (next.has(s.id) && getCategory(s.sectionNumber) === targetCategory) {
+                        next.delete(s.id);
+                    }
+                });
+
+                // 3. Toggle Logic
+                if (!prev.has(sectionId)) {
+                    next.add(sectionId);
+                }
+
+                return next;
+            });
+        },
+        [sectionsByCourseId],
+    );
 
     // Handle jumping to a specific page via input form submission
     const handleJumpPage = useCallback(
@@ -78,18 +110,6 @@ export function useAppController() {
         },
         [jumpValue, pagination.totalPages],
     );
-
-    /**
-     * Handle schedule generation logic.
-     * Disables generation if no pinned courses.
-     */
-    const handleGenerateSchedule = useCallback(async () => {
-        if (pinnedCourses.size === 0) return;
-        setIsGenerating(true);
-        // Logic for AI schedule optimization trigger
-        await new Promise((r) => setTimeout(r, 800));
-        setIsGenerating(false);
-    }, [pinnedCourses.size]);
 
     // ----- Export state, data, refs, and actions -----
     return {
@@ -106,6 +126,7 @@ export function useAppController() {
             expandedCourseIds,
             totalPages: pagination.totalPages,
             totalResults: pagination.totalResults,
+            calendarSidebar: calendarSidebar.state,
         },
         data: {
             courses,
@@ -114,8 +135,9 @@ export function useAppController() {
             sectionsByCourseId,
             pagedCourses: pagination.pagedCourses,
             activeFilters: pagination.activeFilters,
+            calendarSidebar: calendarSidebar.data,
         },
-        refs: { scrollContainerRef },
+        refs: { scrollContainerRef, calendarSidebar: calendarSidebar.refs },
         actions: {
             setActiveTab,
             setSearchQuery,
@@ -128,8 +150,8 @@ export function useAppController() {
             setPinnedCourses,
             handleSectionSelect,
             handleSidebarFilter,
-            handleGenerateSchedule,
             handleJumpPage,
+            calendarSidebar: calendarSidebar.actions,
         },
     };
 }

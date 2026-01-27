@@ -1,70 +1,79 @@
-import React, { useMemo } from 'react';
-import { AlertTriangle } from 'lucide-react';
 import clsx from 'clsx';
+import { useMemo } from 'react';
+import { AlertTriangle } from 'lucide-react';
+import { CALENDAR_CONFIG } from '../../constants';
+import { getInstructorNames } from '../../utils/formatInstructorNames';
+import { formatTime, formatTimeToMinutes, formatHour } from '../../utils/formatTime';
+import type { ApiSectionWithRelations, Block } from '../../types';
 
-export default function WeeklyCalendar({
-    selectedSections,
-    courses,
-    sectionsByCourseId,
+interface WeeklyCalendarProps {
+    showWeekend: boolean;
+    selectedSections: Set<number>; // Correctly typed as Set
+    sectionsByCourseId: Map<number, ApiSectionWithRelations[]>;
+}
+
+function WeeklyCalendar({
     showWeekend,
-}: any) {
-    const days = showWeekend
-        ? ['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su']
-        : ['M', 'Tu', 'W', 'Th', 'F'];
-    const START_HOUR = 8,
-        END_HOUR = 23; // 11 PM
-    const TOTAL_MINS = (END_HOUR - START_HOUR) * 60;
+    selectedSections,
+    sectionsByCourseId,
+}: WeeklyCalendarProps) {
+    const { START_TIME, END_TIME, TOTAL_MINS, ALL_DAYS, WEEK_DAYS } = CALENDAR_CONFIG;
+    const days = showWeekend ? ALL_DAYS : WEEK_DAYS;
 
     const activeBlocks = useMemo(() => {
-        const blocks: any[] = [];
-        selectedSections.forEach((sectionId: number, courseId: number) => {
-            const course = courses.find((c: any) => c.id === courseId);
-            const section = sectionsByCourseId.get(courseId)!.find((s: any) => s.id === sectionId);
-            if (!section || !course) return;
+        const grouped: Record<string, Block[]> = {};
+        days.forEach((d) => (grouped[d] = []));
+        const allBlocks: Block[] = [];
 
-            section.meetings.forEach((m: any) => {
-                const start = new Date(m.startTime),
-                    end = new Date(m.endTime);
-                blocks.push({
-                    courseId,
-                    sectionId,
-                    day: m.day,
-                    courseCode: `${course.department.code} ${course.code}`,
-                    title: course.title,
-                    secNum: section.sectionNumber, // Use sectionNumber from your example
-                    startMins: start.getUTCHours() * 60 + start.getUTCMinutes(),
-                    endMins: end.getUTCHours() * 60 + end.getUTCMinutes(),
-                    displayTime: `${start.getUTCHours()}:${start
-                        .getUTCMinutes()
-                        .toString()
-                        .padStart(2, '0')}`,
+        // 1. Iterate through the Set of Section IDs
+        selectedSections.forEach((sectionId) => {
+            // 2. Find the section object by searching through the Map values
+            let section: ApiSectionWithRelations | undefined;
+            for (const courseSections of sectionsByCourseId.values()) {
+                section = courseSections.find((s) => s.id === sectionId);
+                if (section) break;
+            }
+
+            if (!section) return;
+
+            // 3. Create blocks for each meeting
+            section.meetings.forEach((meeting) => {
+                const timeRange = formatTime(meeting);
+                const minutes = formatTimeToMinutes(timeRange);
+                if (!minutes) return;
+
+                allBlocks.push({
+                    day: meeting.day,
+                    startMins: minutes.startMins,
+                    endMins: minutes.endMins,
+                    timeRange,
+                    location: meeting.location,
+                    sectionNumber: section!.sectionNumber,
+                    instructors: getInstructorNames(section!.instructors),
+                    courseCode: `${section!.course.department.code} ${section!.course.code}`,
+                    hasConflict: false,
                 });
             });
         });
 
-        // Conflict detection (Overlaps)
-        return blocks.map((b1, i) => ({
-            ...b1,
-            hasConflict: blocks.some(
-                (b2, j) =>
+        // 4. Determine conflicts
+        allBlocks.forEach((block1, i) => {
+            const hasConflict = allBlocks.some(
+                (block2, j) =>
                     i !== j &&
-                    b1.day === b2.day &&
-                    b1.startMins < b2.endMins &&
-                    b1.endMins > b2.startMins,
-            ),
-        }));
-    }, [selectedSections, courses, sectionsByCourseId]);
-
-    // Helper to format hour with AM/PM nicely
-    const formatHour = (hour: number) => {
-        const h = hour % 12 === 0 ? 12 : hour % 12;
-        const ampm = hour >= 12 ? 'PM' : 'AM';
-        return `${h} ${ampm}`;
-    };
+                    block1.day === block2.day &&
+                    block1.startMins < block2.endMins &&
+                    block1.endMins > block2.startMins,
+            );
+            if (grouped[block1.day]) {
+                grouped[block1.day].push({ ...block1, hasConflict });
+            }
+        });
+        return grouped;
+    }, [selectedSections, sectionsByCourseId, days]); // Added sectionsByCourseId to dependencies
 
     return (
-        <div className="h-full w-full flex flex-col bg-white overflow-hidden relative select-none">
-            {/* CALENDAR HEADER BAR */}
+        <div className="flex h-full w-full flex-col bg-white select-none">
             <div
                 className={clsx(
                     'grid border-b border-gray-100 bg-white',
@@ -74,89 +83,76 @@ export default function WeeklyCalendar({
                 {days.map((day) => (
                     <div
                         key={day}
-                        className="py-4 text-center border-r border-gray-50 last:border-r-0"
+                        className="border-r border-gray-50 py-4 text-center last:border-r-0"
                     >
-                        <span className="text-[11px] text-gray-400 font-black uppercase tracking-widest">
+                        <span className="text-[11px] font-black tracking-widest text-gray-400 uppercase">
                             {day}
                         </span>
                     </div>
                 ))}
             </div>
-
-            {/* Time Grid (Scaled to 100% Height) */}
-            <div className="flex-1 relative pt-2">
-                <div
-                    className={clsx(
-                        'grid h-full bg-white',
-                        showWeekend ? 'grid-cols-7' : 'grid-cols-5',
-                    )}
-                >
+            <div className="flex-1">
+                <div className={clsx('grid h-full', showWeekend ? 'grid-cols-7' : 'grid-cols-5')}>
                     {days.map((day) => (
-                        <div key={day} className="relative border-r border-gray-100 h-full">
-                            {/* Hour Background Markers */}
-                            {Array.from({ length: END_HOUR - START_HOUR }).map((_, i) => (
+                        <div key={day} className="relative border-r border-gray-100">
+                            {Array.from({ length: END_TIME - START_TIME }).map((_, i) => (
                                 <div
                                     key={i}
-                                    className="border-b border-gray-50 relative"
+                                    className="relative border-b border-gray-50"
                                     style={{
-                                        height: `${100 / (END_HOUR - START_HOUR)}%`,
+                                        height: `${100 / (END_TIME - START_TIME)}%`,
                                     }}
                                 >
-                                    <span className="absolute top-1 left-2 text-[9px] text-gray-400 uppercase">
-                                        {formatHour(i + START_HOUR)}
+                                    <span className="absolute top-2 left-2 text-[9px] text-gray-400 uppercase">
+                                        {formatHour(i + START_TIME)}
                                     </span>
                                 </div>
                             ))}
-
-                            {/* Active Course Blocks */}
-                            {activeBlocks
-                                .filter((b) => b.day === day)
-                                .map((block, i) => {
-                                    const top =
-                                        ((block.startMins - START_HOUR * 60) / TOTAL_MINS) * 100;
-                                    const height =
-                                        ((block.endMins - block.startMins) / TOTAL_MINS) * 100;
-
-                                    return (
-                                        <div
-                                            key={i}
-                                            style={{
-                                                top: `${top}%`,
-                                                height: `${height}%`,
-                                            }}
-                                            className={clsx(
-                                                'absolute left-1.5 right-1.5 p-2 rounded-xl border-l-[6px] transition-all z-20 shadow-md',
-                                                block.hasConflict
-                                                    ? 'bg-red-50 border-red-500 animate-pulse shadow-red-100 ring-2 ring-red-100'
-                                                    : 'bg-white border-theme-blue border-2',
-                                            )}
-                                        >
-                                            <div className="flex flex-col h-full overflow-hidden">
-                                                <div className="flex justify-between items-start">
-                                                    <span
-                                                        className={clsx(
-                                                            'text-[9px] uppercase',
-                                                            block.hasConflict
-                                                                ? 'text-red-600'
-                                                                : 'text-theme-blue',
-                                                        )}
-                                                    >
-                                                        {block.courseCode}
-                                                    </span>
-                                                    {block.hasConflict && (
-                                                        <AlertTriangle
-                                                            size={12}
-                                                            className="text-red-600"
-                                                        />
+                            {activeBlocks[day]?.map((block, i) => {
+                                const top =
+                                    ((block.startMins - START_TIME * 60) / TOTAL_MINS) * 100;
+                                const height =
+                                    ((block.endMins - block.startMins) / TOTAL_MINS) * 100;
+                                return (
+                                    <div
+                                        key={i}
+                                        style={{
+                                            top: `${top}%`,
+                                            height: `${height}%`,
+                                        }}
+                                        className={clsx(
+                                            'absolute right-1.5 left-1.5 rounded-xl border-l-6 p-2 shadow-md transition-all',
+                                            block.hasConflict
+                                                ? 'animate-pulse border-red-500 bg-red-50 ring-2 shadow-red-100 ring-red-500'
+                                                : 'border-theme-blue border-2 bg-gray-100',
+                                        )}
+                                    >
+                                        <div className="flex h-full flex-col overflow-hidden">
+                                            <div className="flex items-start justify-between">
+                                                <span
+                                                    className={clsx(
+                                                        'text-[11px] font-bold uppercase',
+                                                        block.hasConflict
+                                                            ? 'text-red-600'
+                                                            : 'text-theme-blue',
                                                     )}
-                                                </div>
-                                                <p className="text-[10px] text-gray-800 truncate mt-1">
-                                                    Section {block.secNum}
-                                                </p>
+                                                >
+                                                    {block.courseCode}
+                                                </span>
+                                                {block.hasConflict && (
+                                                    <AlertTriangle
+                                                        size={12}
+                                                        className="text-red-600"
+                                                    />
+                                                )}
                                             </div>
+                                            <p className="truncate text-[10px]">
+                                                Section {block.sectionNumber}
+                                            </p>
                                         </div>
-                                    );
-                                })}
+                                    </div>
+                                );
+                            })}
                         </div>
                     ))}
                 </div>
@@ -164,3 +160,5 @@ export default function WeeklyCalendar({
         </div>
     );
 }
+
+export default WeeklyCalendar;
