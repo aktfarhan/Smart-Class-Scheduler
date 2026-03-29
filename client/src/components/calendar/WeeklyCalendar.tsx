@@ -95,7 +95,8 @@ function WeeklyCalendar({
                                     state.dragState && 'pointer-events-none opacity-40',
                                 )}
                             >
-                                {data.activeBlocks[day].map((block) => {
+                                {(data.previewBlocks?.[day]?.blocks ?? data.activeBlocks[day]).map(
+                                    (block) => {
                                     const top =
                                         ((block.startMins - START_TIME * 60) / TOTAL_MINS) * 100;
                                     const height =
@@ -117,24 +118,26 @@ function WeeklyCalendar({
                                 })}
                             </div>
                             {state.dragState &&
-                                data.ghostData?.[day].map((ghost) => {
-                                    const top =
-                                        ((ghost.startMins - START_TIME * 60) / TOTAL_MINS) * 100;
-                                    const height =
-                                        ((ghost.endMins - ghost.startMins) / TOTAL_MINS) * 100;
-                                    return (
-                                        <GhostBlock
-                                            key={`ghost-${ghost.sectionId}-${ghost.startMins}`}
-                                            top={top}
-                                            color={courseColor!}
-                                            height={height}
-                                            timeRange={ghost.timeRange}
-                                            isHovered={state.hoveredGhostId === ghost.sectionId}
-                                            hasConflict={ghost.hasConflict}
-                                            sectionNumber={ghost.sectionNumber}
-                                        />
-                                    );
-                                })}
+                                data.previewBlocks?.[day]?.ghosts.map((ghost) => {
+                                const top =
+                                    ((ghost.startMins - START_TIME * 60) / TOTAL_MINS) * 100;
+                                const height =
+                                    ((ghost.endMins - ghost.startMins) / TOTAL_MINS) * 100;
+                                return (
+                                    <GhostBlock
+                                        key={`ghost-${ghost.sectionId}-${ghost.startMins}`}
+                                        top={top}
+                                        color={courseColor!}
+                                        height={height}
+                                        timeRange={ghost.timeRange}
+                                        isHovered={state.hoveredGhostId === ghost.sectionId}
+                                        columnIndex={ghost.columnIndex}
+                                        hasConflict={ghost.hasConflict}
+                                        totalColumns={ghost.totalColumns}
+                                        sectionNumber={ghost.sectionNumber}
+                                    />
+                                );
+                            })}
                         </div>
                     ))}
                     {state.popover &&

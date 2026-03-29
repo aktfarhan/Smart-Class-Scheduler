@@ -69,13 +69,15 @@ export interface DragState {
 
 // Represents an alternative section drop target during drag-to-swap
 export interface GhostBlockData {
-    sectionId: number;
-    sectionNumber: string;
     day: Day;
-    startMins: number;
     endMins: number;
+    startMins: number;
+    sectionId: number;
     timeRange: string;
     hasConflict: boolean;
+    columnIndex: number;
+    totalColumns: number;
+    sectionNumber: string;
 }
 
 /**

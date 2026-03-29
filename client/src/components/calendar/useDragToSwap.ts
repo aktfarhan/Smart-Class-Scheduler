@@ -103,13 +103,15 @@ export function useDragToSwap({
             // Push each meeting as a ghost block
             for (const meeting of parsedMeetings) {
                 grouped[meeting.day].push({
-                    sectionId: section.id,
-                    sectionNumber: section.sectionNumber,
                     day: meeting.day,
-                    startMins: meeting.startMins,
                     endMins: meeting.endMins,
+                    startMins: meeting.startMins,
+                    sectionId: section.id,
                     timeRange: meeting.timeRange,
                     hasConflict,
+                    columnIndex: 0,
+                    totalColumns: 1,
+                    sectionNumber: section.sectionNumber,
                 });
             }
         }

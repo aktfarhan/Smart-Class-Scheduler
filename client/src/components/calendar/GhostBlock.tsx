@@ -8,7 +8,9 @@ interface GhostBlockProps {
     height: number;
     timeRange: string;
     isHovered: boolean;
+    columnIndex: number;
     hasConflict: boolean;
+    totalColumns: number;
     sectionNumber: string;
 }
 
@@ -18,14 +20,25 @@ function GhostBlock({
     height,
     timeRange,
     isHovered,
+    columnIndex,
     hasConflict,
+    totalColumns,
     sectionNumber,
 }: GhostBlockProps) {
+    // Side-by-side positioning
+    const colWidth = 100 / totalColumns;
+    const leftPercent = columnIndex * colWidth;
+
     return (
         <div
-            style={{ top: `${top}%`, height: `${height}%` }}
+            style={{
+                top: `${top}%`,
+                height: `${height}%`,
+                left: `calc(${leftPercent}% + 4px)`,
+                width: `calc(${colWidth}% - 8px)`,
+            }}
             className={clsx(
-                'absolute right-1 left-1 z-20 rounded-xl border-2 p-2',
+                'absolute z-20 rounded-xl border-2 p-2',
                 isHovered
                     ? hasConflict
                         ? `border-l-6 border-solid border-red-400 ${color.bg} opacity-80 shadow-md shadow-red-200/50`
