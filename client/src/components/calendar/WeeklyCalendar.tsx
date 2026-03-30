@@ -110,6 +110,7 @@ function WeeklyCalendar({
                                             height={height}
                                             isWide={state.isWide}
                                             totalMins={TOTAL_MINS}
+                                            isSwapped={state.swappedSectionId === block.sectionId}
                                             gridHeight={refs.gridRef.current?.clientHeight ?? 0}
                                             onClick={actions.handleBlockClick}
                                             onPointerDown={actions.handleDragStart}

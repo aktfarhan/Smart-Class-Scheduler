@@ -71,6 +71,7 @@ export interface DragState {
 export interface GhostBlockData {
     day: Day;
     endMins: number;
+    courseId: number;
     startMins: number;
     sectionId: number;
     timeRange: string;

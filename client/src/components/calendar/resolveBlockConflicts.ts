@@ -3,7 +3,9 @@ import type { Block, Day } from '../../types';
 // Shared shape for calendar blocks and ghosts in column assignment
 interface TimeSlot {
     endMins: number;
+    courseId: number;
     startMins: number;
+    sectionId: number;
     columnIndex: number;
     totalColumns: number;
 }
@@ -19,8 +21,14 @@ export function assignColumns(blocks: TimeSlot[]) {
     // No column assignment needed for 0 or 1 block
     if (blocks.length < 2) return;
 
-    // Sort by start time, then longer blocks first so they anchor on the left
-    blocks.sort((a, b) => a.startMins - b.startMins || b.endMins - a.endMins);
+    // Sort by start time, longer blocks first, then courseId + sectionId for stable columns
+    blocks.sort(
+        (a, b) =>
+            a.startMins - b.startMins ||
+            b.endMins - a.endMins ||
+            a.courseId - b.courseId ||
+            a.sectionId - b.sectionId,
+    );
 
     // Track the current overlap group's start index and furthest end time
     let groupStart = 0;
@@ -72,7 +80,7 @@ export function assignColumns(blocks: TimeSlot[]) {
 
 /**
  * Detect overlapping blocks and assign side-by-side column positions.
- * 
+ *
  * @param grouped - Blocks grouped by day key
  * @param days - Array of visible day keys (M-F or M-Su)
  */
