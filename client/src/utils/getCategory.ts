@@ -1,3 +1,11 @@
-// Classify section by suffix: Lab ('L'), Discussion ('D'), or Lecture (default)
-export const getCategory = (sectionNumber: string) =>
-    sectionNumber.endsWith('L') ? 'LAB' : sectionNumber.endsWith('D') ? 'DISC' : 'LEC';
+/**
+ * Classify a section by its number suffix.
+ *
+ * @param sectionNumber - The section identifier (e.g., "01", "01L", "01D").
+ * @returns "LAB", "DISC", or "LEC".
+ */
+export function getCategory(sectionNumber: string) {
+    if (sectionNumber.endsWith('L')) return 'LAB';
+    if (sectionNumber.endsWith('D')) return 'DISC';
+    return 'LEC';
+}

@@ -1,6 +1,6 @@
 import { generateSchedulesDFS } from '../../../scheduler';
 import { CALENDAR_CONFIG, ACADEMIC_TERMS, UI_LIMITS } from '../../../constants';
-import { useState, useRef, useCallback, useEffect, useMemo, startTransition } from 'react';
+import { useState, useRef, useCallback, useEffect, startTransition } from 'react';
 import type { DayLiteral, AcademicTerm } from '../../../constants';
 import type { Dispatch, SetStateAction, PointerEvent as ReactPointerEvent } from 'react';
 import type { ApiSectionWithRelations, TimeRange, CourseDiagnostic } from '../../../types';
@@ -26,8 +26,7 @@ export function useCalendarSidebar({
     const [scheduleFeedback, setScheduleFeedback] = useState<CourseDiagnostic[] | null>(null);
 
     // ----- Filter & Range State -----
-    const initialDays = useMemo(() => [...CALENDAR_CONFIG.WEEK_DAYS], []);
-    const [selectedDays, setSelectedDays] = useState<DayLiteral[]>(initialDays);
+    const [selectedDays, setSelectedDays] = useState<DayLiteral[]>(CALENDAR_CONFIG.WEEK_DAYS);
     const [selectedTerm, setSelectedTerm] = useState<AcademicTerm>(ACADEMIC_TERMS.TERMS[2]);
     const [minimumGap, setMinimumGap] = useState<number>(UI_LIMITS.PRESETS[0]);
     const [timeRange, setTimeRange] = useState<TimeRange>({

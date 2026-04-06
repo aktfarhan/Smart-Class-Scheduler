@@ -21,7 +21,7 @@ export const courseMatchesDept = (course: ApiCourseWithDepartment, deptCode?: st
 export const courseMatchesCode = (course: ApiCourseWithDepartment, courseCode?: string) => {
     if (!courseCode) return true;
 
-    // We combine and clean the course's own data to match the parser's strict format
+    // Combine and clean the course's own data to match the parser's strict format
     const combined = `${course.department.code}${course.code}`.replace(/\s/g, '').toUpperCase();
     return combined === courseCode;
 };
