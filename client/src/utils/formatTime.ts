@@ -86,9 +86,10 @@ export function minutesToLabel(totalMinutes: number) {
  * Format a single meeting's time range for display.
  *
  * @param meeting - A single meeting with ISO start/end timestamps.
- * @returns Formatted range like "8:30am – 10:00am".
+ * @returns Formatted range like "8:30am – 10:00am", or "TBA" if no meeting.
  */
 export function formatTime(meeting: ApiMeeting) {
+    if (!meeting) return 'TBA';
     const { startMins, endMins } = meetingToMinutes(meeting);
     return `${minutesToLabel(startMins)} – ${minutesToLabel(endMins)}`;
 }
