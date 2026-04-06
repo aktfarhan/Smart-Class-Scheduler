@@ -1,6 +1,6 @@
 import clsx from 'clsx';
-import { RotateCcw, Sparkles } from 'lucide-react';
 import PinnedCourseList from './PinnedCourseList';
+import { RotateCcw, Sparkles } from 'lucide-react';
 import FilterSettings from './filtersettings/FilterSettings';
 import React, { useMemo, type Dispatch, type SetStateAction } from 'react';
 import type { CalendarSidebar as CalendarSidebarType } from './useCalendarSidebar';
@@ -11,6 +11,7 @@ interface CalendarSidebarProps {
     showWeekend: boolean;
     pinnedCourses: Set<number>;
     selectedSections: Set<number>;
+    hasWeekendSections: boolean;
     sectionsByCourseId: Map<number, ApiSectionWithRelations[]>;
     setShowWeekend: (val: boolean) => void;
     setSelectedSections: Dispatch<SetStateAction<Set<number>>>;
@@ -28,6 +29,7 @@ function CalendarSidebar({
     showWeekend,
     pinnedCourses,
     selectedSections,
+    hasWeekendSections,
     sectionsByCourseId,
     setShowWeekend,
     setSelectedSections,
@@ -44,12 +46,15 @@ function CalendarSidebar({
             <div className="flex shrink-0 gap-2 border-b border-gray-100 bg-white p-4">
                 <button
                     type="button"
+                    disabled={showWeekend && hasWeekendSections}
                     onClick={() => setShowWeekend(!showWeekend)}
                     className={clsx(
-                        'flex-1 cursor-pointer rounded-lg border-2 py-2.5 text-[10px] font-black tracking-widest uppercase transition-all',
-                        showWeekend
-                            ? 'bg-theme-blue border-theme-blue text-white'
-                            : 'border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-300',
+                        'flex-1 rounded-lg border-2 py-2.5 text-[10px] font-black tracking-widest uppercase transition-all',
+                        showWeekend && hasWeekendSections
+                            ? 'cursor-not-allowed border-slate-100 bg-slate-50 text-slate-300'
+                            : showWeekend
+                              ? 'bg-theme-blue border-theme-blue cursor-pointer text-white'
+                              : 'cursor-pointer border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-300',
                     )}
                 >
                     {showWeekend ? 'Hide' : 'Show'} Sat/Sun

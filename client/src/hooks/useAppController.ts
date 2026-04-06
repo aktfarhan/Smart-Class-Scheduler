@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useCatalogData } from './useCatalogData';
 import { useFilterLogic } from './useFilterLogic';
+import { getCategory } from '../utils/getCategory';
 import { useCoursePagination } from './useCoursePagination';
 import { useCalendarSidebar } from '../components/calendar/calendarsidebar/useCalendarSidebar';
 
@@ -28,9 +29,10 @@ export function useAppController() {
 
     // Calendar side bar
     const calendarSidebar = useCalendarSidebar({
-        sectionsByCourseId,
-        setSelectedSections,
         pinnedCourses,
+        sectionsByCourseId,
+        setShowWeekend,
+        setSelectedSections,
     });
 
     // Apply search + filters + pagination to catalog data
@@ -60,6 +62,17 @@ export function useAppController() {
         document.title = `UMBWizard – ${activeTab === 'catalog' ? 'Catalog' : 'Calendar'}`;
     }, [activeTab]);
 
+    // ----- Derived State -----
+
+    // True when any selected section meets on Sa or Su
+    const hasWeekendSections = useMemo(
+        () => sections.some((section) =>
+            selectedSections.has(section.id) &&
+            section.meetings.some((meeting) => meeting.day === 'Sa' || meeting.day === 'Su'),
+        ),
+        [sections, selectedSections],
+    );
+
     // ----- Action Handlers -----
 
     /**
@@ -72,23 +85,17 @@ export function useAppController() {
                 const next = new Set(prev);
 
                 const courseSections = sectionsByCourseId.get(courseId) || [];
-                const targetSection = courseSections.find((s) => s.id === sectionId);
+                const targetSection = courseSections.find((section) => section.id === sectionId);
 
                 if (!targetSection) return prev;
 
-                // 1. Determine Category: 'L' for Lab, 'D' for Discussion, 'LEC' for everything else
-                const getCategory = (secNum: string) => {
-                    if (secNum.endsWith('L')) return 'LAB';
-                    if (secNum.endsWith('D')) return 'DISC';
-                    return 'LEC';
-                };
-
+                // 1. Determine category for the target section
                 const targetCategory = getCategory(targetSection.sectionNumber);
 
                 // 2. Clear out existing sections of the SAME CATEGORY for this course
-                courseSections.forEach((s) => {
-                    if (next.has(s.id) && getCategory(s.sectionNumber) === targetCategory) {
-                        next.delete(s.id);
+                courseSections.forEach((section) => {
+                    if (next.has(section.id) && getCategory(section.sectionNumber) === targetCategory) {
+                        next.delete(section.id);
                     }
                 });
 
@@ -128,6 +135,7 @@ export function useAppController() {
             pinnedCourses,
             selectedSections,
             expandedCourseIds,
+            hasWeekendSections,
             totalPages: pagination.totalPages,
             totalResults: pagination.totalResults,
             calendarSidebar: calendarSidebar.state,

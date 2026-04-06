@@ -1,8 +1,8 @@
 import type { Day } from './api/meeting';
 import type { AcademicTerm } from '../constants';
-import type { SectionType } from './api/section';
 import type { ApiCourseWithDepartment } from './api/course';
 import type { ApiDepartmentWithRelations } from './api/department';
+import type { SectionType, ApiSectionWithRelations } from './api/section';
 
 /**
  * Aggregates all database-related types from the API sub-directory
@@ -82,6 +82,28 @@ export interface GhostBlockData {
 }
 
 /**
+ * Types used by the schedule generator to diagnose why
+ * no valid schedules could be produced.
+ */
+export type DiagnosticReason = 'ok' | 'noTerm' | 'noDays' | 'noTime' | 'conflict';
+
+// Per-course breakdown of which filter stage eliminated all sections
+export interface CourseDiagnostic {
+    reason: DiagnosticReason;
+    courseId: number;
+    latestEnd: number | null;
+    courseCode: string;
+    availableDays: Day[];
+    earliestStart: number | null;
+}
+
+// Return type of the DFS scheduler — schedules on success, diagnostics on failure
+export interface ScheduleResult {
+    schedules: ApiSectionWithRelations[][];
+    diagnostics: CourseDiagnostic[] | null;
+}
+
+/**
  * Types used by the search engine to tokenize and categorize
  * user input during natural language processing.
  */
@@ -127,4 +149,3 @@ export interface LookupData {
     departmentMap: Map<string, ApiDepartmentWithRelations>;
     departmentTitleToCode: Map<string, string>;
 }
-

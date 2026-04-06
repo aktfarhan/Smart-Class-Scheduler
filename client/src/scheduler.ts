@@ -1,58 +1,56 @@
-import { formatTime, formatTimeToMinutes } from './utils/formatTime';
+import { DATA_MAPS } from './constants';
+import { getCategory } from './utils/getCategory';
+import { meetingToMinutes } from './utils/formatTime';
 import type { DayLiteral, AcademicTerm } from './constants';
-import type { ApiSectionWithRelations, TimeRange } from './types';
+import type {
+    ApiSectionWithRelations,
+    TimeRange,
+    ScheduleResult,
+    CourseDiagnostic,
+    DiagnosticReason,
+} from './types';
 
-/** Converts a decimal hour (e.g., 14.5) to total minutes from midnight (e.g., 870) */
-const decimalToMins = (hour: number) => Math.floor(hour * 60);
+// Pre-calculated meeting times to avoid string parsing
+interface ParsedMeeting {
+    day: DayLiteral;
+    start: number;
+    end: number;
+}
 
-/** Internal type for pre-calculated meeting times to avoid string parsing in loops */
-type ParsedMeeting = { day: DayLiteral; start: number; end: number };
-
-/** Extends the base section type to include our pre-parsed numeric times */
+// Extend the base section type to include pre-parsed numeric times
 type ParsedSection = ApiSectionWithRelations & {
     parsedMeetings: ParsedMeeting[];
 };
 
 /**
- * Validates if a section fits into the current schedule without conflicts.
+ * Check if a section fits into the current schedule without time conflicts or gap violations.
  *
- * @param section - The section we are currently testing.
+ * @param section - The section being tested.
  * @param currentSchedule - The sections already placed in the "current branch" of the search.
  * @param minGap - Required buffer time between classes in minutes.
- * @param startLimit - Earliest allowed start time in minutes.
- * @param endLimit - Latest allowed end time in minutes.
- * @param selectedDays - The days the user is willing to attend class.
  */
 function isSectionCompatible(
     section: ParsedSection,
     currentSchedule: ParsedSection[],
     minGap: number,
-    startLimit: number,
-    endLimit: number,
-    selectedDays: DayLiteral[],
 ): boolean {
-    // Loop through every meeting (e.g., Mon/Wed/Fri) of the NEW section
+    // Loop through every meeting of the NEW section
     for (const meeting of section.parsedMeetings) {
-        // --- Check if meeting is within the selected days ---
-        if (!selectedDays.includes(meeting.day)) return false;
-
-        // --- Check if meeting is within the selected time range ---
-        if (meeting.start < startLimit || meeting.end > endLimit) return false;
-
-        // --- Compare this meeting against already selected meetings ---
+        // Compare this meeting against already selected meetings
         for (const scheduledSection of currentSchedule) {
-            for (const sMeeting of scheduledSection.parsedMeetings) {
+            for (const scheduledMeeting of scheduledSection.parsedMeetings) {
                 // If the classes are on different days, they can't conflict
-                if (meeting.day !== sMeeting.day) continue;
+                if (meeting.day !== scheduledMeeting.day) continue;
 
                 // Check if there is a time conflict between meetings
-                if (meeting.start < sMeeting.end && meeting.end > sMeeting.start) return false;
+                if (meeting.start < scheduledMeeting.end && meeting.end > scheduledMeeting.start)
+                    return false;
 
                 // Find the distance between the end of the earlier class and the start of the next one
                 const gap =
-                    meeting.start >= sMeeting.end
-                        ? meeting.start - sMeeting.end
-                        : sMeeting.start - meeting.end;
+                    meeting.start >= scheduledMeeting.end
+                        ? meeting.start - scheduledMeeting.end
+                        : scheduledMeeting.start - meeting.end;
 
                 // If the gap is smaller than the user's preference, it's a conflict.
                 if (gap < minGap) return false;
@@ -63,119 +61,177 @@ function isSectionCompatible(
 }
 
 /**
+ * Build a diagnostic for a course that failed filtering, with suggestion data for the UI.
+ *
+ * @param reason - The filter stage that eliminated all sections.
+ * @param courseId - The course ID for keying in the UI.
+ * @param courseCode - Display label like "CS 240".
+ * @param parsedSections - Sections that passed the term filter.
+ * @param afterDaysSections - Sections that passed the day filter.
+ */
+function buildDiagnostic(
+    reason: DiagnosticReason,
+    courseId: number,
+    courseCode: string,
+    parsedSections: ParsedSection[],
+    afterDaysSections: ParsedSection[],
+): CourseDiagnostic {
+    // Collect available days from sections that passed term but failed days
+    let availableDays: DayLiteral[] = [];
+    if (reason === 'noDays') {
+        const daySet = new Set<DayLiteral>();
+        for (const section of parsedSections) {
+            for (const meeting of section.parsedMeetings) {
+                daySet.add(meeting.day);
+            }
+        }
+        // Deduplicate and sort in calendar order for display
+        availableDays = [...daySet].sort((a, b) => DATA_MAPS.DAY_RANK[a] - DATA_MAPS.DAY_RANK[b]);
+    }
+
+    // Find the time bounds of sections that passed days but failed the time range
+    let earliestStart: number | null = null;
+    let latestEnd: number | null = null;
+    if (reason === 'noTime') {
+        for (const section of afterDaysSections) {
+            for (const meeting of section.parsedMeetings) {
+                // Track the global min start and max end across all meetings
+                if (earliestStart === null || meeting.start < earliestStart) {
+                    earliestStart = meeting.start;
+                }
+                if (latestEnd === null || meeting.end > latestEnd) {
+                    latestEnd = meeting.end;
+                }
+            }
+        }
+    }
+
+    return {
+        reason,
+        courseId,
+        latestEnd,
+        courseCode,
+        availableDays,
+        earliestStart,
+    };
+}
+
+/**
  * Generates all valid class schedules using a Depth-First Search (Backtracking) algorithm.
  *
  * @param courses - The list of courses the student wants to take.
  * @param filters - The user's preferences for days, times, and gaps.
+ * @returns Schedules on success, diagnostics on failure.
  */
 export function generateSchedulesDFS(
-    courses: { id: number; sections: ApiSectionWithRelations[] }[],
+    courses: { id: number; sections: ApiSectionWithRelations[]; courseCode: string }[],
     filters: {
+        timeRange: TimeRange;
+        minimumGap: number;
         selectedDays: DayLiteral[];
         selectedTerm: AcademicTerm;
-        minimumGap: number;
-        timeRange: TimeRange;
     },
-): ApiSectionWithRelations[][] {
-    const { selectedTerm, minimumGap, selectedDays, timeRange } = filters;
+): ScheduleResult {
+    const { timeRange, minimumGap, selectedDays, selectedTerm } = filters;
 
     // Convert global time to minutes after midnight
-    const startLimit = decimalToMins(timeRange.start);
-    const endLimit = decimalToMins(timeRange.end);
+    const startLimit = timeRange.start * 60;
+    const endLimit = timeRange.end * 60;
 
-    // Pre-process courses into a numeric format
-    const processedCourses = courses.map((course) => ({
-        ...course,
-        sections: course.sections
-            // Only keep sections for the right semester that have meeting times
-            .filter((section) => section.term === selectedTerm && section.meetings.length > 0)
-            .map((section) => {
-                const parsedMeetings: ParsedMeeting[] = [];
-                for (const meeting of section.meetings) {
-                    // Extract time and skip TBA sections
-                    const range = formatTime(meeting);
-                    if (range === 'TBA') continue;
+    // Pre-process and filter courses to collect diagnostics
+    const diagnostics: CourseDiagnostic[] = [];
 
-                    // Convert time strings to numeric start/end minutes
-                    const parsed = formatTimeToMinutes(range);
-                    if (parsed && meeting.day) {
-                        parsedMeetings.push({
-                            day: meeting.day,
-                            start: parsed.startMins,
-                            end: parsed.endMins,
-                        });
-                    }
-                }
-                // Attach the parsed numeric meetings to the section object
-                return { ...section, parsedMeetings };
-            })
+    const processedCourses = courses.map((course) => {
+        // 1. Filter by term and presence of meeting data
+        const afterTermSections = course.sections.filter(
+            (section) => section.term === selectedTerm && section.meetings.length > 0,
+        );
 
-            // Remove sections that are invalid (violate filters)
-            .filter((section) =>
-                section.parsedMeetings.every(
-                    (meeting) =>
-                        selectedDays.includes(meeting.day) &&
-                        meeting.start >= startLimit &&
-                        meeting.end <= endLimit,
-                ),
+        // 2. Parse meetings to numeric minutes
+        const parsedSections = afterTermSections.map((section) => ({
+            ...section,
+            parsedMeetings: section.meetings.map((meeting) => {
+                const { startMins, endMins } = meetingToMinutes(meeting);
+                return { day: meeting.day, start: startMins, end: endMins };
+            }),
+        }));
+
+        // 3. Filter by selected days
+        const afterDaysSections = parsedSections.filter((section) =>
+            section.parsedMeetings.every((meeting) => selectedDays.includes(meeting.day)),
+        );
+
+        // 4. Filter by time range
+        const afterTimeSections = afterDaysSections.filter((section) =>
+            section.parsedMeetings.every(
+                (meeting) => meeting.start >= startLimit && meeting.end <= endLimit,
             ),
-    }));
+        );
+
+        // Find the first filter stage that eliminated all sections
+        let reason: DiagnosticReason = 'ok';
+        if (afterTermSections.length === 0) {
+            reason = 'noTerm';
+        } else if (afterDaysSections.length === 0) {
+            reason = 'noDays';
+        } else if (afterTimeSections.length === 0) {
+            reason = 'noTime';
+        }
+
+        diagnostics.push(
+            buildDiagnostic(
+                reason,
+                course.id,
+                course.courseCode,
+                parsedSections,
+                afterDaysSections,
+            ),
+        );
+
+        return { ...course, sections: afterTimeSections };
+    });
+
+    // Early exit — skip backtracking when any course has zero viable sections
+    if (diagnostics.some((diagnostic) => diagnostic.reason !== 'ok')) {
+        return { schedules: [], diagnostics };
+    }
+
+    // Precompute section groupings once per course
+    const courseGroups = processedCourses.map((course) => {
+        const lectures = course.sections.filter(
+            (section) => getCategory(section.sectionNumber) === 'LEC',
+        );
+        const secondaries = course.sections.filter(
+            (section) => getCategory(section.sectionNumber) !== 'LEC',
+        );
+        return { lectures, secondaries };
+    });
 
     const allResults: ApiSectionWithRelations[][] = [];
     const currentPath: ParsedSection[] = [];
 
     // Recursive function that explores course combinations
     function backtrack(courseIdx: number) {
-        //  Base case: save result if a section was picked for every course
-        if (courseIdx === processedCourses.length) {
+        // Base case: save result if a section was picked for every course
+        if (courseIdx === courseGroups.length) {
             allResults.push([...currentPath]);
             return;
         }
 
-        const currentCourse = processedCourses[courseIdx];
+        const { lectures, secondaries } = courseGroups[courseIdx];
 
-        // Group sections by suffix to handle lectures and secondaries (labs and discussions)
-        const labs = currentCourse.sections.filter((s) => s.sectionNumber.endsWith('L'));
-        const discs = currentCourse.sections.filter((s) => s.sectionNumber.endsWith('D'));
-        const lectures = currentCourse.sections.filter(
-            (s) => !s.sectionNumber.endsWith('D') && !s.sectionNumber.endsWith('L'),
-        );
-
-        // Combine labs and discussions into one pool for the course
-        const secondarySections = [...labs, ...discs];
-
-        if (secondarySections.length > 0) {
+        if (secondaries.length > 0) {
             // Case when course requires a lecture paired with one secondary section
             for (const lecture of lectures) {
                 // Check lecture compatibility in the schedule
-                if (
-                    !isSectionCompatible(
-                        lecture,
-                        currentPath,
-                        minimumGap,
-                        startLimit,
-                        endLimit,
-                        selectedDays,
-                    )
-                )
-                    continue;
+                if (!isSectionCompatible(lecture, currentPath, minimumGap)) continue;
 
                 // Temporarily add lecture to the schedule path
                 currentPath.push(lecture);
 
-                for (const secondary of secondarySections) {
+                for (const secondary of secondaries) {
                     // Check secondary compatibility with the lecture and schedule
-                    if (
-                        !isSectionCompatible(
-                            secondary,
-                            currentPath,
-                            minimumGap,
-                            startLimit,
-                            endLimit,
-                            selectedDays,
-                        )
-                    )
-                        continue;
+                    if (!isSectionCompatible(secondary, currentPath, minimumGap)) continue;
 
                     // Add secondary and move to the next course in the list
                     currentPath.push(secondary);
@@ -190,18 +246,9 @@ export function generateSchedulesDFS(
             }
         } else {
             // Case for standard courses with only one section component
-            for (const section of currentCourse.sections) {
+            for (const section of lectures) {
                 // Check compatibility before adding the section
-                if (
-                    isSectionCompatible(
-                        section,
-                        currentPath,
-                        minimumGap,
-                        startLimit,
-                        endLimit,
-                        selectedDays,
-                    )
-                ) {
+                if (isSectionCompatible(section, currentPath, minimumGap)) {
                     currentPath.push(section);
                     backtrack(courseIdx + 1);
 
@@ -215,5 +262,11 @@ export function generateSchedulesDFS(
     // Start the search at the first course index
     backtrack(0);
 
-    return allResults;
+    // Mark all courses as conflicting when DFS exhausted every combination
+    if (allResults.length === 0) {
+        for (const diagnostic of diagnostics) diagnostic.reason = 'conflict';
+        return { schedules: [], diagnostics };
+    }
+
+    return { schedules: allResults, diagnostics: null };
 }

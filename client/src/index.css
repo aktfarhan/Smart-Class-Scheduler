@@ -20,6 +20,11 @@
     }
 }
 
+@utility dot-pattern {
+    background-image: radial-gradient(circle, rgb(148 163 184 / 0.15) 1px, transparent 1px);
+    background-size: 16px 16px;
+}
+
 @utility scrollbar-hidden {
     -ms-overflow-style: none;
     scrollbar-width: none;

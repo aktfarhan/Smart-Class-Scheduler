@@ -106,6 +106,17 @@ export function toMinutes(time: string) {
     return hours * 60 + minutes;
 }
 
+// Convert total minutes from midnight to a display label like "2:30pm"
+export function minutesToLabel(totalMinutes: number) {
+    const hours24 = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    const meridiem = hours24 >= 12 ? 'pm' : 'am';
+    const hours12 = ((hours24 + 11) % 12) + 1;
+    return minutes === 0
+        ? `${hours12}${meridiem}`
+        : `${hours12}:${String(minutes).padStart(2, '0')}${meridiem}`;
+}
+
 export const formatHour = (hour: number) => {
     const h = hour % 12 === 0 ? 12 : hour % 12;
     const ampm = hour >= 12 ? 'PM' : 'AM';
