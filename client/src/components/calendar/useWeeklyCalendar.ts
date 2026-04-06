@@ -1,10 +1,9 @@
 import { useDragToSwap } from './useDragToSwap';
-import { getCategory } from '../../utils/getCategory';
+import { resolveBlockConflicts } from './resolveBlockConflicts';
 import { formatTime, meetingToMinutes } from '../../utils/formatTime';
 import { getInstructorNames } from '../../utils/formatInstructorNames';
 import { useMemo, useState, useRef, useEffect, useCallback } from 'react';
-import { assignColumns, resolveBlockConflicts } from './resolveBlockConflicts';
-import type { ApiSectionWithRelations, Block, GhostBlockData } from '../../types';
+import type { ApiSectionWithRelations, Block } from '../../types';
 import {
     CALENDAR_CONFIG,
     COURSE_COLORS,
@@ -128,53 +127,6 @@ export function useWeeklyCalendar({
         onDragActivate: handlePopoverClose,
     });
 
-    // Preview layout during drag — shows what the calendar looks like with ghosts sharing space
-    const previewBlocks = useMemo(() => {
-        const dragState = dragToSwap.state.dragState;
-        const ghostData = dragToSwap.data.ghostData;
-        // Only run when actively dragging and alternatives exist
-        if (!dragState || !ghostData) return null;
-
-        // Find the dragged section to remove it from the preview
-        const draggedCourseId = dragState.block.courseId;
-        const draggedCategory = getCategory(dragState.block.sectionNumber);
-
-        // Build adjusted blocks + ghosts per day
-        const result: Record<string, { blocks: Block[]; ghosts: GhostBlockData[] }> = {};
-
-        for (const day of days) {
-            // Remove the dragged section's blocks and reset layout values for a fresh sweep
-            const blocks = activeBlocks[day]
-                .filter(
-                    (block) =>
-                        !(
-                            block.courseId === draggedCourseId &&
-                            getCategory(block.sectionNumber) === draggedCategory
-                        ),
-                )
-                .map((block) => ({
-                    ...block,
-                    columnIndex: 0,
-                    totalColumns: 1,
-                    hasConflict: false,
-                }));
-
-            // Clone ghosts with default column values before the sweep assigns them
-            const ghosts = ghostData[day].map((ghost) => ({
-                ...ghost,
-                columnIndex: 0,
-                totalColumns: 1,
-            }));
-
-            // Combine and assign columns so overlapping blocks and ghosts sit side-by-side
-            assignColumns([...blocks, ...ghosts]);
-
-            result[day] = { blocks, ghosts };
-        }
-
-        return result;
-    }, [days, activeBlocks, dragToSwap.state.dragState, dragToSwap.data.ghostData]);
-
     // Compute popover position as CSS percentages so the browser repositions on resize
     const popoverPosition = useMemo(() => {
         if (!popover) return null;
@@ -234,7 +186,6 @@ export function useWeeklyCalendar({
             activeBlocks,
             courseColorMap,
             popoverPosition,
-            previewBlocks,
             ...dragToSwap.data,
         },
         refs: { gridRef, ...dragToSwap.refs },

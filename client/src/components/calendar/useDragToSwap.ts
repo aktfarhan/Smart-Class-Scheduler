@@ -1,4 +1,5 @@
 import { getCategory } from '../../utils/getCategory';
+import { assignColumns } from './resolveBlockConflicts';
 import { formatTime, meetingToMinutes } from '../../utils/formatTime';
 import { useMemo, useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
 import { CALENDAR_CONFIG, type AcademicTerm } from '../../constants';
@@ -47,8 +48,8 @@ export function useDragToSwap({
 
     // ----- Data State -----
 
-    // Build ghost blocks for alternative sections when dragging
-    const ghostData = useMemo(() => {
+    // Build preview layout: remaining blocks + ghost alternatives with column positions
+    const previewBlocks = useMemo(() => {
         if (!dragState) return null;
 
         // Identify which course/section/category is being dragged
@@ -68,8 +69,8 @@ export function useDragToSwap({
         if (alternatives.length === 0) return null;
 
         // Prepare day buckets for ghost blocks
-        const grouped: Record<string, GhostBlockData[]> = {};
-        days.forEach((day) => (grouped[day] = []));
+        const ghostsByDay: Record<string, GhostBlockData[]> = {};
+        days.forEach((day) => (ghostsByDay[day] = []));
 
         // 2. Build ghost blocks with conflict detection
         for (const section of alternatives) {
@@ -78,7 +79,7 @@ export function useDragToSwap({
             // Convert each meeting for grid positioning
             for (const meeting of section.meetings) {
                 // Skip meetings on Sa/Sun if hidden
-                if (!grouped[meeting.day]) continue;
+                if (!ghostsByDay[meeting.day]) continue;
                 const { startMins, endMins } = meetingToMinutes(meeting);
                 parsedMeetings.push({
                     day: meeting.day,
@@ -103,7 +104,7 @@ export function useDragToSwap({
 
             // Push each meeting as a ghost block
             for (const meeting of parsedMeetings) {
-                grouped[meeting.day].push({
+                ghostsByDay[meeting.day].push({
                     day: meeting.day,
                     endMins: meeting.endMins,
                     courseId,
@@ -118,7 +119,35 @@ export function useDragToSwap({
             }
         }
 
-        return grouped;
+        // 3. Build remaining blocks + ghosts per day, assign columns once
+        const result: Record<string, { blocks: Block[]; ghosts: GhostBlockData[] }> = {};
+
+        for (const day of days) {
+            // Remove the dragged section's blocks and reset layout values for a fresh sweep
+            const blocks = activeBlocks[day]
+                .filter(
+                    (block) =>
+                        !(
+                            block.courseId === courseId &&
+                            getCategory(block.sectionNumber) === category
+                        ),
+                )
+                .map((block) => ({
+                    ...block,
+                    columnIndex: 0,
+                    totalColumns: 1,
+                    hasConflict: false,
+                }));
+
+            const ghosts = ghostsByDay[day];
+
+            // Assign columns so overlapping blocks and ghosts are side-by-side
+            assignColumns([...blocks, ...ghosts]);
+
+            result[day] = { blocks, ghosts };
+        }
+
+        return result;
     }, [days, dragState, activeBlocks, sectionsByCourseId, selectedTerm]);
 
     // ----- Action Handlers -----
@@ -185,12 +214,11 @@ export function useDragToSwap({
 
             // 3. Find which ghost the cursor is over
             const gridRect = gridRef.current?.getBoundingClientRect();
-            if (!gridRect || !ghostData) return;
+            if (!gridRect || !previewBlocks) return;
 
             // Figure out which day column the cursor is in
-            const dayIndex = Math.floor(
-                ((e.clientX - gridRect.left) / gridRect.width) * days.length,
-            );
+            const dayWidth = gridRect.width / days.length;
+            const dayIndex = Math.floor((e.clientX - gridRect.left) / dayWidth);
             const day = days[dayIndex];
             if (!day) {
                 setHoveredGhostId(null);
@@ -201,13 +229,21 @@ export function useDragToSwap({
             const cursorMinutes =
                 ((e.clientY - gridRect.top) / gridRect.height) * TOTAL_MINS + START_TIME * 60;
 
-            // Find the ghost at that day + time position
-            const hoveredGhost = ghostData[day].find(
-                (ghost) => cursorMinutes >= ghost.startMins && cursorMinutes <= ghost.endMins,
+            // Compute cursor's fractional X position within the day column
+            const dayLeft = gridRect.left + dayIndex * dayWidth;
+            const dayFraction = (e.clientX - dayLeft) / dayWidth;
+
+            // Find the ghost matching both time range and column position
+            const hoveredGhost = previewBlocks[day].ghosts.find(
+                (ghost) =>
+                    cursorMinutes >= ghost.startMins &&
+                    cursorMinutes <= ghost.endMins &&
+                    dayFraction >= ghost.columnIndex / ghost.totalColumns &&
+                    dayFraction < (ghost.columnIndex + 1) / ghost.totalColumns,
             );
             setHoveredGhostId(hoveredGhost?.sectionId ?? null);
         },
-        [dragState, ghostData, days, START_TIME, TOTAL_MINS, onDragActivate],
+        [dragState, previewBlocks, days, START_TIME, TOTAL_MINS, onDragActivate],
     );
 
     // Stop right-click menu from opening during drag
@@ -241,6 +277,19 @@ export function useDragToSwap({
 
     // ----- Effects -----
 
+    // Cancel drag on Escape key during drag
+    useEffect(() => {
+        if (!dragState) return;
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                setDragState(null);
+                setHoveredGhostId(null);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [dragState]);
+
     // Reset any active drag when sections change or weekend toggles
     useEffect(() => {
         setDragState(null);
@@ -265,7 +314,7 @@ export function useDragToSwap({
     // ----- Export state, data, refs, and actions -----
     return {
         state: { dragState, hoveredGhostId, swappedSectionId },
-        data: { ghostData },
+        data: { previewBlocks },
         refs: { cloneRef },
         actions: { handleDragStart, handleDragMove, handleDragEnd, handleContextMenu },
     };

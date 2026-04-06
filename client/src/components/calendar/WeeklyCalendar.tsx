@@ -66,6 +66,7 @@ function WeeklyCalendar({
                     onClick={actions.handlePopoverClose}
                     onPointerMove={actions.handleDragMove}
                     onPointerUp={actions.handleDragEnd}
+                    onPointerCancel={actions.handleDragEnd}
                     onContextMenu={actions.handleContextMenu}
                 >
                     {data.days.map((day, dayIndex) => (
