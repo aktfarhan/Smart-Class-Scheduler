@@ -11,7 +11,6 @@ interface CalendarBlockProps {
     height: number;
     isWide: boolean;
     totalMins: number;
-    isSwapped: boolean;
     gridHeight: number;
     onClick: (e: React.MouseEvent<HTMLDivElement>, block: Block) => void;
     onPointerDown: (e: React.PointerEvent<HTMLDivElement>, block: Block) => void;
@@ -24,7 +23,6 @@ function CalendarBlock({
     height,
     isWide,
     totalMins,
-    isSwapped,
     gridHeight,
     onClick,
     onPointerDown,
@@ -58,11 +56,10 @@ function CalendarBlock({
                 width: `calc(${colWidth}% - 8px)`,
             }}
             className={clsx(
-                'absolute cursor-pointer touch-none overflow-hidden rounded-xl border-2 border-l-6 p-2.5 transition-all',
+                'animate-in fade-in absolute cursor-pointer touch-none overflow-hidden rounded-xl border-2 border-l-6 p-2.5 transition-all duration-150',
                 block.hasConflict
                     ? `border-red-400 ${color.bg} ${color.hoverBg} shadow-lg ring-1 shadow-red-200/80 ring-red-300/30`
                     : `${color.border} ${color.bg} ${color.hoverBg} shadow-md`,
-                isSwapped && 'animate-in fade-in duration-200',
             )}
             onClick={(e) => onClick(e, block)}
             onPointerDown={(e) => onPointerDown(e, block)}

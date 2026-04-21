@@ -35,10 +35,9 @@ export function useDragToSwap({
 
     // ----- UI State -----
 
-    // Track active drag info, hovered ghost, and recently swapped section
+    // Track active drag info and hovered ghost
     const [dragState, setDragState] = useState<DragState | null>(null);
     const [hoveredGhostId, setHoveredGhostId] = useState<number | null>(null);
-    const [swappedSectionId, setSwappedSectionId] = useState<number | null>(null);
 
     // ----- Refs -----
 
@@ -267,7 +266,6 @@ export function useDragToSwap({
         // Swap to the hovered ghost section
         if (hoveredGhostId !== null) {
             onSectionSwap(dragState.block.courseId, hoveredGhostId);
-            setSwappedSectionId(hoveredGhostId);
         }
 
         // Reset drag state
@@ -297,13 +295,6 @@ export function useDragToSwap({
         pendingDragRef.current = null;
     }, [activeBlocks]);
 
-    // Clear the swap animation flag after the fade-in
-    useEffect(() => {
-        if (swappedSectionId === null) return;
-        const timer = setTimeout(() => setSwappedSectionId(null), 300);
-        return () => clearTimeout(timer);
-    }, [swappedSectionId]);
-
     // Position the clone where the block is on screen when drag starts
     useLayoutEffect(() => {
         if (!dragState || !cloneRef.current) return;
@@ -313,7 +304,7 @@ export function useDragToSwap({
 
     // ----- Export state, data, refs, and actions -----
     return {
-        state: { dragState, hoveredGhostId, swappedSectionId },
+        state: { dragState, hoveredGhostId },
         data: { previewBlocks },
         refs: { cloneRef },
         actions: { handleDragStart, handleDragMove, handleDragEnd, handleContextMenu },

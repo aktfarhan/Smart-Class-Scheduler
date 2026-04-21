@@ -1,14 +1,14 @@
-import { DATA_MAPS } from './constants';
-import { getCategory } from './utils/getCategory';
-import { meetingToMinutes } from './utils/formatTime';
-import type { DayLiteral, AcademicTerm } from './constants';
+import { DATA_MAPS } from '../constants';
+import { getCategory } from '../utils/getCategory';
+import { meetingToMinutes } from '../utils/formatTime';
+import type { DayLiteral, AcademicTerm } from '../constants';
 import type {
     ApiSectionWithRelations,
     TimeRange,
     ScheduleResult,
     CourseDiagnostic,
     DiagnosticReason,
-} from './types';
+} from '../types';
 
 // Pre-calculated meeting times to avoid string parsing
 interface ParsedMeeting {

@@ -136,3 +136,17 @@ export function formatHour(hour: number) {
     const { hours12, meridiem } = to12Hour(hour);
     return `${hours12} ${meridiem.toUpperCase()}`;
 }
+
+/**
+ * Convert total minutes to a duration label.
+ *
+ * @param totalMinutes - Duration in minutes.
+ * @returns Duration string like "7h 45m", "7h", or "45m".
+ */
+export function formatDuration(totalMinutes: number) {
+    const hours = Math.floor(totalMinutes / 60);
+    const mins = totalMinutes % 60;
+    if (hours === 0) return `${mins}m`;
+    if (mins === 0) return `${hours}h`;
+    return `${hours}h ${mins}m`;
+}

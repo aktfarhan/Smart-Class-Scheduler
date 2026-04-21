@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import PinnedCourseList from './PinnedCourseList';
 import { RotateCcw, Sparkles } from 'lucide-react';
 import FilterSettings from './filtersettings/FilterSettings';
+import ScheduleResults from './scheduleresults/ScheduleResults';
 import React, { useMemo, type Dispatch, type SetStateAction } from 'react';
 import type { CalendarSidebar as CalendarSidebarType } from './useCalendarSidebar';
 import type { ApiCourseWithSections, ApiSectionWithRelations } from '../../../types';
@@ -109,6 +110,17 @@ function CalendarSidebar({
                     isCoursesOpen={sidebar.state.isCoursesOpen}
                     setIsCoursesOpen={sidebar.actions.setIsCoursesOpen}
                 />
+                {sidebar.data.hasGeneratedOnce && (
+                    <ScheduleResults
+                        sortPreset={sidebar.state.sortPreset}
+                        rankedSchedules={sidebar.data.rankedSchedules}
+                        selectedResultIndex={sidebar.state.selectedResultIndex}
+                        totalScoredSchedules={sidebar.data.totalScoredSchedules}
+                        onSortChange={sidebar.actions.handleSortChange}
+                        onResultHover={sidebar.actions.handleResultHover}
+                        onResultSelect={sidebar.actions.handleResultSelect}
+                    />
+                )}
             </div>
             <div className="shrink-0 border-t border-gray-100 bg-white p-5">
                 <button
