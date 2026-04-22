@@ -1,64 +1,38 @@
 import type { ApiMeeting } from '../types';
 
-export function formatTime(meeting: ApiMeeting) {
-    if (!meeting) return 'TBA';
-
-    const startTime = meeting.startTime.split('T')[1].split('.')[0];
-    const endTime = meeting.endTime.split('T')[1].split('.')[0];
-
-    const standardStartTime = toStandardTime(startTime);
-    const standardEndTime = toStandardTime(endTime);
-
-    return `${standardStartTime} – ${standardEndTime}`;
-}
-
-export function formatTimes(meetings: ApiMeeting[]) {
-    if (!meetings.length) return 'TBA';
-
-    const groups = new Map<string, string[]>();
-
-    for (const meeting of meetings) {
-        const time = formatTime(meeting);
-        if (!groups.has(time)) groups.set(time, []);
-        groups.get(time)!.push(meeting.day);
-    }
-
-    return Array.from(groups.entries())
-        .map(([time, days]) => `${days.join('')} ${time}`)
-        .join(' | ');
-}
-
-function toStandardTime(time: string) {
-    const [hours24, minutes] = time.split(':');
-    const hours = parseInt(hours24, 10);
-
-    // Calculating am/pm and convert hour 0 or 13-23
-    const meridiem = hours >= 12 ? 'pm' : 'am';
-    const hours12 = ((hours + 11) % 12) + 1;
-
-    return `${hours12}:${minutes}${meridiem}`;
-}
-
-export function formatTimeLabel(hour: number) {
-    const hours24 = Math.floor(hour);
-    const minutes = hour % 1 === 0.5 ? '30' : '00';
-
-    // Convert 24h to 12h logic
-    const meridiem = hours24 >= 12 ? 'pm' : 'am';
-    const hours12 = ((hours24 + 11) % 12) + 1;
-
-    return `${hours12}:${minutes}${meridiem}`;
-}
-
-export function formatTimeToMinutes(time: string) {
-    if (!time || time === 'TBA') return null;
-    const [startPart, endPart] = time.split(' – ');
+// Convert 24-hour value to 12-hour display components
+function to12Hour(hours24: number) {
     return {
-        startMins: toMinutes(startPart),
-        endMins: toMinutes(endPart),
+        hours12: ((hours24 + 11) % 12) + 1,
+        meridiem: hours24 >= 12 ? 'pm' : 'am',
     };
 }
 
+// ----- Parsing (to minutes) -----
+
+/**
+ * Parse 24h DB time directly to minutes from midnight.
+ *
+ * @param meeting - A single meeting with ISO start/end timestamps.
+ * @returns Start and end times as minutes from midnight.
+ */
+export function meetingToMinutes(meeting: ApiMeeting) {
+    const start = meeting.startTime.split('T')[1].split('.')[0];
+    const end = meeting.endTime.split('T')[1].split('.')[0];
+    const [startHours, startMinutes] = start.split(':');
+    const [endHours, endMinutes] = end.split(':');
+    return {
+        startMins: parseInt(startHours, 10) * 60 + parseInt(startMinutes, 10),
+        endMins: parseInt(endHours, 10) * 60 + parseInt(endMinutes, 10),
+    };
+}
+
+/**
+ * Convert a string like "8am" or "10:30pm" to minutes from midnight.
+ *
+ * @param time - A 12-hour time string with am/pm suffix.
+ * @returns Total minutes from midnight.
+ */
 export function toMinutes(time: string) {
     if (!time) return 0;
 
@@ -74,8 +48,8 @@ export function toMinutes(time: string) {
 
     if (hasColon) {
         // Standard logic for "8:30pm"
-        const [h, rest] = clean.split(':');
-        hours = parseInt(h, 10);
+        const [hoursStr, rest] = clean.split(':');
+        hours = parseInt(hoursStr, 10);
         minutes = parseInt(rest.substring(0, 2), 10);
         meridiem = rest.substring(2).trim();
     } else {
@@ -94,8 +68,85 @@ export function toMinutes(time: string) {
     return hours * 60 + minutes;
 }
 
-export const formatHour = (hour: number) => {
-    const h = hour % 12 === 0 ? 12 : hour % 12;
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    return `${h} ${ampm}`;
-};
+// ----- Formatting (to display strings) -----
+
+/**
+ * Convert total minutes from midnight to a display label like "2:30pm".
+ *
+ * @param totalMinutes - Minutes elapsed since midnight.
+ * @returns Formatted 12-hour time string with am/pm.
+ */
+export function minutesToLabel(totalMinutes: number) {
+    const { hours12, meridiem } = to12Hour(Math.floor(totalMinutes / 60));
+    const minutes = totalMinutes % 60;
+    return `${hours12}:${String(minutes).padStart(2, '0')}${meridiem}`;
+}
+
+/**
+ * Format a single meeting's time range for display.
+ *
+ * @param meeting - A single meeting with ISO start/end timestamps.
+ * @returns Formatted range like "8:30am – 10:00am", or "TBA" if no meeting.
+ */
+export function formatTime(meeting: ApiMeeting) {
+    if (!meeting) return 'TBA';
+    const { startMins, endMins } = meetingToMinutes(meeting);
+    return `${minutesToLabel(startMins)} – ${minutesToLabel(endMins)}`;
+}
+
+/**
+ * Format multiple meetings into a grouped display string like "MWF 8:30am – 10:00am".
+ *
+ * @param meetings - Array of meetings to group by time.
+ * @returns Grouped time string, or "TBA" if empty.
+ */
+export function formatTimes(meetings: ApiMeeting[]) {
+    if (!meetings.length) return 'TBA';
+
+    const groups = new Map<string, string[]>();
+
+    for (const meeting of meetings) {
+        const time = formatTime(meeting);
+        if (!groups.has(time)) groups.set(time, []);
+        groups.get(time)!.push(meeting.day);
+    }
+
+    return Array.from(groups.entries())
+        .map(([time, days]) => `${days.join('')} ${time}`)
+        .join(' | ');
+}
+
+/**
+ * Convert a decimal hour (e.g., 8.5) to a time label like "8:30am".
+ *
+ * @param hour - Decimal hour value where .5 = 30 minutes.
+ * @returns Formatted 12-hour time string with am/pm.
+ */
+export function formatTimeLabel(hour: number) {
+    return minutesToLabel(hour * 60);
+}
+
+/**
+ * Convert an integer hour to an uppercase label like "8 AM" for calendar grid.
+ *
+ * @param hour - Integer hour in 24-hour format.
+ * @returns Formatted label with space-separated uppercase meridiem.
+ */
+export function formatHour(hour: number) {
+    const { hours12, meridiem } = to12Hour(hour);
+    return `${hours12} ${meridiem.toUpperCase()}`;
+}
+
+/**
+ * Convert total minutes to a duration label.
+ *
+ * @param totalMinutes - Duration in minutes.
+ * @returns Duration string like "7h 45m", "7h", or "45m".
+ */
+export function formatDuration(totalMinutes: number) {
+    const hours = Math.floor(totalMinutes / 60);
+    const mins = totalMinutes % 60;
+    if (hours === 0) return `${mins}m`;
+    if (mins === 0) return `${hours}h`;
+    return `${hours}h ${mins}m`;
+}

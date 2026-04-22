@@ -82,7 +82,7 @@ function CourseMeta({ showSections, setShowSections, sections }: CourseMetaProps
                 <div className="grid grid-cols-2 gap-2 text-sm text-slate-700 md:flex md:flex-col">
                     <div className="flex items-center gap-2">
                         <CalendarClock size={16} className="text-slate-400" />
-                        <p>{firstSection?.term || 'TBA'}</p>
+                        <p>{termLabel}</p>
                     </div>
                     <div className="flex items-center gap-2">
                         <CalendarDays size={16} className="text-slate-400" />
@@ -95,7 +95,7 @@ function CourseMeta({ showSections, setShowSections, sections }: CourseMetaProps
                     <div className="flex items-center gap-2">
                         <MapPin size={16} className="text-slate-400" />
                         <span title={firstSection?.meetings[0]?.location || 'TBA'}>
-                            {firstSection?.meetings[0]?.location || 'TBA'}
+                            {(firstSection?.meetings[0]?.location || 'TBA').replace('Wheatley-Peters', 'Wheatley-P')}
                         </span>
                     </div>
                 </div>

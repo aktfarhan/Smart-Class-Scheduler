@@ -352,7 +352,7 @@
   {
     "firstName": "Marisol",
     "lastName": "Negron",
-    "title": "Associate Professor American Studies and Latino Studies and Director",
+    "title": "Associate Professor",
     "email": "Marisol.Negron@umb.edu",
     "phone": "617.287.6673"
   },
@@ -576,7 +576,7 @@
   {
     "firstName": "Lorena",
     "lastName": "Estrada-Marthez",
-    "title": "Associate Professor of Urban Planning & Community Development",
+    "title": "Associate Professor",
     "email": "Lorena.Estrada@umb.edu",
     "phone": "617.287.7052"
   },
@@ -793,7 +793,7 @@
   {
     "firstName": "Chi-Kan",
     "lastName": "Hung",
-    "title": "Grad Prog Dir/Assoc Professor",
+    "title": "Graduate Program Director/Associate Professor",
     "email": "Richard.Hung@umb.edu",
     "phone": "617.287.4121"
   },
@@ -982,7 +982,7 @@
   {
     "firstName": "Adan",
     "lastName": "Colon-Carmona",
-    "title": "Professor of Biology",
+    "title": "Professor",
     "email": "Adan.Colon-carmona@umb.edu",
     "phone": "617.287.6680"
   },
@@ -3425,7 +3425,7 @@
   {
     "firstName": "Maria",
     "lastName": "Carvajal Regidor",
-    "title": "Assistant Professor of English",
+    "title": "Assistant Professor",
     "email": "Maria.Carvajal@umb.edu",
     "phone": null
   },
@@ -3684,7 +3684,7 @@
   {
     "firstName": "Joel",
     "lastName": "Mora",
-    "title": "AsstDir",
+    "title": "Asst Dir",
     "email": "Joel.Mora@umb.edu",
     "phone": "617.287.5820"
   },
@@ -4167,7 +4167,7 @@
   {
     "firstName": "Luis",
     "lastName": "Jimenez",
-    "title": "Associate Professor of Political Science",
+    "title": "Associate Professor",
     "email": "Luis.Jimenez@umb.edu",
     "phone": null
   },
@@ -4363,9 +4363,9 @@
   {
     "firstName": "Isabel",
     "lastName": "Gomez",
-    "title": "Assoc Dir",
-    "email": "Betsabe.Gomez@umb.edu",
-    "phone": "617.287.6332"
+    "title": "Department Chair",
+    "email": "Isabel.Gomez@umb.edu",
+    "phone": "617.287.7550"
   },
   {
     "firstName": "Susana",
@@ -5343,7 +5343,7 @@
   {
     "firstName": "Kimberly",
     "lastName": "Sykes",
-    "title": "Clinical Assistant Professor",
+    "title": "Clinical Asst Professor A",
     "email": "Kimberly.Sykes@umb.edu",
     "phone": null
   },
@@ -7506,9 +7506,9 @@
   {
     "firstName": "Elora",
     "lastName": "Chowdhury",
-    "title": null,
-    "email": null,
-    "phone": null
+    "title": "Department Chair",
+    "email": "Elora.Chowdhury@umb.edu",
+    "phone": "617.287.6764"
   },
   {
     "firstName": "Suisui",
@@ -7548,7 +7548,7 @@
   {
     "firstName": "Chris",
     "lastName": "Barcelos",
-    "title": "Associate Professor of Women’s",
+    "title": "Associate Professor",
     "email": "Chris.Barcelos@umb.edu",
     "phone": null
   },

@@ -1,5 +1,5 @@
+import { meetingToMinutes, toMinutes } from '../utils/formatTime';
 import type { Day, ApiSectionWithRelations, SectionType } from '../types';
-import { formatTime, formatTimeToMinutes, toMinutes } from '../utils/formatTime';
 
 /**
  * Checks if a section belongs to a specific term.
@@ -27,7 +27,7 @@ export const sectionMatchesType = (section: ApiSectionWithRelations, type?: Sect
     const sectionNum = section.sectionNumber.trim().toUpperCase();
     const isDiscussion = sectionNum.endsWith('D');
 
-    // 3. Ensure we compare types consistently (Upper to Upper)
+    // 3. Ensure types are compared consistently (Upper to Upper)
     const activeFilter = type.toUpperCase();
 
     if (activeFilter === 'DISCUSSION') {
@@ -87,16 +87,9 @@ export const sectionMatchesDuration = (section: ApiSectionWithRelations, duratio
     if (!duration) return true;
 
     return section.meetings.some((meeting) => {
-        // Get the raw time range string (e.g., "5:30pm – 8:15pm")
-        const timeRangeStr = formatTime(meeting);
-
-        // Convert that string to minutes
-        const parsed = formatTimeToMinutes(timeRangeStr);
-        if (!parsed) return false;
-
-        // Calculate actual duration
-        const meetingDuration = parsed.endMins - parsed.startMins;
-        return meetingDuration === duration;
+        // Parse meeting times directly to minutes and compare duration
+        const { startMins, endMins } = meetingToMinutes(meeting);
+        return endMins - startMins === duration;
     });
 };
 
@@ -118,12 +111,8 @@ export const sectionMatchesTimeRange = (
     const endLimit = toMinutes(range.end);
 
     return section.meetings.some((meeting) => {
-        const rangeStr = formatTime(meeting);
-
-        const parsed = formatTimeToMinutes(rangeStr);
-        if (!parsed) return false;
-
         // Meeting must be fully inside the range
-        return parsed.startMins >= startLimit && parsed.endMins <= endLimit;
+        const { startMins, endMins } = meetingToMinutes(meeting);
+        return startMins >= startLimit && endMins <= endLimit;
     });
 };

@@ -1,77 +1,40 @@
 import clsx from 'clsx';
-import { useMemo } from 'react';
-import { AlertTriangle } from 'lucide-react';
-import { CALENDAR_CONFIG } from '../../constants';
-import { getInstructorNames } from '../../utils/formatInstructorNames';
-import { formatTime, formatTimeToMinutes, formatHour } from '../../utils/formatTime';
-import type { ApiSectionWithRelations, Block } from '../../types';
+import GhostBlock from './GhostBlock';
+import BlockPopover from './BlockPopover';
+import CalendarBlock from './CalendarBlock';
+import { formatHour } from '../../utils/formatTime';
+import { useWeeklyCalendar } from './useWeeklyCalendar';
+import type { ApiSectionWithRelations } from '../../types';
+import { CALENDAR_CONFIG, type AcademicTerm } from '../../constants';
 
 interface WeeklyCalendarProps {
     showWeekend: boolean;
+    selectedTerm: AcademicTerm;
     selectedSections: Set<number>;
     sectionsByCourseId: Map<number, ApiSectionWithRelations[]>;
+    onSectionSwap: (courseId: number, sectionId: number) => void;
 }
 
 function WeeklyCalendar({
     showWeekend,
+    selectedTerm,
     selectedSections,
     sectionsByCourseId,
+    onSectionSwap,
 }: WeeklyCalendarProps) {
-    const { START_TIME, END_TIME, TOTAL_MINS, ALL_DAYS, WEEK_DAYS } = CALENDAR_CONFIG;
-    const days = showWeekend ? ALL_DAYS : WEEK_DAYS;
+    const { START_TIME, END_TIME, TOTAL_MINS } = CALENDAR_CONFIG;
+    const { state, data, refs, actions } = useWeeklyCalendar({
+        showWeekend,
+        selectedTerm,
+        selectedSections,
+        sectionsByCourseId,
+        onSectionSwap,
+    });
 
-    // Builds calendar blocks from selected sections, grouped by day with conflict detection
-    const activeBlocks = useMemo(() => {
-        const grouped: Record<string, Block[]> = {};
-        days.forEach((d) => (grouped[d] = []));
-        const allBlocks: Block[] = [];
-
-        // 1. Iterate through the Set of Section IDs
-        selectedSections.forEach((sectionId) => {
-            // 2. Find the section object by searching through the Map values
-            let section: ApiSectionWithRelations | undefined;
-            for (const courseSections of sectionsByCourseId.values()) {
-                section = courseSections.find((s) => s.id === sectionId);
-                if (section) break;
-            }
-
-            if (!section) return;
-
-            // 3. Convert each meeting into a renderable block with time in minutes
-            section.meetings.forEach((meeting) => {
-                const timeRange = formatTime(meeting);
-                const minutes = formatTimeToMinutes(timeRange);
-                if (!minutes) return;
-
-                allBlocks.push({
-                    day: meeting.day,
-                    startMins: minutes.startMins,
-                    endMins: minutes.endMins,
-                    timeRange,
-                    location: meeting.location,
-                    sectionNumber: section!.sectionNumber,
-                    instructors: getInstructorNames(section!.instructors),
-                    courseCode: `${section!.course.department.code} ${section!.course.code}`,
-                    hasConflict: false,
-                });
-            });
-        });
-
-        // 4. Flag blocks that overlap on the same day, then group by day
-        allBlocks.forEach((block1, i) => {
-            const hasConflict = allBlocks.some(
-                (block2, j) =>
-                    i !== j &&
-                    block1.day === block2.day &&
-                    block1.startMins < block2.endMins &&
-                    block1.endMins > block2.startMins,
-            );
-            if (grouped[block1.day]) {
-                grouped[block1.day].push({ ...block1, hasConflict });
-            }
-        });
-        return grouped;
-    }, [selectedSections, sectionsByCourseId, days]);
+    // Get the dragged block's course color for the clone and ghost blocks
+    const courseColor = state.dragState
+        ? data.courseColorMap.get(state.dragState.block.courseCode)!
+        : null;
 
     return (
         <div className="flex h-full w-full flex-col bg-white select-none">
@@ -81,7 +44,7 @@ function WeeklyCalendar({
                     showWeekend ? 'grid-cols-7' : 'grid-cols-5',
                 )}
             >
-                {days.map((day) => (
+                {data.days.map((day) => (
                     <div
                         key={day}
                         className="border-r border-gray-100 bg-gray-50/50 py-4 text-center last:border-r-0"
@@ -93,8 +56,20 @@ function WeeklyCalendar({
                 ))}
             </div>
             <div className="flex-1">
-                <div className={clsx('grid h-full', showWeekend ? 'grid-cols-7' : 'grid-cols-5')}>
-                    {days.map((day, dayIndex) => (
+                <div
+                    ref={refs.gridRef}
+                    className={clsx(
+                        'relative grid h-full',
+                        showWeekend ? 'grid-cols-7' : 'grid-cols-5',
+                        state.dragState && 'cursor-grabbing touch-none',
+                    )}
+                    onClick={actions.handlePopoverClose}
+                    onPointerMove={actions.handleDragMove}
+                    onPointerUp={actions.handleDragEnd}
+                    onPointerCancel={actions.handleDragEnd}
+                    onContextMenu={actions.handleContextMenu}
+                >
+                    {data.days.map((day, dayIndex) => (
                         <div
                             key={day}
                             className={clsx(
@@ -115,55 +90,90 @@ function WeeklyCalendar({
                                     </span>
                                 </div>
                             ))}
-                            {activeBlocks[day]?.map((block) => {
+                            <div
+                                className={clsx(
+                                    'absolute inset-0 transition-opacity duration-150',
+                                    state.dragState && 'pointer-events-none opacity-40',
+                                )}
+                            >
+                                {(data.previewBlocks?.[day]?.blocks ?? data.activeBlocks[day]).map(
+                                    (block) => {
+                                    const top =
+                                        ((block.startMins - START_TIME * 60) / TOTAL_MINS) * 100;
+                                    const height =
+                                        ((block.endMins - block.startMins) / TOTAL_MINS) * 100;
+                                    return (
+                                        <CalendarBlock
+                                            key={`${block.sectionId}-${block.startMins}`}
+                                            top={top}
+                                            block={block}
+                                            color={data.courseColorMap.get(block.courseCode)!}
+                                            height={height}
+                                            isWide={state.isWide}
+                                            totalMins={TOTAL_MINS}
+                                            gridHeight={refs.gridRef.current?.clientHeight ?? 0}
+                                            onClick={actions.handleBlockClick}
+                                            onPointerDown={actions.handleDragStart}
+                                        />
+                                    );
+                                })}
+                            </div>
+                            {state.dragState &&
+                                data.previewBlocks?.[day]?.ghosts.map((ghost) => {
                                 const top =
-                                    ((block.startMins - START_TIME * 60) / TOTAL_MINS) * 100;
+                                    ((ghost.startMins - START_TIME * 60) / TOTAL_MINS) * 100;
                                 const height =
-                                    ((block.endMins - block.startMins) / TOTAL_MINS) * 100;
+                                    ((ghost.endMins - ghost.startMins) / TOTAL_MINS) * 100;
                                 return (
-                                    <div
-                                        key={`${block.courseCode}-${block.sectionNumber}-${block.startMins}`}
-                                        style={{
-                                            top: `${top}%`,
-                                            height: `${height}%`,
-                                        }}
-                                        className={clsx(
-                                            'absolute right-1.5 left-1.5 rounded-xl border-l-6 p-2 shadow-md transition-all',
-                                            block.hasConflict
-                                                ? 'animate-pulse border-red-500 bg-red-50 ring-2 shadow-red-100 ring-red-500'
-                                                : 'border-theme-blue border-2 bg-gray-100',
-                                        )}
-                                    >
-                                        <div className="flex h-full flex-col overflow-hidden">
-                                            <div className="flex items-start justify-between">
-                                                <span
-                                                    className={clsx(
-                                                        'text-[11px] font-bold uppercase',
-                                                        block.hasConflict
-                                                            ? 'text-red-600'
-                                                            : 'text-theme-blue',
-                                                    )}
-                                                >
-                                                    {block.courseCode}
-                                                </span>
-                                                {block.hasConflict && (
-                                                    <AlertTriangle
-                                                        size={12}
-                                                        className="text-red-600"
-                                                    />
-                                                )}
-                                            </div>
-                                            <p className="truncate text-[10px]">
-                                                Section {block.sectionNumber}
-                                            </p>
-                                        </div>
-                                    </div>
+                                    <GhostBlock
+                                        key={`ghost-${ghost.sectionId}-${ghost.startMins}`}
+                                        top={top}
+                                        color={courseColor!}
+                                        height={height}
+                                        timeRange={ghost.timeRange}
+                                        isHovered={state.hoveredGhostId === ghost.sectionId}
+                                        columnIndex={ghost.columnIndex}
+                                        hasConflict={ghost.hasConflict}
+                                        totalColumns={ghost.totalColumns}
+                                        sectionNumber={ghost.sectionNumber}
+                                    />
                                 );
                             })}
                         </div>
                     ))}
+                    {state.popover &&
+                        data.popoverPosition &&
+                        data.courseColorMap.has(state.popover.courseCode) && (
+                            <BlockPopover
+                                block={state.popover}
+                                color={data.courseColorMap.get(state.popover.courseCode)!}
+                                position={data.popoverPosition}
+                                onClose={actions.handlePopoverClose}
+                            />
+                        )}
                 </div>
             </div>
+            {state.dragState && courseColor && (
+                <div
+                    ref={refs.cloneRef}
+                    className={clsx(
+                        'pointer-events-none fixed z-50 scale-105 overflow-hidden rounded-xl border-2 border-l-6 p-2.5 shadow-2xl',
+                        courseColor.border,
+                        courseColor.bg,
+                    )}
+                    style={{
+                        width: state.dragState.width,
+                        height: state.dragState.height,
+                    }}
+                >
+                    <p className={clsx('truncate text-[11px] font-bold', courseColor.text)}>
+                        {state.dragState.block.courseCode}
+                    </p>
+                    <p className="truncate text-[10px] font-medium text-gray-600">
+                        {state.dragState.block.sectionNumber} · {state.dragState.block.timeRange}
+                    </p>
+                </div>
+            )}
         </div>
     );
 }

@@ -22,7 +22,7 @@ const tmpFile = `${os.tmpdir()}/sync.sql`;
 const truncate = [
     'TRUNCATE',
     '"Department","Course","Section","Meeting","Instructor",',
-    '"DiscussionGroup","_DepartmentInstructors","_SectionInstructors"',
+    '"DiscussionGroup","Metadata","_DepartmentInstructors","_SectionInstructors"',
     'CASCADE;\n',
 ].join(' ');
 
@@ -53,7 +53,7 @@ export async function syncToRailway(phaseOffset = 0): Promise<boolean> {
         logger.info('Data synced');
         return true;
     } finally {
-        // Always clean up the temp file
+        // Clean the temp file
         if (existsSync(tmpFile)) unlinkSync(tmpFile);
     }
 }

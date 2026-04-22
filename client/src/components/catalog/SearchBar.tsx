@@ -35,6 +35,7 @@ function SearchBar({ lookupData, searchQuery, setSearchQuery }: SearchBarProps) 
                 />
                 {searchQuery ? (
                     <button
+                        key="clear"
                         type="button"
                         onClick={() => setSearchQuery('')}
                         className="absolute top-1/2 right-5 -translate-y-1/2 cursor-pointer rounded-lg bg-gray-100 p-1.5 text-slate-400 transition-all hover:bg-gray-200 hover:text-slate-600 active:scale-90"
@@ -43,6 +44,7 @@ function SearchBar({ lookupData, searchQuery, setSearchQuery }: SearchBarProps) 
                     </button>
                 ) : (
                     <button
+                        key="help"
                         type="button"
                         onClick={() => setShowHelp(true)}
                         onMouseDown={(e) => e.preventDefault()}

@@ -63,7 +63,6 @@ function FilterSettings({
                         selectedTerm={filterState.selectedTerm}
                         onChangeTerm={filterActions.handleTermChange}
                     />
-                    <Separator />
                     <ActiveDaysSelector
                         days={days}
                         selectedDays={filterState.selectedDays}

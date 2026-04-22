@@ -133,7 +133,7 @@ export function parseSearchInput(
             continue;
         }
 
-        // --9-- Handles unrecognized segments
+        // --10-- Handles unrecognized segments
         tokens.push({ text: segment, type: 'unknown', isRecognized: false });
         unknownTextParts.push(segment);
     }

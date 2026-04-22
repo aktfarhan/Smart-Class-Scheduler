@@ -1,8 +1,8 @@
 import type { Day } from './api/meeting';
 import type { AcademicTerm } from '../constants';
-import type { SectionType } from './api/section';
 import type { ApiCourseWithDepartment } from './api/course';
 import type { ApiDepartmentWithRelations } from './api/department';
+import type { SectionType, ApiSectionWithRelations } from './api/section';
 
 /**
  * Aggregates all database-related types from the API sub-directory
@@ -13,6 +13,7 @@ export * from './api/section';
 export * from './api/department';
 export * from './api/instructor';
 export * from './api/meeting';
+export * from './scoring';
 
 // Pipeline metadata from /api/metadata
 export interface ApiMetadata {
@@ -29,17 +30,78 @@ export interface TimeRange {
     end: number;
 }
 
-// Represents a single visual "tile" or entry on the calendar grid
+// Represents a single block on the calendar grid
 export interface Block {
-    day: string;
-    endMins: number;
-    location: string;
-    timeRange: string;
-    startMins: number;
+    courseId: number;
     courseCode: string;
-    instructors: string;
-    hasConflict: boolean;
+    sectionId: number;
     sectionNumber: string;
+    day: Day;
+    startMins: number;
+    endMins: number;
+    timeRange: string;
+    instructors: string;
+    location: string;
+    columnIndex: number;
+    totalColumns: number;
+    hasConflict: boolean;
+}
+
+// Stores pointer-down info before drag threshold is met
+export interface PendingDrag {
+    block: Block;
+    pointerId: number;
+    startX: number;
+    startY: number;
+    blockElement: HTMLElement;
+}
+
+// Tracks the actively dragged calendar block during drag-to-swap
+export interface DragState {
+    block: Block;
+    pointerId: number;
+    width: number;
+    height: number;
+    initialLeft: number;
+    initialTop: number;
+    offsetX: number;
+    offsetY: number;
+}
+
+// Represents an alternative section drop target during drag-to-swap
+export interface GhostBlockData {
+    day: Day;
+    endMins: number;
+    courseId: number;
+    startMins: number;
+    sectionId: number;
+    timeRange: string;
+    hasConflict: boolean;
+    columnIndex: number;
+    totalColumns: number;
+    sectionNumber: string;
+}
+
+/**
+ * Types used by the schedule generator to diagnose why
+ * no valid schedules could be produced.
+ */
+export type DiagnosticReason = 'ok' | 'noTerm' | 'noDays' | 'noTime' | 'conflict';
+
+// Per-course breakdown of which filter stage eliminated all sections
+export interface CourseDiagnostic {
+    reason: DiagnosticReason;
+    courseId: number;
+    latestEnd: number | null;
+    courseCode: string;
+    availableDays: Day[];
+    earliestStart: number | null;
+}
+
+// Return type of the DFS scheduler — schedules on success, diagnostics on failure
+export interface ScheduleResult {
+    schedules: ApiSectionWithRelations[][];
+    diagnostics: CourseDiagnostic[] | null;
 }
 
 /**
@@ -88,8 +150,3 @@ export interface LookupData {
     departmentMap: Map<string, ApiDepartmentWithRelations>;
     departmentTitleToCode: Map<string, string>;
 }
-
-/**
- * Specialized types for tracking user interactions with specific courses.
- */
-export type CourseSelection = number | number[];

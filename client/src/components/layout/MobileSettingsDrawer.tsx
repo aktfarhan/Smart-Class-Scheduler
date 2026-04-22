@@ -24,6 +24,7 @@ function MobileSettingsDrawer({ data, state, actions, refs }: MobileSettingsDraw
                         showWeekend={state.showWeekend}
                         pinnedCourses={state.pinnedCourses}
                         selectedSections={state.selectedSections}
+                        hasWeekendSections={state.hasWeekendSections}
                         sectionsByCourseId={data.sectionsByCourseId}
                         setShowWeekend={actions.setShowWeekend}
                         setSelectedSections={actions.setSelectedSections}

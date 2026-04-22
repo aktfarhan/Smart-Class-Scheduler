@@ -1,96 +1,131 @@
-import { generateSchedulesDFS } from '../../../scheduler';
-import type { DayLiteral, AcademicTerm } from '../../../constants';
-import type { ApiSectionWithRelations, TimeRange } from '../../../types';
-import { useState, useRef, useCallback, useMemo, startTransition } from 'react';
+import { useTimeRangeSlider } from './useTimeRangeSlider';
+import { scheduleHasWeekend } from '../../../utils/scheduleHasWeekend';
+import { generateSchedulesDFS } from '../../../scheduling/scheduler';
 import { CALENDAR_CONFIG, ACADEMIC_TERMS, UI_LIMITS } from '../../../constants';
-import type { Dispatch, SetStateAction, PointerEvent as ReactPointerEvent } from 'react';
+import { useState, useMemo, useRef, useCallback, useEffect, startTransition } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import type { DayLiteral, AcademicTerm } from '../../../constants';
+import type { ApiSectionWithRelations, CourseDiagnostic, ScoredSchedule } from '../../../types';
+import {
+    SORT_OPTIONS,
+    rankBySortOption,
+    scoreAllSchedules,
+} from '../../../scheduling/scheduleScoring';
 
 interface CalendarSideBarParams {
-    sectionsByCourseId: Map<number, ApiSectionWithRelations[]>;
-    setSelectedSections: Dispatch<SetStateAction<Set<number>>>;
     pinnedCourses: Set<number>;
+    sectionsByCourseId: Map<number, ApiSectionWithRelations[]>;
+    setShowWeekend: (val: boolean) => void;
+    setSelectedSections: Dispatch<SetStateAction<Set<number>>>;
 }
 
 export function useCalendarSidebar({
-    sectionsByCourseId,
-    setSelectedSections,
     pinnedCourses,
+    sectionsByCourseId,
+    setShowWeekend,
+    setSelectedSections,
 }: CalendarSideBarParams) {
     // ----- UI State -----
     const [expandedId, setExpandedId] = useState<number | null>(null);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [isCoursesOpen, setIsCoursesOpen] = useState(false);
-    const [generatedSchedules, setGeneratedSchedules] = useState<ApiSectionWithRelations[][]>([]);
 
-    // ----- Filter & Range State -----
-    const initialDays = useMemo(() => [...CALENDAR_CONFIG.WEEK_DAYS], []);
-    const [selectedDays, setSelectedDays] = useState<DayLiteral[]>(initialDays);
+    // ----- Results State -----
+    const [sortPreset, setSortPreset] = useState(0);
+    const [hasGeneratedOnce, setHasGeneratedOnce] = useState(false);
+    const [selectedResultIndex, setSelectedResultIndex] = useState(0);
+    const [scoredSchedules, setScoredSchedules] = useState<ScoredSchedule[]>([]);
+    const [scheduleFeedback, setScheduleFeedback] = useState<CourseDiagnostic[] | null>(null);
+
+    // ----- Filter State -----
+    const [selectedDays, setSelectedDays] = useState<DayLiteral[]>(CALENDAR_CONFIG.WEEK_DAYS);
     const [selectedTerm, setSelectedTerm] = useState<AcademicTerm>(ACADEMIC_TERMS.TERMS[2]);
     const [minimumGap, setMinimumGap] = useState<number>(UI_LIMITS.PRESETS[0]);
-    const [timeRange, setTimeRange] = useState<TimeRange>({
+
+    // Time Range slider
+    const slider = useTimeRangeSlider({
         start: CALENDAR_CONFIG.START_TIME,
         end: CALENDAR_CONFIG.END_TIME,
     });
+    const { timeRange } = slider.state;
+    const { setTimeRange, onPointerDown, onPointerMove, onPointerUp } = slider.actions;
 
     // ----- Refs -----
-    const sliderRef = useRef<HTMLDivElement | null>(null);
-    const draggingRef = useRef<'start' | 'end' | null>(null);
-    const trackRectRef = useRef<DOMRect | null>(null);
+    const pendingGenerateRef = useRef(false);
+    const hoverRevertRef = useRef<Set<number> | null>(null);
+    const committedScheduleRef = useRef<ScoredSchedule | null>(null);
+
+    // ----- Derived State -----
+
+    // Re-rank scored schedules whenever sort preset changes, cap at top 3
+    const rankedSchedules = useMemo(
+        () => rankBySortOption(scoredSchedules, SORT_OPTIONS[sortPreset]).slice(0, 3),
+        [scoredSchedules, sortPreset],
+    );
 
     // ----- Action Handlers -----
+
+    // Commit a schedule as the active selection and show weekend columns if needed
+    const commitSchedule = useCallback(
+        (schedule: ScoredSchedule, index: number) => {
+            // Any explicit commit invalidates a pending hover-revert snapshot
+            hoverRevertRef.current = null;
+            committedScheduleRef.current = schedule;
+            setSelectedResultIndex(index);
+            setSelectedSections(schedule.sectionIds);
+            if (scheduleHasWeekend(schedule.sections)) setShowWeekend(true);
+        },
+        [setSelectedSections, setShowWeekend],
+    );
 
     // Toggle a day in the selectedDays filter
     const toggleDay = useCallback((day: DayLiteral) => {
         setSelectedDays((prev) =>
-            // if the day is already selected, remove it; otherwise add it
-            prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
+            prev.includes(day) ? prev.filter((existing) => existing !== day) : [...prev, day],
         );
     }, []);
 
-    // Filters data, checks for invalid courses, and runs DFS
+    // Build course list, run DFS, and show diagnostics on failure
     const handleGenerateSchedule = useCallback(() => {
-        // Map pinned course IDs to their respective sections
-        const coursesToSchedule = Array.from(pinnedCourses).map((id) => {
-            const allSections = sectionsByCourseId.get(id) || [];
-            return {
-                id,
-                // Filter out sections that lack meeting data
-                sections: allSections.filter((s) => s.meetings && s.meetings.length > 0),
-            };
+        if (pinnedCourses.size === 0) return;
+
+        // 1. Build the course list with course codes for diagnostic labels
+        const coursesToSchedule = [...pinnedCourses].map((id) => {
+            const allSections = sectionsByCourseId.get(id)!;
+            const firstSection = allSections[0];
+            const courseCode = `${firstSection.course.department.code} ${firstSection.course.code}`;
+            return { id, sections: allSections, courseCode };
         });
 
-        // Identify any course that has no valid sections to schedule
-        const invalidCourse = coursesToSchedule.find((c) => c.sections.length === 0);
-        if (invalidCourse) {
-            setGeneratedSchedules([]);
-            setSelectedSections(new Set());
-            return;
-        }
-
-        // Return if no courses are pinned
-        if (coursesToSchedule.length === 0) return;
-
-        // Start a transition to prevent UI not responding during DFS
+        // 2. Run DFS inside a transition to keep the UI responsive
         startTransition(() => {
-            const results = generateSchedulesDFS(coursesToSchedule, {
+            const { schedules, diagnostics } = generateSchedulesDFS(coursesToSchedule, {
+                timeRange,
+                minimumGap,
                 selectedDays,
                 selectedTerm,
-                minimumGap,
-                timeRange,
             });
 
-            if (results.length > 0) {
-                // Save valid combinations and select the first path
-                setGeneratedSchedules(results);
-
-                const firstValidPath = results[0];
-                const newSelection = new Set<number>(firstValidPath.map((s) => s.id));
-                setSelectedSections(newSelection);
-            } else {
-                // Reset state if no valid schedules are found
-                setGeneratedSchedules([]);
+            // 3. Surface diagnostics when no valid schedules exist
+            if (schedules.length === 0) {
+                setScoredSchedules([]);
+                setSelectedResultIndex(0);
+                setHasGeneratedOnce(false);
+                setScheduleFeedback(diagnostics);
                 setSelectedSections(new Set());
+                hoverRevertRef.current = null;
+                committedScheduleRef.current = null;
+                return;
             }
+
+            // 4. Score all results and commit the top-ranked schedule
+            const scored = scoreAllSchedules(schedules);
+            const ranked = rankBySortOption(scored, SORT_OPTIONS[sortPreset]);
+
+            setScoredSchedules(scored);
+            setHasGeneratedOnce(true);
+            setScheduleFeedback(null);
+            commitSchedule(ranked[0], 0);
         });
     }, [
         sectionsByCourseId,
@@ -99,109 +134,171 @@ export function useCalendarSidebar({
         selectedTerm,
         minimumGap,
         timeRange,
-        setSelectedSections,
+        sortPreset,
+        commitSchedule,
     ]);
 
-    // Updates the active term and removes sections that are no longer valid for that term
+    // Clear term-specific state when switching terms (filter effect handles the rest)
     const handleTermChange = useCallback(
         (newTerm: AcademicTerm) => {
             setSelectedTerm(newTerm);
-            setSelectedSections((prev) => {
-                const next = new Set(prev);
-                let hasChanges = false;
+            setSortPreset(0);
+            setHasGeneratedOnce(false);
+            setSelectedSections(new Set());
+            hoverRevertRef.current = null;
+            committedScheduleRef.current = null;
+        },
+        [setSelectedSections],
+    );
 
-                // Check every ID in the current selection
-                next.forEach((sectionId) => {
-                    // Find the section across all courses in this Map
-                    let sectionFound = false;
-                    for (const sections of sectionsByCourseId.values()) {
-                        const s = sections.find((sec) => sec.id === sectionId);
-                        if (s && s.term === newTerm) {
-                            sectionFound = true;
-                            break;
-                        }
-                    }
+    // Dismiss the schedule feedback overlay
+    const handleDismissFeedback = useCallback(() => {
+        setScheduleFeedback(null);
+    }, []);
 
-                    if (!sectionFound) {
-                        next.delete(sectionId);
-                        hasChanges = true;
-                    }
+    // Change the sort order and commit the new #1 result
+    const handleSortChange = useCallback(
+        (index: number) => {
+            setSortPreset(index);
+            hoverRevertRef.current = null;
+
+            if (scoredSchedules.length === 0) return;
+
+            const ranked = rankBySortOption(scoredSchedules, SORT_OPTIONS[index]);
+            const topSchedule = ranked[0];
+
+            // Same schedule won the new preset — keep any drag-swaps, just update the rank position
+            if (topSchedule === committedScheduleRef.current) {
+                setSelectedResultIndex(0);
+                return;
+            }
+            commitSchedule(topSchedule, 0);
+        },
+        [scoredSchedules, commitSchedule],
+    );
+
+    // Commit a specific ranked schedule to the calendar
+    const handleResultSelect = useCallback(
+        (index: number) => {
+            // Skip re-commit so manual drag-swaps on the committed schedule are preserved
+            if (index === selectedResultIndex) return;
+            const schedule = rankedSchedules[index];
+            if (!schedule) return;
+            commitSchedule(schedule, index);
+        },
+        [rankedSchedules, selectedResultIndex, commitSchedule],
+    );
+
+    // Temporarily preview a ranked schedule on hover, revert on leave
+    const handleResultHover = useCallback(
+        (index: number | null) => {
+            if (index !== null) {
+                const schedule = rankedSchedules[index];
+                if (!schedule) return;
+
+                // Snapshot whatever is currently selected before overwriting with the preview
+                setSelectedSections((current) => {
+                    if (hoverRevertRef.current === null) hoverRevertRef.current = current;
+                    return schedule.sectionIds;
                 });
 
-                return hasChanges ? next : prev;
-            });
-        },
-        [sectionsByCourseId, setSelectedSections],
-    );
-
-    const updateSliderValue = useCallback((clientX: number) => {
-        if (!draggingRef.current || !trackRectRef.current) return;
-
-        // Capture which thumb is active now, before the async state update
-        const thumb = draggingRef.current;
-
-        // Use the cached rect from the element that received the pointer down
-        const rect = trackRectRef.current;
-
-        // Convert pointer position to a 0–1 percentage
-        const percent = Math.min(Math.max(0, (clientX - rect.left) / rect.width), 1);
-
-        // Convert percentage to time value
-        const range = CALENDAR_CONFIG.END_TIME - CALENDAR_CONFIG.START_TIME;
-        const rawValue = CALENDAR_CONFIG.START_TIME + percent * range;
-
-        // Snap to nearest 0.5 hour increment
-        const newValue = Math.round(rawValue * 2) / 2;
-
-        setTimeRange((prev) => {
-            // Update start thumb, clamped to stay before end
-            if (thumb === 'start') {
-                return { ...prev, start: Math.min(newValue, prev.end - 1) };
+                // Show weekend columns when the preview includes Sa or Su
+                if (scheduleHasWeekend(schedule.sections)) setShowWeekend(true);
+            } else if (hoverRevertRef.current !== null) {
+                setSelectedSections(hoverRevertRef.current);
+                hoverRevertRef.current = null;
             }
+        },
+        [rankedSchedules, setSelectedSections, setShowWeekend],
+    );
 
-            // Update end thumb, clamped to stay after start
-            return { ...prev, end: Math.max(newValue, prev.start + 1) };
+    // Apply suggested filter adjustments from diagnostics, then auto-generate
+    const handleApplyFix = useCallback(() => {
+        if (!scheduleFeedback) return;
+
+        // 1. Collect needed filter adjustments from all failing courses
+        const neededDays = new Set<DayLiteral>(selectedDays);
+        let newStart = timeRange.start;
+        let newEnd = timeRange.end;
+
+        for (const diagnostic of scheduleFeedback) {
+            // Add any missing days the course needs
+            if (diagnostic.reason === 'noDays') {
+                for (const day of diagnostic.availableDays) neededDays.add(day);
+            } else if (diagnostic.reason === 'noTime') {
+                // Floor to nearest 0.5h below the earliest start
+                if (diagnostic.earliestStart !== null) {
+                    newStart = Math.min(newStart, Math.floor(diagnostic.earliestStart / 30) / 2);
+                }
+
+                // Ceil to nearest 0.5h above the latest end
+                if (diagnostic.latestEnd !== null) {
+                    newEnd = Math.max(newEnd, Math.ceil(diagnostic.latestEnd / 30) / 2);
+                }
+            }
+        }
+
+        // 2. Apply days fix and show weekend columns if Sa or Su was added
+        if (neededDays.size !== selectedDays.length) {
+            setSelectedDays([...neededDays]);
+            if (neededDays.has('Sa') || neededDays.has('Su')) {
+                setShowWeekend(true);
+            }
+        }
+
+        // 3. Apply time range fix
+        if (newStart !== timeRange.start || newEnd !== timeRange.end) {
+            setTimeRange({ start: newStart, end: newEnd });
+        }
+
+        // 4. Signal the effect to auto-generate after filters commit
+        pendingGenerateRef.current = true;
+    }, [scheduleFeedback, selectedDays, timeRange, setTimeRange, setShowWeekend]);
+
+    // ----- Effects -----
+
+    // Clear results and remove unpinned blocks when filters or pinned courses change
+    useEffect(() => {
+        setScoredSchedules([]);
+        setSelectedResultIndex(0);
+        setScheduleFeedback(null);
+        hoverRevertRef.current = null;
+        committedScheduleRef.current = null;
+
+        // Fully hide the Results section once all courses are unpinned
+        if (pinnedCourses.size === 0) setHasGeneratedOnce(false);
+
+        // Remove blocks for unpinned courses, keep the rest
+        setSelectedSections((prev) => {
+            const next = new Set<number>();
+            for (const sectionId of prev) {
+                // Only walk pinned courses — much faster than scanning the full catalog
+                for (const courseId of pinnedCourses) {
+                    const sections = sectionsByCourseId.get(courseId);
+                    if (sections?.some((section) => section.id === sectionId)) {
+                        next.add(sectionId);
+                        break;
+                    }
+                }
+            }
+            return next.size === prev.size ? prev : next;
         });
-    }, []);
+    }, [
+        selectedTerm,
+        selectedDays,
+        timeRange,
+        minimumGap,
+        pinnedCourses,
+        sectionsByCourseId,
+        setSelectedSections,
+    ]);
 
-    // Determines which thumb is closer to the tap and captures the pointer to the track
-    const onPointerDown = useCallback(
-        (e: ReactPointerEvent) => {
-            if (e.button !== 0) return;
-            e.preventDefault();
-
-            // Cache the rect from the actual visible element that received the event
-            trackRectRef.current = (e.currentTarget as HTMLElement).getBoundingClientRect();
-
-            // Calculate which thumb is closer to the tapped position
-            const rect = trackRectRef.current;
-            const percent = (e.clientX - rect.left) / rect.width;
-            const range = CALENDAR_CONFIG.END_TIME - CALENDAR_CONFIG.START_TIME;
-            const tappedValue = CALENDAR_CONFIG.START_TIME + percent * range;
-
-            const distToStart = Math.abs(tappedValue - timeRange.start);
-            const distToEnd = Math.abs(tappedValue - timeRange.end);
-            draggingRef.current = distToStart <= distToEnd ? 'start' : 'end';
-
-            (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-            updateSliderValue(e.clientX);
-        },
-        [timeRange, updateSliderValue],
-    );
-
-    // Updates the slider value as the pointer moves (only while dragging)
-    const onPointerMove = useCallback(
-        (e: ReactPointerEvent) => {
-            if (!draggingRef.current) return;
-            updateSliderValue(e.clientX);
-        },
-        [updateSliderValue],
-    );
-
-    // Resets drag state when the pointer is released or capture is lost
-    const onPointerUp = useCallback(() => {
-        draggingRef.current = null;
-    }, []);
+    // Auto-generate after Fix applies new filter values
+    useEffect(() => {
+        if (!pendingGenerateRef.current) return;
+        pendingGenerateRef.current = false;
+        handleGenerateSchedule();
+    }, [handleGenerateSchedule]);
 
     // ----- Export state, data, refs, and actions -----
     return {
@@ -213,18 +310,23 @@ export function useCalendarSidebar({
             selectedTerm,
             minimumGap,
             timeRange,
-            generatedSchedules,
+            sortPreset,
+            scheduleFeedback,
+            selectedResultIndex,
             sliderMin: CALENDAR_CONFIG.START_TIME,
             sliderMax: CALENDAR_CONFIG.END_TIME,
             daysList: CALENDAR_CONFIG.ALL_DAYS,
         },
         data: {
+            rankedSchedules,
+            hasGeneratedOnce,
             availableTerms: ACADEMIC_TERMS.TERMS,
             gapPresets: UI_LIMITS.PRESETS,
             maxGap: UI_LIMITS.MAX_GAP,
+            totalScoredSchedules: scoredSchedules.length,
         },
         refs: {
-            sliderRef,
+            sliderRef: slider.refs.sliderRef,
         },
         actions: {
             setExpandedId,
@@ -235,6 +337,11 @@ export function useCalendarSidebar({
             setTimeRange,
             toggleDay,
             handleTermChange,
+            handleApplyFix,
+            handleSortChange,
+            handleResultHover,
+            handleResultSelect,
+            handleDismissFeedback,
             onPointerDown,
             onPointerMove,
             onPointerUp,
