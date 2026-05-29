@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { ChevronDown, Settings2 } from 'lucide-react';
-import type { AcademicTerm } from '../../../../constants';
+import type { AcademicTerm } from '../../../../types';
 
 interface FilterHeaderProps {
     isOpen: boolean;

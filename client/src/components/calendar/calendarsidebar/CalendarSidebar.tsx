@@ -10,6 +10,7 @@ import type { ApiCourseWithSections, ApiSectionWithRelations } from '../../../ty
 interface CalendarSidebarProps {
     courses: ApiCourseWithSections[];
     showWeekend: boolean;
+    academicYear: number;
     pinnedCourses: Set<number>;
     selectedSections: Set<number>;
     hasWeekendSections: boolean;
@@ -28,6 +29,7 @@ interface CalendarSidebarProps {
 function CalendarSidebar({
     courses,
     showWeekend,
+    academicYear,
     pinnedCourses,
     selectedSections,
     hasWeekendSections,
@@ -95,7 +97,7 @@ function CalendarSidebar({
                     sliderRef={sidebar.refs.sliderRef}
                     SLIDER_MIN={sidebar.state.sliderMin}
                     SLIDER_MAX={sidebar.state.sliderMax}
-                    availableTerms={sidebar.data.availableTerms}
+                    academicYear={academicYear}
                     gapPresets={sidebar.data.gapPresets}
                     maxGap={sidebar.data.maxGap}
                 />

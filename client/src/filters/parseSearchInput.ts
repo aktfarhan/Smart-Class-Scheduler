@@ -1,5 +1,4 @@
-import { REGEX, DURATION_UNITS } from '../constants';
-import { FILTER_CATEGORIES, DATA_MAPS, type AcademicTerm } from '../constants';
+import { REGEX, DURATION_UNITS, FILTER_CATEGORIES, DATA_MAPS } from '../constants';
 import type { SectionType, SearchFilters, Token, LookupData, Day } from '../types';
 
 /**
@@ -31,7 +30,7 @@ export function parseSearchInput(
     // Split the input by comma, trim spaces, and remove empty segments
     const segments = normalizedInput
         .split(',')
-        .map((s) => s.trim())
+        .map((segment) => segment.trim())
         .filter(Boolean);
 
     // Iterate over all segments to find filter types
@@ -61,7 +60,7 @@ export function parseSearchInput(
         const durationMatch = segment.match(REGEX.DURATION);
         if (durationMatch) {
             const [_, value, unit] = durationMatch;
-            const multiplier = DURATION_UNITS.get(unit.toLowerCase()) ?? 1;
+            const multiplier = DURATION_UNITS.get(unit.toLowerCase())!;
             filters.duration = parseInt(value, 10) * multiplier;
             tokens.push({ text: segment, type: 'duration', isRecognized: true });
             continue;
@@ -106,8 +105,8 @@ export function parseSearchInput(
             const seasonRaw = s1 || s2;
             const year = y1 || y2;
             const season = seasonRaw.charAt(0).toUpperCase() + seasonRaw.slice(1).toLowerCase();
-            const termKey = `${year} ${season}` as AcademicTerm;
-            if (FILTER_CATEGORIES.TERMS.has(termKey)) {
+            const termKey = `${year} ${season}`;
+            if (lookupData.termsSet.has(termKey)) {
                 filters.term = termKey;
                 tokens.push({ text: segment, type: 'term', isRecognized: true });
                 continue;

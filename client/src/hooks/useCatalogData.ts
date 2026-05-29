@@ -1,5 +1,6 @@
+import { SEASON_ORDER } from '../constants';
 import { useEffect, useState, useMemo } from 'react';
-import { ACADEMIC_TERMS } from '../constants';
+import { getAYForTerm, getTermsForAY } from '../utils/academicYear';
 import type {
     ApiDepartmentWithRelations,
     ApiCourseWithDepartment,
@@ -37,26 +38,27 @@ export function useCatalogData() {
         fetchData();
     }, []);
 
-    /**
-     * Unified Lookup Maps for 0ms Search Parsing
-     */
+    // Pre-built lookup maps for fast filter validation.
     const lookupData = useMemo(() => {
         const courseMap = new Map<string, ApiCourseWithDepartment>();
         const departmentMap = new Map<string, ApiDepartmentWithRelations>();
         const departmentTitleToCode = new Map<string, string>();
         const instructorSet = new Set<string>();
+        const academicYearsSet = new Set<number>();
 
         // 1. Process Departments & Instructors
-        departments.forEach((dept) => {
-            const code = dept.code.toUpperCase();
-            departmentMap.set(code, dept);
-            departmentTitleToCode.set(dept.title.toLowerCase().trim(), code);
+        departments.forEach((department) => {
+            const code = department.code.toUpperCase();
+            departmentMap.set(code, department);
+            departmentTitleToCode.set(department.title.toLowerCase().trim(), code);
 
             // Populate instructor set from department relations
-            dept.instructors?.forEach((inst) => {
-                if (inst.firstName && inst.lastName) {
-                    instructorSet.add(`${inst.firstName} ${inst.lastName}`.toLowerCase().trim());
-                    instructorSet.add(inst.lastName.toLowerCase().trim());
+            department.instructors.forEach((instructor) => {
+                if (instructor.firstName && instructor.lastName) {
+                    instructorSet.add(
+                        `${instructor.firstName} ${instructor.lastName}`.toLowerCase().trim(),
+                    );
+                    instructorSet.add(instructor.lastName.toLowerCase().trim());
                 }
             });
         });
@@ -67,18 +69,29 @@ export function useCatalogData() {
             courseMap.set(key, course);
         });
 
+        // 3. Derive academic years in the data
+        for (const section of sections) {
+            academicYearsSet.add(getAYForTerm(section.term));
+        }
+        const academicYears = [...academicYearsSet].sort((a, b) => a - b);
+
+        // 4. Build the four terms per AY
+        const termsSet = new Set(academicYears.flatMap(getTermsForAY));
+
         return {
+            termsSet,
             courseMap,
             departmentMap,
-            departmentTitleToCode,
             instructorSet,
+            academicYears,
+            departmentTitleToCode,
         };
-    }, [departments, courses]);
+    }, [departments, courses, sections]);
 
     /**
      * Optimized Section Grouping with Triple-Tier Sort:
      * 1. Year (Ascending)
-     * 2. Semester (Spring -> Summer -> Fall -> Winter)
+     * 2. Semester (Fall -> Winter -> Spring -> Summer)
      * 3. Section Number (Natural Sort: 01, 02, 10)
      */
     const sectionsByCourseId = useMemo(() => {
@@ -94,7 +107,7 @@ export function useCatalogData() {
 
             // 2. Sort by Semester Chronology
             if (semA !== semB) {
-                return (ACADEMIC_TERMS.ORDER[semA] || 0) - (ACADEMIC_TERMS.ORDER[semB] || 0);
+                return (SEASON_ORDER[semA] ?? 99) - (SEASON_ORDER[semB] ?? 99);
             }
 
             // 3. Sort by Section Number (Natural Sort handles "01" vs "10" correctly)

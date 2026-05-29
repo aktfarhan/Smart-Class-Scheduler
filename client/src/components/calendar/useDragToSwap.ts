@@ -2,12 +2,13 @@ import { getCategory } from '../../utils/getCategory';
 import { assignColumns } from './resolveBlockConflicts';
 import { formatTime, meetingToMinutes } from '../../utils/formatTime';
 import { useMemo, useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
-import { CALENDAR_CONFIG, type AcademicTerm } from '../../constants';
+import { CALENDAR_CONFIG } from '../../constants';
 import type {
     Day,
     Block,
     DragState,
     PendingDrag,
+    AcademicTerm,
     GhostBlockData,
     ApiSectionWithRelations,
 } from '../../types';

@@ -1,16 +1,24 @@
+import { getAYForTerm } from '../utils/academicYear';
 import { meetingToMinutes, toMinutes } from '../utils/formatTime';
-import type { Day, ApiSectionWithRelations, SectionType } from '../types';
+import type { AcademicTerm, Day, ApiSectionWithRelations, SectionType } from '../types';
 
 /**
- * Checks if a section belongs to a specific term.
+ * Checks if a section matches the active term/AY context.
  *
  * @param section - The section data with relations.
- * @param term - The term to match.
- * @returns True if the term matches or no term is selected.
+ * @param term - Specific term to match.
+ * @param academicYear - AY start year to match when no specific term is set.
+ * @returns True if the section belongs to the active term or AY.
  */
-export const sectionMatchesTerm = (section: ApiSectionWithRelations, term?: string) => {
-    if (!term) return true;
-    return section.term.toLowerCase() === term.toLowerCase();
+export const sectionMatchesTermContext = (
+    section: ApiSectionWithRelations,
+    term?: AcademicTerm,
+    academicYear?: number,
+) => {
+    // Specific term wins so search overrides (e.g., "fall 2025") work while dropdown stays elsewhere
+    if (term) return section.term.toLowerCase() === term.toLowerCase();
+    if (academicYear !== undefined) return getAYForTerm(section.term) === academicYear;
+    return true;
 };
 
 /**
@@ -27,7 +35,7 @@ export const sectionMatchesType = (section: ApiSectionWithRelations, type?: Sect
     const sectionNum = section.sectionNumber.trim().toUpperCase();
     const isDiscussion = sectionNum.endsWith('D');
 
-    // 3. Ensure types are compared consistently (Upper to Upper)
+    // Ensure types are compared consistently (Upper to Upper)
     const activeFilter = type.toUpperCase();
 
     if (activeFilter === 'DISCUSSION') {
@@ -54,9 +62,9 @@ export const sectionMatchesInstructor = (section: ApiSectionWithRelations, name?
     // Split search into individual words for better search
     const searchTerms = name.split(/\s+/);
 
-    return (section.instructors ?? []).some((inst) => {
+    return section.instructors.some((instructor) => {
         // Build full instructor name
-        const fullName = `${inst.firstName} ${inst.lastName}`.toLowerCase();
+        const fullName = `${instructor.firstName} ${instructor.lastName}`.toLowerCase();
 
         // Every typed word must appear somewhere in the instructor's full name
         return searchTerms.every((term) => fullName.includes(term));
@@ -72,8 +80,8 @@ export const sectionMatchesInstructor = (section: ApiSectionWithRelations, name?
  */
 export const sectionMatchesDays = (section: ApiSectionWithRelations, filterDays?: Day[]) => {
     if (!filterDays?.length) return true;
-    const sectionDays = new Set(section.meetings.map((m) => m.day));
-    return filterDays.every((d) => sectionDays.has(d));
+    const sectionDays = new Set(section.meetings.map((meeting) => meeting.day));
+    return filterDays.every((day) => sectionDays.has(day));
 };
 
 /**

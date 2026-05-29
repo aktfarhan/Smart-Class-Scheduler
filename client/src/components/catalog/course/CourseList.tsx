@@ -37,7 +37,11 @@ function CourseList({
             // Apply all active section-level filters
             const filtered = rawSections.filter(
                 (section) =>
-                    SectionRules.sectionMatchesTerm(section, activeFilters.term) &&
+                    SectionRules.sectionMatchesTermContext(
+                        section,
+                        activeFilters.term,
+                        activeFilters.academicYear,
+                    ) &&
                     SectionRules.sectionMatchesType(section, activeFilters.sectionType) &&
                     SectionRules.sectionMatchesInstructor(section, activeFilters.instructorName) &&
                     SectionRules.sectionMatchesDays(section, activeFilters.days) &&
@@ -97,7 +101,7 @@ function CourseList({
             </div>
         );
     }
-    
+
     return (
         <div className="flex flex-col">
             {pagedCourses.map((course) => (

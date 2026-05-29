@@ -1,11 +1,17 @@
 import { useTimeRangeSlider } from './useTimeRangeSlider';
 import { scheduleHasWeekend } from '../../../utils/scheduleHasWeekend';
 import { generateSchedulesDFS } from '../../../scheduling/scheduler';
-import { CALENDAR_CONFIG, ACADEMIC_TERMS, UI_LIMITS } from '../../../constants';
+import { CALENDAR_CONFIG, UI_LIMITS } from '../../../constants';
+import { pickDefaultSeason, type Season } from '../../../utils/academicYear';
 import { useState, useMemo, useRef, useCallback, useEffect, startTransition } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
-import type { DayLiteral, AcademicTerm } from '../../../constants';
-import type { ApiSectionWithRelations, CourseDiagnostic, ScoredSchedule } from '../../../types';
+import type { DayLiteral } from '../../../constants';
+import type {
+    AcademicTerm,
+    ApiSectionWithRelations,
+    CourseDiagnostic,
+    ScoredSchedule,
+} from '../../../types';
 import {
     SORT_OPTIONS,
     rankBySortOption,
@@ -13,6 +19,7 @@ import {
 } from '../../../scheduling/scheduleScoring';
 
 interface CalendarSideBarParams {
+    academicYear: number;
     pinnedCourses: Set<number>;
     sectionsByCourseId: Map<number, ApiSectionWithRelations[]>;
     setShowWeekend: (val: boolean) => void;
@@ -20,6 +27,7 @@ interface CalendarSideBarParams {
 }
 
 export function useCalendarSidebar({
+    academicYear,
     pinnedCourses,
     sectionsByCourseId,
     setShowWeekend,
@@ -39,8 +47,14 @@ export function useCalendarSidebar({
 
     // ----- Filter State -----
     const [selectedDays, setSelectedDays] = useState<DayLiteral[]>(CALENDAR_CONFIG.WEEK_DAYS);
-    const [selectedTerm, setSelectedTerm] = useState<AcademicTerm>(ACADEMIC_TERMS.TERMS[2]);
+    const [selectedSeason, setSelectedSeason] = useState<Season>(() => pickDefaultSeason());
     const [minimumGap, setMinimumGap] = useState<number>(UI_LIMITS.PRESETS[0]);
+
+    // Derived term string
+    const selectedTerm = useMemo(() => {
+        const year = selectedSeason === 'Fall' ? academicYear : academicYear + 1;
+        return `${year} ${selectedSeason}`;
+    }, [academicYear, selectedSeason]);
 
     // Time Range slider
     const slider = useTimeRangeSlider({
@@ -138,18 +152,11 @@ export function useCalendarSidebar({
         commitSchedule,
     ]);
 
-    // Clear term-specific state when switching terms (filter effect handles the rest)
-    const handleTermChange = useCallback(
-        (newTerm: AcademicTerm) => {
-            setSelectedTerm(newTerm);
-            setSortPreset(0);
-            setHasGeneratedOnce(false);
-            setSelectedSections(new Set());
-            hoverRevertRef.current = null;
-            committedScheduleRef.current = null;
-        },
-        [setSelectedSections],
-    );
+    // Switch the term
+    const handleTermChange = useCallback((term: AcademicTerm) => {
+        const [, season] = term.split(' ');
+        setSelectedSeason(season as Season);
+    }, []);
 
     // Dismiss the schedule feedback overlay
     const handleDismissFeedback = useCallback(() => {
@@ -257,7 +264,19 @@ export function useCalendarSidebar({
 
     // ----- Effects -----
 
-    // Clear results and remove unpinned blocks when filters or pinned courses change
+    // Full reset on term change
+    useEffect(() => {
+        setSortPreset(0);
+        setHasGeneratedOnce(false);
+        setSelectedSections(new Set());
+        setScoredSchedules([]);
+        setSelectedResultIndex(0);
+        setScheduleFeedback(null);
+        hoverRevertRef.current = null;
+        committedScheduleRef.current = null;
+    }, [selectedTerm, setSelectedSections]);
+
+    // Light clear on non-term filter changes + filter selectedSections to pinned courses
     useEffect(() => {
         setScoredSchedules([]);
         setSelectedResultIndex(0);
@@ -284,7 +303,6 @@ export function useCalendarSidebar({
             return next.size === prev.size ? prev : next;
         });
     }, [
-        selectedTerm,
         selectedDays,
         timeRange,
         minimumGap,
@@ -320,7 +338,6 @@ export function useCalendarSidebar({
         data: {
             rankedSchedules,
             hasGeneratedOnce,
-            availableTerms: ACADEMIC_TERMS.TERMS,
             gapPresets: UI_LIMITS.PRESETS,
             maxGap: UI_LIMITS.MAX_GAP,
             totalScoredSchedules: scoredSchedules.length,

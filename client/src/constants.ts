@@ -23,18 +23,14 @@ export const UI_LIMITS = {
 
 /**
  * 2. ACADEMIC DATA
- * Canonical definitions for semesters and their chronological sort order
- * to handle logic where "Spring" must precede "Fall."
+ * Seasonal sort order within an academic year.
  */
-export const ACADEMIC_TERMS = {
-    ORDER: {
-        Fall: 1,
-        Winter: 2,
-        Spring: 3,
-        Summer: 4,
-    } as Record<string, number>,
-    TERMS: ['2025 Fall', '2026 Winter', '2026 Spring', '2026 Summer'],
-} as const;
+export const SEASON_ORDER: Record<string, number> = {
+    Fall: 1,
+    Winter: 2,
+    Spring: 3,
+    Summer: 4,
+};
 
 /**
  * 3. SEARCH & FILTER CATEGORIES
@@ -43,7 +39,6 @@ export const ACADEMIC_TERMS = {
  */
 export const FILTER_CATEGORIES = {
     DAYS: new Set(CALENDAR_CONFIG.ALL_DAYS),
-    TERMS: new Set(ACADEMIC_TERMS.TERMS),
     TYPES: new Set(['Lecture', 'Discussion']),
     TIMES: new Set(['Morning', 'Afternoon', 'Evening', 'Night']),
 } as const;
@@ -213,4 +208,3 @@ export type CourseColor = (typeof COURSE_COLORS)[number];
  * type-safety across the application.
  */
 export type DayLiteral = (typeof CALENDAR_CONFIG.ALL_DAYS)[number];
-export type AcademicTerm = (typeof ACADEMIC_TERMS.TERMS)[number];

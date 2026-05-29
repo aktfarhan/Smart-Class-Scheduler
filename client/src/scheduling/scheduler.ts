@@ -1,10 +1,11 @@
 import { DATA_MAPS } from '../constants';
 import { getCategory } from '../utils/getCategory';
 import { meetingToMinutes } from '../utils/formatTime';
-import type { DayLiteral, AcademicTerm } from '../constants';
+import type { DayLiteral } from '../constants';
 import type {
     ApiSectionWithRelations,
     TimeRange,
+    AcademicTerm,
     ScheduleResult,
     CourseDiagnostic,
     DiagnosticReason,

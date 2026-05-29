@@ -1,7 +1,6 @@
-import type { SearchFilters } from '../types';
 import * as CourseFilters from './coursePredicates';
 import * as SectionFilters from './sectionPredicates';
-import type { ApiCourseWithSections, ApiSectionWithRelations } from '../types';
+import type { SearchFilters, ApiCourseWithSections, ApiSectionWithRelations } from '../types';
 
 /**
  * Filters the course catalog at course-level and section-level.
@@ -19,7 +18,7 @@ export function applyFilters(
     // Find all sections that fit the filters
     const validSections = sections.filter(
         (section) =>
-            SectionFilters.sectionMatchesTerm(section, filters.term) &&
+            SectionFilters.sectionMatchesTermContext(section, filters.term, filters.academicYear) &&
             SectionFilters.sectionMatchesType(section, filters.sectionType) &&
             SectionFilters.sectionMatchesInstructor(section, filters.instructorName) &&
             SectionFilters.sectionMatchesDays(section, filters.days) &&
@@ -30,17 +29,6 @@ export function applyFilters(
     // Create a list of IDs for all sections that passed the schedule filters
     const validSectionIds = new Set(validSections.map((section) => section.id));
 
-    // Check if the user is filtering by sections; if they aren't, skip checking sections
-    const hasSectionFilters = Boolean(
-        filters.term ||
-        filters.instructorName ||
-        filters.days?.length ||
-        filters.duration ||
-        filters.sectionType ||
-        filters.timeRange,
-    );
-
-    // Filter courses based on metadata
     return courses.filter((course) => {
         // Check for a match on the course name, department, or code
         const isBasicMatch =
@@ -50,10 +38,7 @@ export function applyFilters(
 
         if (!isBasicMatch) return false;
 
-        // If no scheduling filters are active, filter course-level
-        if (!hasSectionFilters) return true;
-
-        // Ensure the course has at least one valid section for the active filters.
-        return course.sections?.some((s) => validSectionIds.has(s.id)) ?? false;
+        // Course must have at least one section that survived the section-level filters
+        return course.sections.some((section) => validSectionIds.has(section.id));
     });
 }

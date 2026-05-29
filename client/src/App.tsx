@@ -24,13 +24,16 @@ function App() {
                                 filters={data.activeFilters}
                                 isLoading={data.isLoading}
                                 lastUpdatedAt={data.lastUpdatedAt}
-                                departmentMap={data.lookupData.departmentMap}
+                                lookupData={data.lookupData}
+                                academicYear={state.academicYear}
+                                onAcademicYearChange={actions.handleAcademicYearChange}
                                 onFilterChange={actions.handleSidebarFilter}
                             />
                         ) : (
                             <CalendarSidebar
                                 courses={data.courses}
                                 showWeekend={state.showWeekend}
+                                academicYear={state.academicYear}
                                 pinnedCourses={state.pinnedCourses}
                                 selectedSections={state.selectedSections}
                                 hasWeekendSections={state.hasWeekendSections}

@@ -1,5 +1,4 @@
 import type { Day } from './api/meeting';
-import type { AcademicTerm } from '../constants';
 import type { ApiCourseWithDepartment } from './api/course';
 import type { ApiDepartmentWithRelations } from './api/department';
 import type { SectionType, ApiSectionWithRelations } from './api/section';
@@ -14,6 +13,8 @@ export * from './api/department';
 export * from './api/instructor';
 export * from './api/meeting';
 export * from './scoring';
+
+export type AcademicTerm = string;
 
 // Pipeline metadata from /api/metadata
 export interface ApiMetadata {
@@ -132,20 +133,23 @@ export interface Token {
  * database values for fast client-side lookups.
  */
 export interface SearchFilters {
-    departmentCode?: string;
-    courseCode?: string;
-    text?: string;
-    duration?: number;
-    term?: AcademicTerm;
     days?: Day[];
+    text?: string;
+    term?: AcademicTerm;
+    duration?: number;
     timeRange?: { start: string; end: string };
+    courseCode?: string;
     sectionType?: SectionType;
+    academicYear?: number;
+    departmentCode?: string;
     instructorName?: string;
 }
 
 // In-memory data structures used to speed up search comparisons
 export interface LookupData {
+    termsSet: Set<AcademicTerm>;
     courseMap: Map<string, ApiCourseWithDepartment>;
+    academicYears: number[];
     instructorSet: Set<string>;
     departmentMap: Map<string, ApiDepartmentWithRelations>;
     departmentTitleToCode: Map<string, string>;

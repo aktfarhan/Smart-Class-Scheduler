@@ -1,23 +1,22 @@
 import { useCallback } from 'react';
 import { FILTER_CATEGORIES } from '../constants';
-import type { ApiDepartmentWithRelations, FilterType } from '../types';
+import type { Dispatch, SetStateAction } from 'react';
+import type { FilterType, LookupData } from '../types';
 
 interface UseFilterLogicParams {
-    searchQuery: string;
-    setSearchQuery: (query: string) => void;
+    lookupData: LookupData;
     setCurrentPage: (page: number) => void;
-    departmentMap: Map<string, ApiDepartmentWithRelations>;
+    setSearchQuery: Dispatch<SetStateAction<string>>;
 }
 
 export function useFilterLogic({
-    searchQuery,
+    lookupData,
     setSearchQuery,
     setCurrentPage,
-    departmentMap,
 }: UseFilterLogicParams) {
     const handleSidebarFilter = useCallback(
-        (type: FilterType | 'clear', value: string | number) => {
-            const valueStr = String(value).trim();
+        (type: FilterType, value: string) => {
+            const trimmed = value.trim();
 
             if (type === 'clear') {
                 setSearchQuery('');
@@ -25,44 +24,38 @@ export function useFilterLogic({
                 return;
             }
 
-            const currentTokens = searchQuery
-                ? searchQuery
-                      .split(',')
-                      .map((t) => t.trim())
-                      .filter(Boolean)
-                : [];
+            setSearchQuery((prev) => {
+                const currentTokens = prev
+                    .split(',')
+                    .map((token) => token.trim())
+                    .filter(Boolean);
 
-            if (currentTokens.includes(valueStr)) {
-                setSearchQuery(currentTokens.filter((t) => t !== valueStr).join(', '));
-                return;
-            }
+                if (currentTokens.includes(trimmed)) {
+                    return currentTokens.filter((token) => token !== trimmed).join(', ');
+                }
 
-            let newTokens: string[];
-
-            if (type === 'day') {
-                newTokens = [...currentTokens, valueStr];
-            } else {
-                newTokens = currentTokens.filter((token) => {
-                    switch (type) {
-                        case 'term':
-                            return !(FILTER_CATEGORIES.TERMS as Set<string>).has(token);
-                        case 'sectionType':
-                            return !(FILTER_CATEGORIES.TYPES as Set<string>).has(token);
-                        case 'timeRange':
-                            return !(FILTER_CATEGORIES.TIMES as Set<string>).has(token);
-                        case 'departmentCode':
-                            return !departmentMap.has(token.toUpperCase());
-                        default:
-                            return true;
-                    }
-                });
-                newTokens.push(valueStr);
-            }
-
-            setSearchQuery(newTokens.join(', '));
+                const filtered =
+                    type === 'day'
+                        ? currentTokens
+                        : currentTokens.filter((token) => {
+                              switch (type) {
+                                  case 'term':
+                                      return !lookupData.termsSet.has(token);
+                                  case 'sectionType':
+                                      return !(FILTER_CATEGORIES.TYPES as Set<string>).has(token);
+                                  case 'timeRange':
+                                      return !(FILTER_CATEGORIES.TIMES as Set<string>).has(token);
+                                  case 'departmentCode':
+                                      return !lookupData.departmentMap.has(token.toUpperCase());
+                                  default:
+                                      return true;
+                              }
+                          });
+                return [...filtered, trimmed].join(', ');
+            });
             setCurrentPage(1);
         },
-        [searchQuery, setSearchQuery, setCurrentPage, departmentMap],
+        [lookupData, setSearchQuery, setCurrentPage],
     );
 
     return { handleSidebarFilter };

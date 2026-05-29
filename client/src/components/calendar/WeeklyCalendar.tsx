@@ -2,10 +2,10 @@ import clsx from 'clsx';
 import GhostBlock from './GhostBlock';
 import BlockPopover from './BlockPopover';
 import CalendarBlock from './CalendarBlock';
+import { CALENDAR_CONFIG } from '../../constants';
 import { formatHour } from '../../utils/formatTime';
 import { useWeeklyCalendar } from './useWeeklyCalendar';
-import type { ApiSectionWithRelations } from '../../types';
-import { CALENDAR_CONFIG, type AcademicTerm } from '../../constants';
+import type { AcademicTerm, ApiSectionWithRelations } from '../../types';
 
 interface WeeklyCalendarProps {
     showWeekend: boolean;
@@ -98,47 +98,49 @@ function WeeklyCalendar({
                             >
                                 {(data.previewBlocks?.[day]?.blocks ?? data.activeBlocks[day]).map(
                                     (block) => {
-                                    const top =
-                                        ((block.startMins - START_TIME * 60) / TOTAL_MINS) * 100;
-                                    const height =
-                                        ((block.endMins - block.startMins) / TOTAL_MINS) * 100;
-                                    return (
-                                        <CalendarBlock
-                                            key={`${block.sectionId}-${block.startMins}`}
-                                            top={top}
-                                            block={block}
-                                            color={data.courseColorMap.get(block.courseCode)!}
-                                            height={height}
-                                            isWide={state.isWide}
-                                            totalMins={TOTAL_MINS}
-                                            gridHeight={refs.gridRef.current?.clientHeight ?? 0}
-                                            onClick={actions.handleBlockClick}
-                                            onPointerDown={actions.handleDragStart}
-                                        />
-                                    );
-                                })}
+                                        const top =
+                                            ((block.startMins - START_TIME * 60) / TOTAL_MINS) *
+                                            100;
+                                        const height =
+                                            ((block.endMins - block.startMins) / TOTAL_MINS) * 100;
+                                        return (
+                                            <CalendarBlock
+                                                key={`${block.sectionId}-${block.startMins}`}
+                                                top={top}
+                                                block={block}
+                                                color={data.courseColorMap.get(block.courseCode)!}
+                                                height={height}
+                                                isWide={state.isWide}
+                                                totalMins={TOTAL_MINS}
+                                                gridHeight={refs.gridRef.current?.clientHeight ?? 0}
+                                                onClick={actions.handleBlockClick}
+                                                onPointerDown={actions.handleDragStart}
+                                            />
+                                        );
+                                    },
+                                )}
                             </div>
                             {state.dragState &&
                                 data.previewBlocks?.[day]?.ghosts.map((ghost) => {
-                                const top =
-                                    ((ghost.startMins - START_TIME * 60) / TOTAL_MINS) * 100;
-                                const height =
-                                    ((ghost.endMins - ghost.startMins) / TOTAL_MINS) * 100;
-                                return (
-                                    <GhostBlock
-                                        key={`ghost-${ghost.sectionId}-${ghost.startMins}`}
-                                        top={top}
-                                        color={courseColor!}
-                                        height={height}
-                                        timeRange={ghost.timeRange}
-                                        isHovered={state.hoveredGhostId === ghost.sectionId}
-                                        columnIndex={ghost.columnIndex}
-                                        hasConflict={ghost.hasConflict}
-                                        totalColumns={ghost.totalColumns}
-                                        sectionNumber={ghost.sectionNumber}
-                                    />
-                                );
-                            })}
+                                    const top =
+                                        ((ghost.startMins - START_TIME * 60) / TOTAL_MINS) * 100;
+                                    const height =
+                                        ((ghost.endMins - ghost.startMins) / TOTAL_MINS) * 100;
+                                    return (
+                                        <GhostBlock
+                                            key={`ghost-${ghost.sectionId}-${ghost.startMins}`}
+                                            top={top}
+                                            color={courseColor!}
+                                            height={height}
+                                            timeRange={ghost.timeRange}
+                                            isHovered={state.hoveredGhostId === ghost.sectionId}
+                                            columnIndex={ghost.columnIndex}
+                                            hasConflict={ghost.hasConflict}
+                                            totalColumns={ghost.totalColumns}
+                                            sectionNumber={ghost.sectionNumber}
+                                        />
+                                    );
+                                })}
                         </div>
                     ))}
                     {state.popover &&

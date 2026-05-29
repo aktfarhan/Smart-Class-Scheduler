@@ -8,6 +8,7 @@ interface CourseCardProps {
     course: ApiCourseWithSections;
     sections: ApiSectionWithRelations[];
     isExpanded: boolean;
+    unofferedLabel?: string | null;
     selectedSections: Set<number>;
     onExpandCourse: () => void;
     onSectionSelect: (courseId: number, sectionId: number) => void;
@@ -17,12 +18,13 @@ function CourseCard({
     course,
     sections,
     isExpanded,
+    unofferedLabel,
     selectedSections,
     onExpandCourse,
     onSectionSelect,
 }: CourseCardProps) {
     return (
-        <div className="relative">
+        <div className={clsx('relative', unofferedLabel && 'opacity-60')}>
             <button
                 onClick={onExpandCourse}
                 type="button"
@@ -35,14 +37,23 @@ function CourseCard({
                 )}
             >
                 <div className="flex min-w-0 flex-1 flex-col text-left">
-                    <span
-                        className={clsx(
-                            'font-space w-fit rounded px-2 py-0.5 text-[10px] font-bold tracking-tight uppercase',
-                            isExpanded ? 'bg-theme-blue text-white' : 'bg-slate-100 text-slate-500',
+                    <div className="flex items-center gap-1.5">
+                        <span
+                            className={clsx(
+                                'font-space w-fit rounded px-2 py-0.5 text-[10px] font-bold tracking-tight uppercase',
+                                isExpanded
+                                    ? 'bg-theme-blue text-white'
+                                    : 'bg-slate-100 text-slate-500',
+                            )}
+                        >
+                            {course.department.code} {course.code}
+                        </span>
+                        {unofferedLabel && (
+                            <span className="rounded bg-amber-50 px-1.5 py-0.5 text-[9px] font-bold tracking-tight text-amber-700 uppercase">
+                                {unofferedLabel}
+                            </span>
                         )}
-                    >
-                        {course.department.code} {course.code}
-                    </span>
+                    </div>
                     <span className="mt-1 truncate text-xs font-semibold text-slate-800">
                         {course.title}
                     </span>

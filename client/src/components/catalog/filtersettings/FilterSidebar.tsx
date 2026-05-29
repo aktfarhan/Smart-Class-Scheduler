@@ -1,19 +1,23 @@
 import { RotateCcw } from 'lucide-react';
 import TimeSelector from './TimeSelector';
+import { useCallback, useMemo } from 'react';
 import Separator from '../../shared/Separator';
 import DataUpdateTimer from './DataUpdateTimer';
 import TermSelector from '../../shared/TermSelector';
 import DepartmentSelector from './DepartmentSelector';
+import { FILTER_CATEGORIES } from '../../../constants';
 import SectionTypeSelector from './SectionTypeSelector';
+import { getTermsForAY } from '../../../utils/academicYear';
 import ActiveDaysSelector from '../../shared/ActiveDaysSelector';
-import { FILTER_CATEGORIES, type AcademicTerm } from '../../../constants';
-import type { ApiDepartmentWithRelations, SearchFilters, FilterType } from '../../../types';
+import type { AcademicTerm, LookupData, SearchFilters, FilterType } from '../../../types';
 
 interface FilterSidebarProps {
     filters: SearchFilters;
     isLoading: boolean;
     lastUpdatedAt: string | null;
-    departmentMap: Map<string, ApiDepartmentWithRelations>;
+    lookupData: LookupData;
+    academicYear: number;
+    onAcademicYearChange: (ayStart: number) => void;
     onFilterChange: (type: FilterType, value: string) => void;
 }
 
@@ -21,16 +25,27 @@ function FilterSidebar({
     filters,
     isLoading,
     lastUpdatedAt,
-    departmentMap,
+    lookupData,
+    academicYear,
+    onAcademicYearChange,
     onFilterChange,
 }: FilterSidebarProps) {
+    const availableTerms = useMemo(() => getTermsForAY(academicYear), [academicYear]);
+    const handleTermClick = useCallback(
+        (term: AcademicTerm) => onFilterChange('term', term),
+        [onFilterChange],
+    );
+
     return (
         <div className="flex h-full flex-col bg-white select-none">
             <div className="scrollbar-hidden flex-1 space-y-5 overflow-y-auto p-6">
                 <TermSelector
-                    availableTerms={[...FILTER_CATEGORIES.TERMS]}
-                    selectedTerm={filters.term as AcademicTerm}
-                    onChangeTerm={(term) => onFilterChange('term', term)}
+                    academicYear={academicYear}
+                    yearOptions={lookupData.academicYears}
+                    onYearChange={onAcademicYearChange}
+                    selectedTerm={filters.term ?? null}
+                    availableTerms={availableTerms}
+                    onChangeTerm={handleTermClick}
                 />
                 <ActiveDaysSelector
                     days={[...FILTER_CATEGORIES.DAYS]}
@@ -40,7 +55,7 @@ function FilterSidebar({
                 <TimeSelector
                     times={[...FILTER_CATEGORIES.TIMES]}
                     selectedTime={filters.timeRange}
-                    onSelect={(t) => onFilterChange('timeRange', t)}
+                    onSelect={(time) => onFilterChange('timeRange', time)}
                 />
                 <SectionTypeSelector
                     types={[...FILTER_CATEGORIES.TYPES]}
@@ -50,7 +65,7 @@ function FilterSidebar({
                 <Separator />
                 <DepartmentSelector
                     isLoading={isLoading}
-                    departmentMap={departmentMap}
+                    departmentMap={lookupData.departmentMap}
                     selectedDeptCode={filters.departmentCode}
                     onSelect={(code) => onFilterChange('departmentCode', code)}
                 />

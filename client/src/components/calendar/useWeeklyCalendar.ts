@@ -3,13 +3,8 @@ import { resolveBlockConflicts } from './resolveBlockConflicts';
 import { formatTime, meetingToMinutes } from '../../utils/formatTime';
 import { getInstructorNames } from '../../utils/formatInstructorNames';
 import { useMemo, useState, useRef, useEffect, useCallback } from 'react';
-import type { ApiSectionWithRelations, Block } from '../../types';
-import {
-    CALENDAR_CONFIG,
-    COURSE_COLORS,
-    type CourseColor,
-    type AcademicTerm,
-} from '../../constants';
+import type { AcademicTerm, ApiSectionWithRelations, Block } from '../../types';
+import { CALENDAR_CONFIG, COURSE_COLORS, type CourseColor } from '../../constants';
 
 interface UseWeeklyCalendarParams {
     showWeekend: boolean;

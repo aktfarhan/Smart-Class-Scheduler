@@ -1,12 +1,14 @@
+import { useMemo } from 'react';
 import FilterHeader from './FilterHeader';
 import MinGapSlider from './MinGapSlider';
-import Separator from '../../../shared/Separator';
 import TimeRangeSlider from './TimeRangeSlider';
+import Separator from '../../../shared/Separator';
 import TermSelector from '../../../shared/TermSelector';
 import ActiveDaysSelector from '../../../shared/ActiveDaysSelector';
-import type { TimeRange } from '../../../../types';
+import { getTermsForAY } from '../../../../utils/academicYear';
+import type { DayLiteral } from '../../../../constants';
+import type { AcademicTerm, TimeRange } from '../../../../types';
 import type { Dispatch, RefObject, SetStateAction } from 'react';
-import type { AcademicTerm, DayLiteral } from '../../../../constants';
 
 interface FilterState {
     isFilterOpen: boolean;
@@ -33,7 +35,7 @@ interface FilterSettingsProps {
     sliderRef: RefObject<HTMLDivElement | null>;
     SLIDER_MIN: number;
     SLIDER_MAX: number;
-    availableTerms: readonly AcademicTerm[];
+    academicYear: number;
     gapPresets: readonly number[];
     maxGap: number;
 }
@@ -45,10 +47,12 @@ function FilterSettings({
     sliderRef,
     SLIDER_MIN,
     SLIDER_MAX,
-    availableTerms,
+    academicYear,
     gapPresets,
     maxGap,
 }: FilterSettingsProps) {
+    const availableTerms = useMemo(() => getTermsForAY(academicYear), [academicYear]);
+
     return (
         <div className="border-b border-gray-100 bg-gray-50/50">
             <FilterHeader
@@ -59,8 +63,9 @@ function FilterSettings({
             {filterState.isFilterOpen && (
                 <div className="animate-in fade-in slide-in-from-top-2 mt-1 space-y-6 px-6 pb-6">
                     <TermSelector
-                        availableTerms={availableTerms}
+                        academicYear={academicYear}
                         selectedTerm={filterState.selectedTerm}
+                        availableTerms={availableTerms}
                         onChangeTerm={filterActions.handleTermChange}
                     />
                     <ActiveDaysSelector

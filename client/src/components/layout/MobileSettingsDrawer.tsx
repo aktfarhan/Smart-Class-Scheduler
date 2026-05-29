@@ -22,6 +22,7 @@ function MobileSettingsDrawer({ data, state, actions, refs }: MobileSettingsDraw
                     <CalendarSidebar
                         courses={data.courses}
                         showWeekend={state.showWeekend}
+                        academicYear={state.academicYear}
                         pinnedCourses={state.pinnedCourses}
                         selectedSections={state.selectedSections}
                         hasWeekendSections={state.hasWeekendSections}

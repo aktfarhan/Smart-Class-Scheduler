@@ -3,8 +3,8 @@ import CourseCard from './CourseCard';
 import { useCallback, useMemo } from 'react';
 import { Bookmark, ChevronDown } from 'lucide-react';
 import type { Dispatch, SetStateAction } from 'react';
-import type { AcademicTerm } from '../../../constants';
-import type { ApiCourseWithSections, ApiSectionWithRelations } from '../../../types';
+import { formatAYLabel, getAYForTerm } from '../../../utils/academicYear';
+import type { AcademicTerm, ApiCourseWithSections, ApiSectionWithRelations } from '../../../types';
 
 interface PinnedCourseListProps {
     expandedId: number | null;
@@ -36,18 +36,21 @@ function PinnedCourseList({
         [setExpandedId],
     );
 
-    // Only show sections that match the selected term for each pinned course
-    const filteredSectionsMap = useMemo(() => {
-        const map = new Map<number, ApiSectionWithRelations[]>();
+    // Build per-course display data in a single pass
+    const activeAY = getAYForTerm(selectedTerm);
+    const displayData = useMemo(() => {
+        const map = new Map<number, { sections: ApiSectionWithRelations[]; unoffered: boolean }>();
         pinnedCourses.forEach((course) => {
-            const sections = sectionsByCourseId.get(course.id) || [];
-            map.set(
-                course.id,
-                sections.filter((section) => section.term === selectedTerm),
-            );
+            const allSections = sectionsByCourseId.get(course.id)!;
+            const termSections = allSections.filter((section) => section.term === selectedTerm);
+
+            // Unoffered means no sections in the entire AY
+            const hasInAY = allSections.some((section) => getAYForTerm(section.term) === activeAY);
+
+            map.set(course.id, { sections: termSections, unoffered: !hasInAY });
         });
         return map;
-    }, [pinnedCourses, sectionsByCourseId, selectedTerm]);
+    }, [pinnedCourses, sectionsByCourseId, selectedTerm, activeAY]);
 
     return (
         <div className="border-b border-gray-100 bg-gray-50/50">
@@ -78,7 +81,11 @@ function PinnedCourseList({
                     {pinnedCourses.length > 0 ? (
                         pinnedCourses.map((course: ApiCourseWithSections) => {
                             const isExpanded = expandedId === course.id;
-                            const sections = filteredSectionsMap.get(course.id) ?? [];
+                            const { sections, unoffered } = displayData.get(course.id)!;
+                            const unofferedLabel = unoffered
+                                ? `Not offered in ${formatAYLabel(activeAY)}`
+                                : null;
+
                             return (
                                 <CourseCard
                                     key={course.id}
@@ -88,6 +95,7 @@ function PinnedCourseList({
                                     selectedSections={selectedSections}
                                     onSectionSelect={onSectionSelect}
                                     onExpandCourse={() => handleExpand(course.id)}
+                                    unofferedLabel={unofferedLabel}
                                 />
                             );
                         })

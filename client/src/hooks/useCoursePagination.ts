@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import type { LookupData } from '../types/index';
 import { applyFilters } from '../filters/applyFilters';
 import { parseSearchInput } from '../filters/parseSearchInput';
-import type { ApiCourseWithSections, ApiSectionWithRelations } from '../types/index';
+import type { ApiCourseWithSections, ApiSectionWithRelations, SearchFilters } from '../types/index';
 
 const PAGE_SIZE = 25;
 
@@ -12,6 +12,7 @@ interface useCoursePaginationProps {
     lookupData: LookupData;
     searchQuery: string;
     currentPage: number;
+    academicYear: number;
     pinnedCourses: Set<number>;
 }
 
@@ -21,23 +22,27 @@ export function useCoursePagination({
     lookupData,
     searchQuery,
     currentPage,
+    academicYear,
     pinnedCourses,
 }: useCoursePaginationProps) {
     return useMemo(() => {
         // 1. Convert search string into structured filters (Dept, Course, Instructor, etc.)
-        const { filters } = parseSearchInput(searchQuery, lookupData);
+        const { filters: parsed } = parseSearchInput(searchQuery, lookupData);
 
-        // 2. Use the Filter Engine to handle complex logic (Days, Duration, etc.)
+        // 2. Merge the AY context
+        const filters: SearchFilters = { ...parsed, academicYear };
+
+        // 3. Apply filters to get matching courses
         const filtered = applyFilters(courses, sections, filters);
 
-        // 3. Professional Sort: Keep pinned courses at the top
+        // 4. Pinned courses first
         const sorted = [...filtered].sort((a, b) => {
             const aPinned = pinnedCourses.has(a.id) ? 1 : 0;
             const bPinned = pinnedCourses.has(b.id) ? 1 : 0;
             return bPinned - aPinned;
         });
 
-        // 4. Calculate Slices
+        // 5. Calculate Slices
         const start = (currentPage - 1) * PAGE_SIZE;
 
         return {
@@ -46,5 +51,5 @@ export function useCoursePagination({
             totalResults: sorted.length,
             activeFilters: filters,
         };
-    }, [courses, sections, lookupData, searchQuery, pinnedCourses, currentPage]);
+    }, [courses, sections, lookupData, searchQuery, pinnedCourses, currentPage, academicYear]);
 }

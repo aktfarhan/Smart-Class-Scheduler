@@ -3,6 +3,7 @@ import { useCatalogData } from './useCatalogData';
 import { useFilterLogic } from './useFilterLogic';
 import { getCategory } from '../utils/getCategory';
 import { useCoursePagination } from './useCoursePagination';
+import { getCurrentAYStart, rewriteTermTokens } from '../utils/academicYear';
 import { useCalendarSidebar } from '../components/calendar/calendarsidebar/useCalendarSidebar';
 
 export function useAppController() {
@@ -20,6 +21,7 @@ export function useAppController() {
     const [isPanelOpen, setIsPanelOpen] = useState(false);
     const [showWeekend, setShowWeekend] = useState(false);
     const [jumpValue, setJumpValue] = useState('');
+    const [academicYear, setAcademicYear] = useState<number>(() => getCurrentAYStart());
 
     // ----- Data State -----
     // Tracking user selections: pinned courses, selected sections per course, expanded course IDs
@@ -29,6 +31,7 @@ export function useAppController() {
 
     // Calendar side bar
     const calendarSidebar = useCalendarSidebar({
+        academicYear,
         pinnedCourses,
         sectionsByCourseId,
         setShowWeekend,
@@ -41,21 +44,21 @@ export function useAppController() {
         sections,
         lookupData,
         searchQuery,
-        pinnedCourses,
         currentPage,
+        academicYear,
+        pinnedCourses,
     });
 
     const { handleSidebarFilter } = useFilterLogic({
-        searchQuery,
+        lookupData,
         setSearchQuery,
         setCurrentPage,
-        departmentMap: lookupData.departmentMap,
     });
 
-    // Reset scroll position whenever page or search query changes
+    // Reset scroll position whenever page, search query, or AY changes
     useEffect(() => {
         scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
-    }, [currentPage, searchQuery]);
+    }, [currentPage, searchQuery, academicYear]);
 
     // Update browser tab title when switching between Catalog and Calendar
     useEffect(() => {
@@ -66,40 +69,50 @@ export function useAppController() {
 
     // True when any selected section meets on Sa or Su
     const hasWeekendSections = useMemo(
-        () => sections.some((section) =>
-            selectedSections.has(section.id) &&
-            section.meetings.some((meeting) => meeting.day === 'Sa' || meeting.day === 'Su'),
-        ),
+        () =>
+            sections.some(
+                (section) =>
+                    selectedSections.has(section.id) &&
+                    section.meetings.some(
+                        (meeting) => meeting.day === 'Sa' || meeting.day === 'Su',
+                    ),
+            ),
         [sections, selectedSections],
     );
 
     // ----- Action Handlers -----
 
+    // Switch the academic year, and any term tokens in the search bar
+    const handleAcademicYearChange = useCallback((newAY: number) => {
+        setSearchQuery((prev) => rewriteTermTokens(prev, newAY));
+        setAcademicYear(newAY);
+        setCurrentPage(1);
+    }, []);
+
     /**
      * Toggle section selection for a given course.
-     * If the section is already selected, deselect it; otherwise select it.
+     * Picking a new section of the same category (lecture, lab, discussion) deselects the previous one.
      */
     const handleSectionSelect = useCallback(
         (courseId: number, sectionId: number) => {
             setSelectedSections((prev) => {
                 const next = new Set(prev);
 
-                const courseSections = sectionsByCourseId.get(courseId) || [];
-                const targetSection = courseSections.find((section) => section.id === sectionId);
-
-                if (!targetSection) return prev;
-
-                // 1. Determine category for the target section
+                const courseSections = sectionsByCourseId.get(courseId)!;
+                const targetSection = courseSections.find((section) => section.id === sectionId)!;
                 const targetCategory = getCategory(targetSection.sectionNumber);
 
-                // 2. Clear out existing sections of the SAME CATEGORY for this course
+                // 1. Clear existing sections of the SAME category for this course
                 courseSections.forEach((section) => {
-                    if (next.has(section.id) && getCategory(section.sectionNumber) === targetCategory) {
+                    if (
+                        next.has(section.id) &&
+                        getCategory(section.sectionNumber) === targetCategory
+                    ) {
                         next.delete(section.id);
                     }
                 });
 
-                // 3. Toggle Logic
+                // 2. Toggle target, add if wasn't already selected
                 if (!prev.has(sectionId)) {
                     next.add(sectionId);
                 }
@@ -132,6 +145,7 @@ export function useAppController() {
             jumpValue,
             isPanelOpen,
             showWeekend,
+            academicYear,
             pinnedCourses,
             selectedSections,
             expandedCourseIds,
@@ -161,6 +175,7 @@ export function useAppController() {
             setSelectedSections,
             setExpandedCourseIds,
             setPinnedCourses,
+            handleAcademicYearChange,
             handleSectionSelect,
             handleSidebarFilter,
             handleJumpPage,
