@@ -189,11 +189,11 @@
     "phone": "617.287.4418"
   },
   {
-    "firstName": "Kathryn",
-    "lastName": "Archard",
-    "title": "Senior Lecturer II",
-    "email": "Kathryn.Archard@umb.edu",
-    "phone": "617.287.7685"
+    "firstName": "Edward",
+    "lastName": "Cook",
+    "title": "Senior Lecturer",
+    "email": "Edward.Cook@umb.edu",
+    "phone": "617.287.7843"
   },
   {
     "firstName": "John",
@@ -201,6 +201,13 @@
     "title": "Lecturer",
     "email": "John.Scialoia@umb.edu",
     "phone": null
+  },
+  {
+    "firstName": "Kathryn",
+    "lastName": "Archard",
+    "title": "Senior Lecturer II",
+    "email": "Kathryn.Archard@umb.edu",
+    "phone": "617.287.7685"
   },
   {
     "firstName": "Suzanne",
@@ -245,13 +252,6 @@
     "phone": "617.287.6793"
   },
   {
-    "firstName": "Bayyinah",
-    "lastName": "Jeffries",
-    "title": "Professor",
-    "email": "Bayyinah.Jeffries@umb.edu",
-    "phone": null
-  },
-  {
     "firstName": "Nicole",
     "lastName": "Richards",
     "title": "Associate Lecturer",
@@ -268,7 +268,7 @@
   {
     "firstName": "Jean",
     "lastName": "Rene",
-    "title": "Adjunct Faculty",
+    "title": "Assoc Lecturer A",
     "email": "Jean.Rene@umb.edu",
     "phone": null
   },
@@ -308,18 +308,11 @@
     "phone": "617.287.6879"
   },
   {
-    "firstName": "Kibibi",
-    "lastName": "Mack-Shelton",
-    "title": null,
-    "email": null,
-    "phone": null
-  },
-  {
     "firstName": "Elizabeth",
     "lastName": "Sweet",
-    "title": "Associate Professor",
-    "email": "Elizabeth.Sweet@umb.edu",
-    "phone": "617.287.6894"
+    "title": "Associate Dean",
+    "email": "Betsy.Sweet@umb.edu",
+    "phone": null
   },
   {
     "firstName": "Anne",
@@ -499,9 +492,16 @@
   {
     "firstName": "Lauren",
     "lastName": "Sullivan",
-    "title": "Senior Lecturer III",
-    "email": "Lauren.Sullivan@umb.edu",
-    "phone": "617.287.6855"
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
+    "firstName": "Maria",
+    "lastName": "Torras Freixa",
+    "title": "Assoc Lecturer A",
+    "email": "Maria.TorrasFreixa@umb.edu",
+    "phone": null
   },
   {
     "firstName": "Douglas",
@@ -527,9 +527,16 @@
   {
     "firstName": "Alejandro",
     "lastName": "Reuss",
-    "title": "Professional - Hourly",
+    "title": "Lecturer",
     "email": "Alejandro.Reuss@umb.edu",
     "phone": "617.287.7267"
+  },
+  {
+    "firstName": "Madeline",
+    "lastName": "Snyder Hughes",
+    "title": "Assoc Lecturer A",
+    "email": "Madeline.Snyder001@umb.edu",
+    "phone": null
   },
   {
     "firstName": "Meredith",
@@ -667,7 +674,7 @@
   {
     "firstName": "Joetta",
     "lastName": "Maue",
-    "title": "Associate Lecturer",
+    "title": "Assoc Lecturer A",
     "email": "Joetta.Maue@umb.edu",
     "phone": null
   },
@@ -828,8 +835,8 @@
   {
     "firstName": "Chieko",
     "lastName": "Nakajima",
-    "title": "Associate Lecturer",
-    "email": "Chieko.Nakajima@umb.edu",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -882,18 +889,18 @@
     "phone": "617.287.7949"
   },
   {
-    "firstName": "Katherine",
-    "lastName": "Hatzis",
-    "title": "Senior Lecturer III",
-    "email": "Katherine.Hatzis@umb.edu",
-    "phone": "617.287.7865"
-  },
-  {
     "firstName": "Margaret",
     "lastName": "Cadieux",
     "title": "Senior Lecturer III",
     "email": "Margaret.Cadieux@umb.edu",
     "phone": "617.287.7989"
+  },
+  {
+    "firstName": "Katherine",
+    "lastName": "Hatzis",
+    "title": "Senior Lecturer III",
+    "email": "Katherine.Hatzis@umb.edu",
+    "phone": "617.287.7865"
   },
   {
     "firstName": "Katherine",
@@ -907,13 +914,6 @@
     "lastName": "Giargiari",
     "title": "Senior Lecturer",
     "email": "Michele.Giargiari@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Alison",
-    "lastName": "Freedman",
-    "title": "Associate Lecturer",
-    "email": "Alison.Freedman@umb.edu",
     "phone": null
   },
   {
@@ -938,11 +938,11 @@
     "phone": null
   },
   {
-    "firstName": "Glover",
-    "lastName": "Martin",
-    "title": "Senior Lecturer",
-    "email": "Glover.Martin@umb.edu",
-    "phone": "617.287.6559"
+    "firstName": "William",
+    "lastName": "Horton",
+    "title": "Lecturer",
+    "email": "William.Horton@umb.edu",
+    "phone": "617.287.6143"
   },
   {
     "firstName": "Daniel",
@@ -950,6 +950,13 @@
     "title": "Associate Professor",
     "email": "Daniel.Dowling@umb.edu",
     "phone": "617.287.5853"
+  },
+  {
+    "firstName": "Glover",
+    "lastName": "Martin",
+    "title": "Senior Lecturer",
+    "email": "Glover.Martin@umb.edu",
+    "phone": "617.287.6559"
   },
   {
     "firstName": "Leslie",
@@ -968,7 +975,7 @@
   {
     "firstName": "Jeremy",
     "lastName": "Liew",
-    "title": "Associate Lecturer",
+    "title": "Hourly Research Fellow",
     "email": "Jeremy.Liew001@umb.edu",
     "phone": null
   },
@@ -1099,6 +1106,13 @@
     "phone": "617.287.3236"
   },
   {
+    "firstName": "Kellee",
+    "lastName": "Siegfried-Harris",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
     "firstName": "Bela",
     "lastName": "Torok",
     "title": "Professor",
@@ -1125,13 +1139,6 @@
     "title": "Professor",
     "email": "Wei.Zhang@umb.edu",
     "phone": "617.287.3946"
-  },
-  {
-    "firstName": "Kellee",
-    "lastName": "Siegfried-Harris",
-    "title": null,
-    "email": null,
-    "phone": null
   },
   {
     "firstName": "Christina",
@@ -1176,10 +1183,24 @@
     "phone": null
   },
   {
+    "firstName": "James",
+    "lastName": "Stark",
+    "title": "Senior Lecturer",
+    "email": "James.Stark@umb.edu",
+    "phone": "617.287.6584"
+  },
+  {
     "firstName": "Delaney",
     "lastName": "Bowen",
     "title": "Lecturer",
     "email": "Delaney.Bowen001@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Cheyenne",
+    "lastName": "Petrino",
+    "title": "Departmental Assistant -Hourly",
+    "email": "Cheyenne.Petrino@umb.edu",
     "phone": null
   },
   {
@@ -1188,6 +1209,13 @@
     "title": "Lecturer",
     "email": "Stephanie.Wood@umb.edu",
     "phone": "617.287.6585"
+  },
+  {
+    "firstName": "Peyton",
+    "lastName": "Haifley",
+    "title": null,
+    "email": null,
+    "phone": null
   },
   {
     "firstName": "Anthony",
@@ -1239,6 +1267,13 @@
     "phone": "617.287.4617"
   },
   {
+    "firstName": "Kaitlyn",
+    "lastName": "Williams",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
     "firstName": "Liam",
     "lastName": "Revell",
     "title": "Professor",
@@ -1281,6 +1316,13 @@
     "phone": null
   },
   {
+    "firstName": "Jarrett",
+    "lastName": "Byrnes",
+    "title": "Associate Professor",
+    "email": "Jarrett.Byrnes@umb.edu",
+    "phone": "617.287.3145"
+  },
+  {
     "firstName": "Jennifer",
     "lastName": "Bender",
     "title": "Program Coordinator",
@@ -1295,13 +1337,6 @@
     "phone": "617.287.6572"
   },
   {
-    "firstName": "Mayra",
-    "lastName": "Cadorin Vidal",
-    "title": "Assistant Professor",
-    "email": "Mayra.CadorinVidal@umb.edu",
-    "phone": "617.287.6619"
-  },
-  {
     "firstName": "Albert",
     "lastName": "Kao",
     "title": "Assistant Professor",
@@ -1309,11 +1344,11 @@
     "phone": null
   },
   {
-    "firstName": "Jarrett",
-    "lastName": "Byrnes",
-    "title": "Associate Professor",
-    "email": "Jarrett.Byrnes@umb.edu",
-    "phone": "617.287.3145"
+    "firstName": "Daniel",
+    "lastName": "Buitrago",
+    "title": null,
+    "email": null,
+    "phone": null
   },
   {
     "firstName": "Nichola",
@@ -1323,9 +1358,30 @@
     "phone": "617.287.6675"
   },
   {
+    "firstName": "Guilherme",
+    "lastName": "Ortigara Longo",
+    "title": "Assistant Professor",
+    "email": "Guilherme.Longo@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Mayra",
+    "lastName": "Cadorin Vidal",
+    "title": "Assistant Professor",
+    "email": "Mayra.CadorinVidal@umb.edu",
+    "phone": "617.287.6619"
+  },
+  {
+    "firstName": "Joanna",
+    "lastName": "Dahl",
+    "title": "Associate Professor",
+    "email": "Joanna.Dahl@umb.edu",
+    "phone": "617.287.7433"
+  },
+  {
     "firstName": "Brooke",
     "lastName": "Moyers",
-    "title": "Assistant Professor",
+    "title": "Dir of Curriculum & STEM Engmt",
     "email": "Brook.Moyers@umb.edu",
     "phone": null
   },
@@ -1384,6 +1440,13 @@
     "title": "Senior Lecturer III",
     "email": "Mridula.Satyamurti@umb.edu",
     "phone": "617.287.6139"
+  },
+  {
+    "firstName": "Manisha",
+    "lastName": "Mishra",
+    "title": "Senior Lecturer",
+    "email": "Manisha.Mishra@umb.edu",
+    "phone": null
   },
   {
     "firstName": "Sumeyra",
@@ -1463,6 +1526,20 @@
     "phone": null
   },
   {
+    "firstName": "Ryan",
+    "lastName": "Riddell",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
+    "firstName": "Camille",
+    "lastName": "Tinerella",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
     "firstName": "Hom",
     "lastName": "Rijal",
     "title": null,
@@ -1491,13 +1568,6 @@
     "phone": null
   },
   {
-    "firstName": "Camille",
-    "lastName": "Tinerella",
-    "title": null,
-    "email": null,
-    "phone": null
-  },
-  {
     "firstName": "Massimo",
     "lastName": "Ruscitti",
     "title": null,
@@ -1512,31 +1582,24 @@
     "phone": null
   },
   {
-    "firstName": "Ryan",
-    "lastName": "Riddell",
+    "firstName": "Jiaming",
+    "lastName": "Zhu",
     "title": null,
     "email": null,
     "phone": null
   },
   {
-    "firstName": "William",
-    "lastName": "Horton",
-    "title": "Lecturer",
-    "email": "William.Horton@umb.edu",
-    "phone": "617.287.6143"
+    "firstName": "Cailyn",
+    "lastName": "Root",
+    "title": null,
+    "email": null,
+    "phone": null
   },
   {
     "firstName": "Robert",
     "lastName": "Carter",
     "title": null,
     "email": null,
-    "phone": null
-  },
-  {
-    "firstName": "Manisha",
-    "lastName": "Mishra",
-    "title": "Senior Lecturer",
-    "email": "Manisha.Mishra@umb.edu",
     "phone": null
   },
   {
@@ -1552,6 +1615,13 @@
     "title": "Senior Lecturer",
     "email": "Gita.Venkatakrishnan@umb.edu",
     "phone": "617.287.6117"
+  },
+  {
+    "firstName": "David",
+    "lastName": "Daggett",
+    "title": null,
+    "email": null,
+    "phone": null
   },
   {
     "firstName": "Maithili",
@@ -1575,8 +1645,8 @@
     "phone": null
   },
   {
-    "firstName": "Jiaming",
-    "lastName": "Zhu",
+    "firstName": "Asher",
+    "lastName": "Stocker",
     "title": null,
     "email": null,
     "phone": null
@@ -1605,6 +1675,13 @@
   {
     "firstName": "Maxim",
     "lastName": "Mastyugin",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
+    "firstName": "Sabrina",
+    "lastName": "Delsas",
     "title": null,
     "email": null,
     "phone": null
@@ -1640,8 +1717,8 @@
   {
     "firstName": "Mariam",
     "lastName": "Ismail",
-    "title": "Assistant Professor",
-    "email": "Mariam.Ismail@umb.edu",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -1664,13 +1741,6 @@
     "title": "Senior Lecturer",
     "email": "Linda.Liu@umb.edu",
     "phone": null
-  },
-  {
-    "firstName": "Katharina",
-    "lastName": "Loew",
-    "title": "Associate Professor",
-    "email": "Katharina.Loew@umb.edu",
-    "phone": "617.287.5642"
   },
   {
     "firstName": "Marco",
@@ -1701,11 +1771,25 @@
     "phone": null
   },
   {
+    "firstName": "Katharina",
+    "lastName": "Loew",
+    "title": "Associate Professor",
+    "email": "Katharina.Loew@umb.edu",
+    "phone": "617.287.5642"
+  },
+  {
     "firstName": "Sarah",
     "lastName": "Hamblin",
     "title": "Graduate Program Director/Associate Professor",
     "email": "Sarah.Hamblin@umb.edu",
     "phone": null
+  },
+  {
+    "firstName": "Kenneth",
+    "lastName": "Rothwell Jr",
+    "title": "Professor",
+    "email": "Kenneth.Rothwell@umb.edu",
+    "phone": "617.287.6120"
   },
   {
     "firstName": "Kellee",
@@ -1720,6 +1804,13 @@
     "title": "Dept Chair & Associate Prof",
     "email": "Jason.VonEhrenkrook@umb.edu",
     "phone": null
+  },
+  {
+    "firstName": "Christopher",
+    "lastName": "Cochran",
+    "title": "Assistant Professor",
+    "email": "Christopher.Cochran@umb.edu",
+    "phone": "617.287.6121"
   },
   {
     "firstName": "Michael",
@@ -1748,20 +1839,6 @@
     "title": "Lecturer",
     "email": "Michael.Motia@umb.edu",
     "phone": null
-  },
-  {
-    "firstName": "Christopher",
-    "lastName": "Cochran",
-    "title": "Assistant Professor",
-    "email": "Christopher.Cochran@umb.edu",
-    "phone": "617.287.6121"
-  },
-  {
-    "firstName": "Kenneth",
-    "lastName": "Rothwell Jr",
-    "title": "Professor",
-    "email": "Kenneth.Rothwell@umb.edu",
-    "phone": "617.287.6120"
   },
   {
     "firstName": "Diane",
@@ -1876,10 +1953,38 @@
     "phone": "617.287.3144"
   },
   {
+    "firstName": "Andrea",
+    "lastName": "Warren",
+    "title": "Associate Lecturer",
+    "email": "Andria.Warren@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Iuliia",
+    "lastName": "Fakhrutdinova",
+    "title": "Associate Lecturer",
+    "email": "I.Fakhrutdinova001@umb.edu",
+    "phone": null
+  },
+  {
     "firstName": "Ian",
     "lastName": "Drinkwater",
     "title": "Senior Lecturer",
     "email": "Ian.Drinkwater@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Cynthia",
+    "lastName": "Conti",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
+    "firstName": "Julia",
+    "lastName": "Djeke",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -1918,13 +2023,6 @@
     "phone": null
   },
   {
-    "firstName": "Wei",
-    "lastName": "Ding",
-    "title": "Distinguished Professor",
-    "email": "Wei.Ding@umb.edu",
-    "phone": "617.287.6428"
-  },
-  {
     "firstName": "Swaminathan",
     "lastName": "Iyer",
     "title": "Senior Lecturer",
@@ -1953,15 +2051,8 @@
     "phone": null
   },
   {
-    "firstName": "Christopher",
-    "lastName": "Kelly",
-    "title": "Lecturer",
-    "email": "Christopher.Kelly005@umb.edu",
-    "phone": "617.287.6490"
-  },
-  {
-    "firstName": "Sang Hyuk",
-    "lastName": "Kim",
+    "firstName": "Satya Naga Srikar",
+    "lastName": "Kodavati",
     "title": null,
     "email": null,
     "phone": null
@@ -1981,8 +2072,8 @@
     "phone": null
   },
   {
-    "firstName": "Fatemeh",
-    "lastName": "Ensafitakaldani",
+    "firstName": "Paul",
+    "lastName": "Maynard",
     "title": null,
     "email": null,
     "phone": null
@@ -2093,6 +2184,13 @@
     "phone": null
   },
   {
+    "firstName": "Wei",
+    "lastName": "Ding",
+    "title": "Distinguished Professor",
+    "email": "Wei.Ding@umb.edu",
+    "phone": "617.287.6428"
+  },
+  {
     "firstName": "Bo",
     "lastName": "Sheng",
     "title": "Professor",
@@ -2137,9 +2235,9 @@
   {
     "firstName": "Temitayo",
     "lastName": "Banjo",
-    "title": "Senior Lecturer",
-    "email": "Temitayo.Banjo@umb.edu",
-    "phone": "617.287.3827"
+    "title": null,
+    "email": null,
+    "phone": null
   },
   {
     "firstName": "Glenn",
@@ -2147,13 +2245,6 @@
     "title": "Senior Lecturer",
     "email": "Glenn.Hoffman@umb.edu",
     "phone": "617.287.6475"
-  },
-  {
-    "firstName": "Junichi",
-    "lastName": "Suzuki",
-    "title": "Associate Professor",
-    "email": "Junichi.Suzuki@umb.edu",
-    "phone": "617.287.6462"
   },
   {
     "firstName": "Torna",
@@ -2167,6 +2258,20 @@
     "lastName": "Maroney",
     "title": "Assistant Professor",
     "email": "Meredith.Maroney@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Rachel",
+    "lastName": "Shinnick",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
+    "firstName": "Aashika",
+    "lastName": "Anantharaman",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -2212,13 +2317,6 @@
     "phone": null
   },
   {
-    "firstName": "Edna",
-    "lastName": "De Pina",
-    "title": null,
-    "email": null,
-    "phone": null
-  },
-  {
     "firstName": "Muqing",
     "lastName": "Zhang",
     "title": null,
@@ -2226,10 +2324,17 @@
     "phone": null
   },
   {
+    "firstName": "Edna",
+    "lastName": "De Pina",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
     "firstName": "Mayra",
     "lastName": "Cuevas",
-    "title": "Assoc Lecturer A",
-    "email": "Mayra.Cuevas001@umb.edu",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -2240,18 +2345,25 @@
     "phone": "617.287.4517"
   },
   {
-    "firstName": "Natalie",
-    "lastName": "Calixto",
-    "title": "Fiscal & Program Assistant",
-    "email": "Natalie.Calixto@umb.edu",
-    "phone": "617.287.7503"
-  },
-  {
     "firstName": "Debra",
     "lastName": "Johnston-Malden",
     "title": "Lecturer",
     "email": "Debra.JohnstonMalden@umb.edu",
     "phone": "617.287.4620"
+  },
+  {
+    "firstName": "Rita",
+    "lastName": "Rzezuski",
+    "title": "Lecturer",
+    "email": "Rita.Rzezuski@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Da Hei",
+    "lastName": "Ku",
+    "title": "Assistant Professor",
+    "email": "DaHei.Ku@umb.edu",
+    "phone": "617.287.7635"
   },
   {
     "firstName": "Jennifer",
@@ -2261,18 +2373,18 @@
     "phone": null
   },
   {
-    "firstName": "Saameh",
-    "lastName": "Solaimani",
-    "title": "Lecturer",
-    "email": "Saameh.Solaimani@umb.edu",
-    "phone": null
-  },
-  {
     "firstName": "Serra",
     "lastName": "Acar",
     "title": "Graduate Program Director/Associate Professor",
     "email": "Serra.Acar@umb.edu",
     "phone": "617.287.3873"
+  },
+  {
+    "firstName": "Saameh",
+    "lastName": "Solaimani",
+    "title": "Lecturer",
+    "email": "Saameh.Solaimani@umb.edu",
+    "phone": null
   },
   {
     "firstName": "Eunsuk",
@@ -2308,13 +2420,6 @@
     "title": "Associate Lecturer",
     "email": "Caroline.Blackman@umb.edu",
     "phone": "617.287.4295"
-  },
-  {
-    "firstName": "Rita",
-    "lastName": "Rzezuski",
-    "title": "Lecturer",
-    "email": "Rita.Rzezuski@umb.edu",
-    "phone": null
   },
   {
     "firstName": "Cheryl",
@@ -2373,6 +2478,13 @@
     "phone": null
   },
   {
+    "firstName": "Ayesha",
+    "lastName": "Ali",
+    "title": "Lecturer",
+    "email": "Ayesha.Ali@umb.edu",
+    "phone": null
+  },
+  {
     "firstName": "Joanne",
     "lastName": "Spitz",
     "title": "Senior Lecturer III",
@@ -2385,13 +2497,6 @@
     "title": "Senior Lecturer III",
     "email": "Peter.Janson@umb.edu",
     "phone": "617.287.6990"
-  },
-  {
-    "firstName": "Ayesha",
-    "lastName": "Ali",
-    "title": "Lecturer",
-    "email": "Ayesha.Ali@umb.edu",
-    "phone": null
   },
   {
     "firstName": "Ilaria",
@@ -2410,8 +2515,8 @@
   {
     "firstName": "Jennifer",
     "lastName": "Clifford",
-    "title": "Assoc Lecturer A",
-    "email": "Jennifer.Clifford@umb.edu",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -2590,6 +2695,13 @@
     "phone": "617.287.4826"
   },
   {
+    "firstName": "Heidi",
+    "lastName": "Stanish",
+    "title": "Professor",
+    "email": "Heidi.Stanish@umb.edu",
+    "phone": "617.287.7465"
+  },
+  {
     "firstName": "Beth-Anne",
     "lastName": "Alves",
     "title": "Lecturer",
@@ -2611,6 +2723,13 @@
     "phone": "617.287.7475"
   },
   {
+    "firstName": "Nan",
+    "lastName": "Zeng",
+    "title": "Assistant Professor",
+    "email": "Nan.Zeng@umb.edu",
+    "phone": "617.287.4867"
+  },
+  {
     "firstName": "Dana",
     "lastName": "Commesso",
     "title": "Interim Department Chair",
@@ -2623,20 +2742,6 @@
     "title": "Professor",
     "email": "Ana.Lindsay@umb.edu",
     "phone": "617.287.7579"
-  },
-  {
-    "firstName": "Heidi",
-    "lastName": "Stanish",
-    "title": "Professor",
-    "email": "Heidi.Stanish@umb.edu",
-    "phone": "617.287.7465"
-  },
-  {
-    "firstName": "Nan",
-    "lastName": "Zeng",
-    "title": "Assistant Professor",
-    "email": "Nan.Zeng@umb.edu",
-    "phone": "617.287.4867"
   },
   {
     "firstName": "Tracy",
@@ -2672,13 +2777,6 @@
     "title": "Professor",
     "email": "Kim.Hamad@umb.edu",
     "phone": "617.287.6390"
-  },
-  {
-    "firstName": "Joanna",
-    "lastName": "Dahl",
-    "title": "Associate Professor",
-    "email": "Joanna.Dahl@umb.edu",
-    "phone": "617.287.7433"
   },
   {
     "firstName": "Gang",
@@ -2751,10 +2849,227 @@
     "phone": null
   },
   {
+    "firstName": "Todd",
+    "lastName": "Drogy",
+    "title": "Senior Lecturer III",
+    "email": "Todd.Drogy@umb.edu",
+    "phone": "617.287.6700"
+  },
+  {
+    "firstName": "Michael",
+    "lastName": "Chao",
+    "title": "Lecturer",
+    "email": "Michael.Chao@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "William",
+    "lastName": "Gratza-Wells",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
+    "firstName": "Mary",
+    "lastName": "Mangual",
+    "title": "Lecturer",
+    "email": "Mary.Mangual@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Susan",
+    "lastName": "Svendsgaard",
+    "title": "Associate Lecturer",
+    "email": "Susan.Svendsgaard@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Tyler",
+    "lastName": "Hauth",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
+    "firstName": "Jamie",
+    "lastName": "Millen",
+    "title": "Lecturer",
+    "email": "Jamie.Millen@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Danielle",
+    "lastName": "Kodess",
+    "title": "Lecturer",
+    "email": "Danielle.Kodess@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Matthew",
+    "lastName": "Shiels",
+    "title": "Lecturer",
+    "email": "Matthew.Shiels@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Paul",
+    "lastName": "Dyson Jr",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
+    "firstName": "Itai",
+    "lastName": "Halevi",
+    "title": "Senior Lecturer III",
+    "email": "Itai.Halevi@umb.edu",
+    "phone": "617.287.6700"
+  },
+  {
+    "firstName": "Maura",
+    "lastName": "Norton",
+    "title": "Senior Lecturer",
+    "email": "Maura.Norton@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Brendan",
+    "lastName": "Holloway",
+    "title": "Lecturer",
+    "email": "Brendan.Holloway@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Ryan",
+    "lastName": "Meyer",
+    "title": "Associate Lecturer",
+    "email": "Ryan.Meyer@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Clarissa",
+    "lastName": "Eaton",
+    "title": "Lecturer",
+    "email": "Clarissa.Eaton@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Kinlee",
+    "lastName": "Whitney",
+    "title": "Associate Lecturer",
+    "email": "Kinlee.Whitney@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Courtney",
+    "lastName": "Whited",
+    "title": "Lecturer",
+    "email": "Courtney.Whited@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Ashley",
+    "lastName": "Collins",
+    "title": "Lecturer",
+    "email": "Ashley.Collins@umb.edu",
+    "phone": null
+  },
+  {
     "firstName": "Conor",
     "lastName": "McMahon",
     "title": "Associate Lecturer",
     "email": "Conor.McMahon@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Walker",
+    "lastName": "Perreault",
+    "title": "Associate Lecturer",
+    "email": "Walker.Perreault@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Natalia",
+    "lastName": "Scarpetti",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
+    "firstName": "Joseph",
+    "lastName": "Piazza",
+    "title": "Senior Lecturer III",
+    "email": "Joseph.Piazza@umb.edu",
+    "phone": "617.287.6700"
+  },
+  {
+    "firstName": "Sabina",
+    "lastName": "Lindsey",
+    "title": "Lecturer",
+    "email": "Sabina.Lindsey@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Brian",
+    "lastName": "Meredith",
+    "title": "Senior Lecturer",
+    "email": "Brian.Meredith@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Janet",
+    "lastName": "Stevens",
+    "title": "Senior Lecturer II",
+    "email": "Janet.Stevens@umb.edu",
+    "phone": "617.287.6700"
+  },
+  {
+    "firstName": "Raul",
+    "lastName": "Ybarra",
+    "title": "Assoc Professor U of M",
+    "email": "Raul.Ybarra@umb.edu",
+    "phone": "617.287.7158"
+  },
+  {
+    "firstName": "Jennifer",
+    "lastName": "Grouling Snider",
+    "title": "Lecturer",
+    "email": "JA.GroulingSnider@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Adam",
+    "lastName": "Mooney",
+    "title": "Lecturer",
+    "email": "Adam.Mooney@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Mark",
+    "lastName": "Earley",
+    "title": "Senior Lecturer",
+    "email": "Mark.Earley@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Nathan",
+    "lastName": "Schneider",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
+    "firstName": "Marta",
+    "lastName": "Martinez Earley",
+    "title": "Senior Lecturer III",
+    "email": "Marta.MartinezEarley@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Carol",
+    "lastName": "Chandler-Rourke",
+    "title": "Senior Lecturer III",
+    "email": "Carol.Chandler@umb.edu",
     "phone": null
   },
   {
@@ -2786,27 +3101,6 @@
     "phone": null
   },
   {
-    "firstName": "Todd",
-    "lastName": "Drogy",
-    "title": "Senior Lecturer III",
-    "email": "Todd.Drogy@umb.edu",
-    "phone": "617.287.6700"
-  },
-  {
-    "firstName": "Joseph",
-    "lastName": "Piazza",
-    "title": "Senior Lecturer III",
-    "email": "Joseph.Piazza@umb.edu",
-    "phone": "617.287.6700"
-  },
-  {
-    "firstName": "Courtney",
-    "lastName": "Whited",
-    "title": "Lecturer",
-    "email": "Courtney.Whited@umb.edu",
-    "phone": null
-  },
-  {
     "firstName": "Susan",
     "lastName": "Matteucci",
     "title": null,
@@ -2819,13 +3113,6 @@
     "title": null,
     "email": null,
     "phone": null
-  },
-  {
-    "firstName": "Raul",
-    "lastName": "Ybarra",
-    "title": "Assoc Professor U of M",
-    "email": "Raul.Ybarra@umb.edu",
-    "phone": "617.287.7158"
   },
   {
     "firstName": "Thomas",
@@ -2842,185 +3129,10 @@
     "phone": null
   },
   {
-    "firstName": "Adam",
-    "lastName": "Mooney",
-    "title": "Lecturer",
-    "email": "Adam.Mooney@umb.edu",
-    "phone": null
-  },
-  {
     "firstName": "Theodora",
     "lastName": "Dimitrakopoulos",
     "title": "Senior Lecturer III",
     "email": "Teddy.Chocos@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Carol",
-    "lastName": "Chandler-Rourke",
-    "title": "Senior Lecturer III",
-    "email": "Carol.Chandler@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Marta",
-    "lastName": "Martinez Earley",
-    "title": "Senior Lecturer III",
-    "email": "Marta.MartinezEarley@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Janet",
-    "lastName": "Stevens",
-    "title": "Senior Lecturer II",
-    "email": "Janet.Stevens@umb.edu",
-    "phone": "617.287.6700"
-  },
-  {
-    "firstName": "Paul",
-    "lastName": "Dyson Jr",
-    "title": null,
-    "email": null,
-    "phone": null
-  },
-  {
-    "firstName": "Brittanie",
-    "lastName": "Weatherbie-Greco",
-    "title": "Senior Lecturer",
-    "email": "Brittanie.Greco@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Clarissa",
-    "lastName": "Eaton",
-    "title": "Lecturer",
-    "email": "Clarissa.Eaton@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Walker",
-    "lastName": "Perreault",
-    "title": "Associate Lecturer",
-    "email": "Walker.Perreault001@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Michael",
-    "lastName": "Chao",
-    "title": "Lecturer",
-    "email": "Michael.Chao@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Sabina",
-    "lastName": "Lindsey",
-    "title": "Lecturer",
-    "email": "Sabina.Lindsey@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Kinlee",
-    "lastName": "Whitney",
-    "title": "Associate Lecturer",
-    "email": "Kinlee.Whitney@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Jennifer",
-    "lastName": "Grouling Snider",
-    "title": "Lecturer",
-    "email": "JA.GroulingSnider@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Maura",
-    "lastName": "Norton",
-    "title": "Senior Lecturer",
-    "email": "Maura.Norton@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Itai",
-    "lastName": "Halevi",
-    "title": "Senior Lecturer III",
-    "email": "Itai.Halevi@umb.edu",
-    "phone": "617.287.6700"
-  },
-  {
-    "firstName": "Karen",
-    "lastName": "Grayson",
-    "title": "Senior Lecturer II",
-    "email": "Karen.Grayson@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Danielle",
-    "lastName": "Kodess",
-    "title": "Lecturer",
-    "email": "Danielle.Kodess@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Ryan",
-    "lastName": "Meyer",
-    "title": "Associate Lecturer",
-    "email": "Ryan.Meyer@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Sandra",
-    "lastName": "Howland",
-    "title": "Senior Lecturer III",
-    "email": "Sandra.Howland@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Ashley",
-    "lastName": "Collins",
-    "title": "Lecturer",
-    "email": "Ashley.Collins@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Brian",
-    "lastName": "Meredith",
-    "title": "Senior Lecturer",
-    "email": "Brian.Meredith@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Susan",
-    "lastName": "Svendsgaard",
-    "title": "Associate Lecturer",
-    "email": "Susan.Svendsgaard@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Paul",
-    "lastName": "Haney",
-    "title": "Senior Lecturer",
-    "email": "Paul.Haney@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Jamie",
-    "lastName": "Millen",
-    "title": "Lecturer",
-    "email": "Jamie.Millen@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Brendan",
-    "lastName": "Holloway",
-    "title": "Lecturer",
-    "email": "Brendan.Holloway@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Stephanie",
-    "lastName": "Roberts",
-    "title": "Associate Lecturer",
-    "email": "Stephanie.Roberts003@umb.edu",
     "phone": null
   },
   {
@@ -3031,32 +3143,39 @@
     "phone": null
   },
   {
-    "firstName": "Matthew",
-    "lastName": "Shiels",
-    "title": "Lecturer",
-    "email": "Matthew.Shiels@umb.edu",
+    "firstName": "Brittanie",
+    "lastName": "Weatherbie-Greco",
+    "title": "Senior Lecturer",
+    "email": "Brittanie.Greco@umb.edu",
     "phone": null
   },
   {
-    "firstName": "Mary",
-    "lastName": "Mangual",
-    "title": "Lecturer",
-    "email": "Mary.Mangual@umb.edu",
+    "firstName": "Karen",
+    "lastName": "Grayson",
+    "title": "Senior Lecturer II",
+    "email": "Karen.Grayson@umb.edu",
     "phone": null
   },
   {
-    "firstName": "Natalia",
-    "lastName": "Scarpetti",
-    "title": null,
-    "email": null,
+    "firstName": "Daniel",
+    "lastName": "Messier",
+    "title": "Senior Lecturer II",
+    "email": "Daniel.Messier@umb.edu",
+    "phone": "617.287.6700"
+  },
+  {
+    "firstName": "Paul",
+    "lastName": "Haney",
+    "title": "Senior Lecturer",
+    "email": "Paul.Haney@umb.edu",
     "phone": null
   },
   {
-    "firstName": "William",
-    "lastName": "Gratza-Wells",
-    "title": null,
-    "email": null,
-    "phone": null
+    "firstName": "Adam",
+    "lastName": "Cassell",
+    "title": "ROI Department Head",
+    "email": "Adam.Cassell@umb.edu",
+    "phone": "617.287.6132"
   },
   {
     "firstName": "Brittany",
@@ -3066,11 +3185,25 @@
     "phone": null
   },
   {
-    "firstName": "Daniel",
-    "lastName": "Messier",
-    "title": "Senior Lecturer II",
-    "email": "Daniel.Messier@umb.edu",
-    "phone": "617.287.6700"
+    "firstName": "Hadi",
+    "lastName": "Banat",
+    "title": "Assistant Professor",
+    "email": "Hadi.Banat@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Sandra",
+    "lastName": "Howland",
+    "title": "Senior Lecturer III",
+    "email": "Sandra.Howland@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Stephanie",
+    "lastName": "Roberts",
+    "title": "Associate Lecturer",
+    "email": "Stephanie.Roberts003@umb.edu",
+    "phone": null
   },
   {
     "firstName": "Megan",
@@ -3098,20 +3231,6 @@
     "lastName": "Oleksiak",
     "title": "Associate Professor",
     "email": "Timothy.Oleksiak@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Mark",
-    "lastName": "Earley",
-    "title": "Senior Lecturer",
-    "email": "Mark.Earley@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Hadi",
-    "lastName": "Banat",
-    "title": "Assistant Professor",
-    "email": "Hadi.Banat@umb.edu",
     "phone": null
   },
   {
@@ -3367,13 +3486,6 @@
     "phone": "617.287.6761"
   },
   {
-    "firstName": "Shangyang",
-    "lastName": "Fang",
-    "title": "Assistant Professor",
-    "email": "Shangyang.Fang@umb.edu",
-    "phone": null
-  },
-  {
     "firstName": "Matthew",
     "lastName": "Miller",
     "title": "Associate Lecturer",
@@ -3399,13 +3511,6 @@
     "lastName": "Sauri",
     "title": "Professor",
     "email": "Emilio.Sauri@umb.edu",
-    "phone": "617.287.6700"
-  },
-  {
-    "firstName": "Sari",
-    "lastName": "Edelstein",
-    "title": "Professor",
-    "email": "Sari.Edelstein@umb.edu",
     "phone": "617.287.6700"
   },
   {
@@ -3642,8 +3747,8 @@
   {
     "firstName": "Munjed",
     "lastName": "Murad",
-    "title": "Associate Lecturer",
-    "email": "Munjed.Murad@umb.edu",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -3675,6 +3780,13 @@
     "phone": "617.287.5821"
   },
   {
+    "firstName": "Aysah",
+    "lastName": "Dalton",
+    "title": "Academic Success Advisor",
+    "email": "Aysah.Dalton@umb.edu",
+    "phone": null
+  },
+  {
     "firstName": "Bruce",
     "lastName": "Hallgren",
     "title": "Academic Success Advisor",
@@ -3696,13 +3808,6 @@
     "phone": "617.287.5820"
   },
   {
-    "firstName": "Aysah",
-    "lastName": "Dalton",
-    "title": "Academic Success Advisor",
-    "email": "Aysah.Dalton@umb.edu",
-    "phone": null
-  },
-  {
     "firstName": "Sokpagna",
     "lastName": "Chuon",
     "title": "Program Coordinator",
@@ -3717,6 +3822,13 @@
     "phone": null
   },
   {
+    "firstName": "Marie",
+    "lastName": "Brun",
+    "title": "Associate Professor",
+    "email": "Maria.Brincker@umb.edu",
+    "phone": null
+  },
+  {
     "firstName": "Thierry",
     "lastName": "Gustave",
     "title": "Senior Lecturer",
@@ -3726,15 +3838,8 @@
   {
     "firstName": "Alice",
     "lastName": "Yamada",
-    "title": "Associate Lecturer",
-    "email": "Alice.Yamada@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Marie",
-    "lastName": "Brun",
-    "title": "Associate Professor",
-    "email": "Maria.Brincker@umb.edu",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -3845,8 +3950,8 @@
   {
     "firstName": "Debra",
     "lastName": "Dodds",
-    "title": "Assoc Lecturer A",
-    "email": "Debra.Dodds@umb.edu",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -3866,9 +3971,9 @@
   {
     "firstName": "Ellen",
     "lastName": "Birchander",
-    "title": null,
-    "email": null,
-    "phone": null
+    "title": "Research Fellow - Non Benefit",
+    "email": "Ellen.Birchander@umb.edu",
+    "phone": "617.287.7300"
   },
   {
     "firstName": "Qian",
@@ -3971,9 +4076,9 @@
   {
     "firstName": "Matteo",
     "lastName": "Casini",
-    "title": "Associate Lecturer",
-    "email": "Matteo.Casini@umb.edu",
-    "phone": "617.287.6860"
+    "title": null,
+    "email": null,
+    "phone": null
   },
   {
     "firstName": "Gary",
@@ -4039,6 +4144,20 @@
     "phone": "617.287.6860"
   },
   {
+    "firstName": "Kelly",
+    "lastName": "Colvin",
+    "title": "Graduate Program Director/Associate Professor",
+    "email": "Kelly.Colvin@umb.edu",
+    "phone": "617.287.6815"
+  },
+  {
+    "firstName": "Leisa",
+    "lastName": "Morrison",
+    "title": "Assoc Lecturer A",
+    "email": "Leisa.Morrison@umb.edu",
+    "phone": null
+  },
+  {
     "firstName": "Josephine",
     "lastName": "Roberts",
     "title": "Associate Lecturer",
@@ -4062,8 +4181,8 @@
   {
     "firstName": "Linda",
     "lastName": "Connor",
-    "title": null,
-    "email": null,
+    "title": "Assoc Lecturer A",
+    "email": "Linda.Connor001@umb.edu",
     "phone": null
   },
   {
@@ -4071,6 +4190,13 @@
     "lastName": "Alberts",
     "title": "Assoc Lecturer A",
     "email": "Leonard.Alberts@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Norman",
+    "lastName": "Li",
+    "title": "Assoc Lecturer A",
+    "email": "Norman.Li001@umb.edu",
     "phone": null
   },
   {
@@ -4093,6 +4219,13 @@
     "title": "Asst Dean for Budget & Admin",
     "email": "Roxann.Harvey@umb.edu",
     "phone": "617.287.5564"
+  },
+  {
+    "firstName": "Jennifer",
+    "lastName": "Skinnon",
+    "title": "Outreach & Student Success Coordinator",
+    "email": "Jennifer.Skinnon@umb.edu",
+    "phone": "(617) 287-5567"
   },
   {
     "firstName": "Nir",
@@ -4153,8 +4286,8 @@
   {
     "firstName": "Paul",
     "lastName": "Bauer",
-    "title": "Associate Lecturer",
-    "email": "Paul.Bauer@umb.edu",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -4174,7 +4307,7 @@
   {
     "firstName": "Leonard",
     "lastName": "Von Morze",
-    "title": "Professor A & Interim Dean",
+    "title": "Professor A & Dean",
     "email": "Leonard.VonMorze@umb.edu",
     "phone": "617.287.5521"
   },
@@ -4207,11 +4340,25 @@
     "phone": "617.287.7232"
   },
   {
-    "firstName": "Huu",
-    "lastName": "Nguyen",
-    "title": "Sr IT Desktop Supp Consultant",
-    "email": "Hung.Nguyen@umb.edu",
-    "phone": "617.287.5268"
+    "firstName": "Christopher",
+    "lastName": "Kelly",
+    "title": "Lecturer",
+    "email": "Christopher.Kelly005@umb.edu",
+    "phone": "617.287.6490"
+  },
+  {
+    "firstName": "Patricio",
+    "lastName": "Torres-Palacio",
+    "title": "Associate Lecturer",
+    "email": "P.TorresPalacio@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Nelson",
+    "lastName": "Velez",
+    "title": "Senior Lecturer",
+    "email": "Nelson.Velez@umb.edu",
+    "phone": "617.287.7852"
   },
   {
     "firstName": "Hongmin",
@@ -4270,6 +4417,13 @@
     "phone": null
   },
   {
+    "firstName": "Noordeen",
+    "lastName": "Kateregga",
+    "title": "Associate Lecturer",
+    "email": "Noordeen.Kateregga@umb.edu",
+    "phone": null
+  },
+  {
     "firstName": "Saketh",
     "lastName": "Maddineni",
     "title": "Associate Lecturer",
@@ -4284,6 +4438,13 @@
     "phone": "617.287.7736"
   },
   {
+    "firstName": "George",
+    "lastName": "Kelley",
+    "title": "Senior Lecturer II",
+    "email": "George.Kelley@umb.edu",
+    "phone": null
+  },
+  {
     "firstName": "RamaKrishna",
     "lastName": "Ayyagari",
     "title": "Associate Professor",
@@ -4295,27 +4456,6 @@
     "lastName": "Eno",
     "title": "Associate Lecturer",
     "email": "Skyler.Eno@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Nelson",
-    "lastName": "Velez",
-    "title": "Senior Lecturer",
-    "email": "Nelson.Velez@umb.edu",
-    "phone": "617.287.7852"
-  },
-  {
-    "firstName": "Noordeen",
-    "lastName": "Kateregga",
-    "title": "Associate Lecturer",
-    "email": "Noordeen.Kateregga@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "George",
-    "lastName": "Kelley",
-    "title": "Senior Lecturer II",
-    "email": "George.Kelley@umb.edu",
     "phone": null
   },
   {
@@ -4340,10 +4480,10 @@
     "phone": "617.287.5957"
   },
   {
-    "firstName": "Yoko",
-    "lastName": "Yasuhara",
-    "title": "Lecturer",
-    "email": "Yoko.Yasuhara@umb.edu",
+    "firstName": "Maria",
+    "lastName": "Di Bari",
+    "title": "Adjunct Faculty",
+    "email": "Maria.DiBari@umb.edu",
     "phone": null
   },
   {
@@ -4354,10 +4494,17 @@
     "phone": null
   },
   {
+    "firstName": "Yoko",
+    "lastName": "Yasuhara",
+    "title": "Lecturer",
+    "email": "Yoko.Yasuhara@umb.edu",
+    "phone": null
+  },
+  {
     "firstName": "Risa",
     "lastName": "Ginther",
-    "title": null,
-    "email": null,
+    "title": "Assoc Lecturer A",
+    "email": "Risa.Ginther@umb.edu",
     "phone": null
   },
   {
@@ -4396,13 +4543,6 @@
     "phone": "617.287.5521"
   },
   {
-    "firstName": "Maria",
-    "lastName": "Cisterna Gold",
-    "title": "Associate Professor",
-    "email": "Maria.Cisterna@umb.edu",
-    "phone": "617.287.7550"
-  },
-  {
     "firstName": "Adam",
     "lastName": "Beresford",
     "title": "Associate Professor",
@@ -4422,6 +4562,13 @@
     "title": "Senior Lecturer",
     "email": "Monique.Fuguet@umb.edu",
     "phone": "617.287.6440"
+  },
+  {
+    "firstName": "Robert",
+    "lastName": "Moray",
+    "title": null,
+    "email": null,
+    "phone": null
   },
   {
     "firstName": "Joel",
@@ -4447,7 +4594,7 @@
   {
     "firstName": "Shujian",
     "lastName": "Chen",
-    "title": "Associate Lecturer",
+    "title": "Lecturer",
     "email": "Shujian.Chen@umb.edu",
     "phone": null
   },
@@ -4683,18 +4830,18 @@
     "phone": "617.287.6440"
   },
   {
-    "firstName": "Janet",
-    "lastName": "D'Angelo",
-    "title": "Lecturer",
-    "email": "Janet.DAngelo@umb.edu",
-    "phone": null
-  },
-  {
     "firstName": "Samantha",
     "lastName": "Erskine",
     "title": "Assistant Professor",
     "email": "Samantha.Erskine@umb.edu",
     "phone": "617.287.7734"
+  },
+  {
+    "firstName": "Janet",
+    "lastName": "D'Angelo",
+    "title": "Lecturer",
+    "email": "Janet.DAngelo@umb.edu",
+    "phone": null
   },
   {
     "firstName": "Margaret",
@@ -4711,10 +4858,24 @@
     "phone": "617.287.3814"
   },
   {
+    "firstName": "Karla",
+    "lastName": "Corres",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
     "firstName": "Roxanne",
     "lastName": "Winsor",
     "title": "Lecturer",
     "email": "Roxanne.Winsor@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "James",
+    "lastName": "Motley",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -4725,15 +4886,8 @@
     "phone": "617.287.7764"
   },
   {
-    "firstName": "James",
-    "lastName": "Motley",
-    "title": null,
-    "email": null,
-    "phone": null
-  },
-  {
-    "firstName": "Lauren",
-    "lastName": "Lovegood",
+    "firstName": "Patricia",
+    "lastName": "Naya",
     "title": null,
     "email": null,
     "phone": null
@@ -4746,6 +4900,13 @@
     "phone": null
   },
   {
+    "firstName": "Lauren",
+    "lastName": "Lovegood",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
     "firstName": "Janice",
     "lastName": "Goldman",
     "title": "Senior Lecturer III",
@@ -4755,9 +4916,9 @@
   {
     "firstName": "Matthew",
     "lastName": "Oleyer",
-    "title": "Associate Lecturer",
-    "email": "Matthew.Oleyer@umb.edu",
-    "phone": null
+    "title": "Assoc Vice Provost/Dir of ORSP",
+    "email": "Matthew.Meyer@umb.edu",
+    "phone": "617.287.5372"
   },
   {
     "firstName": "Benyamin",
@@ -4774,6 +4935,13 @@
     "phone": "617.287.7871"
   },
   {
+    "firstName": "Silvia",
+    "lastName": "Dorado-Banacloche",
+    "title": "Grad Prog Dir/Professor",
+    "email": "Silvia.Dorado@umb.edu",
+    "phone": "617.287.7751"
+  },
+  {
     "firstName": "Hyeun",
     "lastName": "Lee",
     "title": null,
@@ -4785,13 +4953,6 @@
     "lastName": "McCormack",
     "title": "Lecturer",
     "email": "James.McCormack@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Scott",
-    "lastName": "Todaro",
-    "title": "Lecturer",
-    "email": "Scott.Todaro@umb.edu",
     "phone": null
   },
   {
@@ -4809,10 +4970,38 @@
     "phone": null
   },
   {
+    "firstName": "Leon",
+    "lastName": "Zurawicki",
+    "title": "Professor U Of M",
+    "email": "Leon.Zurawicki@umb.edu",
+    "phone": "617.287.7735"
+  },
+  {
+    "firstName": "Tzushuo",
+    "lastName": "Wang",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
+    "firstName": "Scott",
+    "lastName": "Todaro",
+    "title": "Lecturer",
+    "email": "Scott.Todaro@umb.edu",
+    "phone": null
+  },
+  {
     "firstName": "Zachary",
     "lastName": "Scola",
     "title": "Assistant Professor",
     "email": "Zachary.Scola@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Alemayehu",
+    "lastName": "Bekele",
+    "title": "Associate Lecturer",
+    "email": "Alemayehu.Bekele@umb.edu",
     "phone": null
   },
   {
@@ -4823,13 +5012,6 @@
     "phone": "617.287.7739"
   },
   {
-    "firstName": "Paul",
-    "lastName": "Napolitano",
-    "title": "Lecturer",
-    "email": "Paul.Napolitano@umb.edu",
-    "phone": null
-  },
-  {
     "firstName": "Werner",
     "lastName": "Kunz",
     "title": "Professor",
@@ -4837,10 +5019,10 @@
     "phone": "617.287.7709"
   },
   {
-    "firstName": "Alemayehu",
-    "lastName": "Bekele",
-    "title": "Associate Lecturer",
-    "email": "Alemayehu.Bekele@umb.edu",
+    "firstName": "Paul",
+    "lastName": "Napolitano",
+    "title": "Lecturer",
+    "email": "Paul.Napolitano@umb.edu",
     "phone": null
   },
   {
@@ -4879,10 +5061,17 @@
     "phone": null
   },
   {
-    "firstName": "Patricio",
-    "lastName": "Torres-Palacio",
-    "title": "Associate Lecturer",
-    "email": "P.TorresPalacio@umb.edu",
+    "firstName": "Kai",
+    "lastName": "Yang",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
+    "firstName": "Ping",
+    "lastName": "Lin",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -4891,13 +5080,6 @@
     "title": "Professor",
     "email": "Jeff.Keisler@umb.edu",
     "phone": "617.287.7738"
-  },
-  {
-    "firstName": "Edward",
-    "lastName": "Cook",
-    "title": "Senior Lecturer",
-    "email": "Edward.Cook@umb.edu",
-    "phone": "617.287.7843"
   },
   {
     "firstName": "Moumita",
@@ -4921,11 +5103,25 @@
     "phone": "617.287.7888"
   },
   {
+    "firstName": "Fahimeh",
+    "lastName": "Rahmanniyaychomachaei",
+    "title": "Assistant Professor",
+    "email": "Fahimeh.Chomachaei@umb.edu",
+    "phone": "617.287.7730"
+  },
+  {
     "firstName": "Mary",
     "lastName": "Holley",
     "title": "Associate Lecturer",
     "email": "Mary.Holley@umb.edu",
     "phone": null
+  },
+  {
+    "firstName": "Peng",
+    "lastName": "Xu",
+    "title": "Department Chair",
+    "email": "Peng.Xu@umb.edu",
+    "phone": "617.287.7882"
   },
   {
     "firstName": "David",
@@ -4998,11 +5194,25 @@
     "phone": "617.287.6987"
   },
   {
+    "firstName": "Chaerin",
+    "lastName": "Kim",
+    "title": "Assoc Lecturer A",
+    "email": "Chaerin.Kim@umb.edu",
+    "phone": null
+  },
+  {
     "firstName": "Timothy",
     "lastName": "McFarland",
     "title": "Senior Lecturer II",
     "email": "Timothy.Mcfarland@umb.edu",
     "phone": "617.287.6982"
+  },
+  {
+    "firstName": "Randy",
+    "lastName": "McGee",
+    "title": "Assoc Lecturer A",
+    "email": "Randy.McGee1@umb.edu",
+    "phone": null
   },
   {
     "firstName": "Catherine",
@@ -5035,7 +5245,7 @@
   {
     "firstName": "Ervin",
     "lastName": "Dhimo",
-    "title": "Professional - Hourly",
+    "title": "Assoc Lecturer A",
     "email": "Ervin.Dhimo@umb.edu",
     "phone": null
   },
@@ -5054,13 +5264,6 @@
     "phone": null
   },
   {
-    "firstName": "Chaerin",
-    "lastName": "Kim",
-    "title": "Assoc Lecturer A",
-    "email": "Chaerin.Kim@umb.edu",
-    "phone": null
-  },
-  {
     "firstName": "Russell",
     "lastName": "Kniffin",
     "title": "Assoc Lecturer A",
@@ -5075,17 +5278,17 @@
     "phone": null
   },
   {
-    "firstName": "Randy",
-    "lastName": "McGee",
+    "firstName": "Kenneth",
+    "lastName": "Mok",
     "title": "Assoc Lecturer A",
-    "email": "Randy.McGee1@umb.edu",
+    "email": "Kenneth.Mok@umb.edu",
     "phone": null
   },
   {
-    "firstName": "Kenneth",
-    "lastName": "Mok",
-    "title": "Professional - Hourly",
-    "email": "Kenneth.Mok@umb.edu",
+    "firstName": "Ana",
+    "lastName": "Diaz Asencio",
+    "title": "Assoc Lecturer A",
+    "email": "Ana.DiazAsencio@umb.edu",
     "phone": null
   },
   {
@@ -5098,8 +5301,8 @@
   {
     "firstName": "Darren",
     "lastName": "Sacks",
-    "title": "Assoc Lecturer A",
-    "email": "Darren.Sacks@umb.edu",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -5117,31 +5320,24 @@
     "phone": "617.287.5640"
   },
   {
-    "firstName": "Ana",
-    "lastName": "Diaz Asencio",
-    "title": "Assoc Lecturer A",
-    "email": "Ana.DiazAsencio@umb.edu",
-    "phone": null
-  },
-  {
     "firstName": "Paul",
     "lastName": "Geresy",
-    "title": null,
-    "email": null,
+    "title": "Assoc Lecturer A",
+    "email": "Paul.Geresy@umb.edu",
     "phone": null
   },
   {
     "firstName": "Jerome",
     "lastName": "Mouffe",
-    "title": "Assoc Lecturer A",
-    "email": "Jerome.Mouffe@umb.edu",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
     "firstName": "Mario",
     "lastName": "Perrett",
-    "title": "Assoc Lecturer A",
-    "email": "Mario.Perrett@umb.edu",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -5252,7 +5448,7 @@
   {
     "firstName": "Barbara",
     "lastName": "Cincotta",
-    "title": "Clinical Associate Lecturer",
+    "title": "Clinical Lecturer",
     "email": "Barbara.Cincotta@umb.edu",
     "phone": null
   },
@@ -5341,6 +5537,13 @@
     "phone": null
   },
   {
+    "firstName": "Diana",
+    "lastName": "Galvez",
+    "title": "Clinical Asst Professor A",
+    "email": "Diana.Galvez@umb.edu",
+    "phone": null
+  },
+  {
     "firstName": "Kimberly",
     "lastName": "Sykes",
     "title": "Clinical Asst Professor A",
@@ -5418,10 +5621,38 @@
     "phone": null
   },
   {
-    "firstName": "Diana",
-    "lastName": "Galvez",
-    "title": "Clinical Asst Professor A",
-    "email": "Diana.Galvez@umb.edu",
+    "firstName": "Darneala",
+    "lastName": "Sequeira",
+    "title": "Clinical Associate Lecturer A",
+    "email": "Darneala.Sequeira@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Jennifer",
+    "lastName": "Castelly",
+    "title": "Clinical Associate Lecturer",
+    "email": "Jennifer.Castelly@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Melissa",
+    "lastName": "Sweeney",
+    "title": "Clinical Associate Lecturer",
+    "email": "Melissa.Sweeney@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Roisin",
+    "lastName": "Lydon",
+    "title": "Clinical Associate Lecturer",
+    "email": "Roisin.Lydon@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Stacey",
+    "lastName": "Laro",
+    "title": "Clinical Associate Lecturer A",
+    "email": "Stacey.Laro@umb.edu",
     "phone": null
   },
   {
@@ -5441,7 +5672,7 @@
   {
     "firstName": "Alba",
     "lastName": "Mullen",
-    "title": "Clinical Lecturer A",
+    "title": "Clinical Associate Lecturer A",
     "email": "Alba.Mullen001@umb.edu",
     "phone": null
   },
@@ -5464,13 +5695,6 @@
     "lastName": "Blanchard",
     "title": "Clinical Associate Lecturer",
     "email": "Joan.Blanchard@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Roisin",
-    "lastName": "Lydon",
-    "title": "Clinical Associate Lecturer",
-    "email": "Roisin.Lydon@umb.edu",
     "phone": null
   },
   {
@@ -5532,8 +5756,8 @@
   {
     "firstName": "Faydene",
     "lastName": "Small-Jones",
-    "title": "Clinical Lecturer",
-    "email": "Faydene.SmallJones@umb.edu",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -5553,8 +5777,8 @@
   {
     "firstName": "Angela",
     "lastName": "Reddington",
-    "title": "Lecturer",
-    "email": "Angela.Reddington@umb.edu",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -5861,15 +6085,8 @@
   {
     "firstName": "Sukarina",
     "lastName": "Guerrier",
-    "title": "Clinical Associate Lecturer A",
-    "email": "Sukarina.Guerrier@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Jennifer",
-    "lastName": "Castelly",
-    "title": "Clinical Associate Lecturer",
-    "email": "Jennifer.Castelly@umb.edu",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -5884,6 +6101,20 @@
     "lastName": "Burnett",
     "title": "Clinical Associate Lecturer",
     "email": "Hanna.Burnett@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Rachel",
+    "lastName": "Bresilla",
+    "title": "Clinical Associate Lecturer A",
+    "email": "Rachel.Bresilla@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Melissa",
+    "lastName": "Jasset",
+    "title": "Clinical Associate Lecturer A",
+    "email": "Melissa.Jasset@umb.edu",
     "phone": null
   },
   {
@@ -5912,13 +6143,6 @@
     "lastName": "Louis-Letang",
     "title": "Clinical Associate Lecturer",
     "email": "Carline.LouisLetang@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Melissa",
-    "lastName": "Sweeney",
-    "title": "Clinical Associate Lecturer",
-    "email": "Melissa.Sweeney@umb.edu",
     "phone": null
   },
   {
@@ -6092,9 +6316,9 @@
   {
     "firstName": "Kathleen",
     "lastName": "Kafel",
-    "title": "Clinical Associate Lecturer A",
-    "email": "Kathleen.Kafel@umb.edu",
-    "phone": "617.287.7529"
+    "title": null,
+    "email": null,
+    "phone": null
   },
   {
     "firstName": "Jenna",
@@ -6223,6 +6447,13 @@
     "phone": null
   },
   {
+    "firstName": "Alexandra",
+    "lastName": "Hall",
+    "title": "Clinical Associate Lecturer A",
+    "email": "Alexandra.Hall@umb.edu",
+    "phone": null
+  },
+  {
     "firstName": "Valentina",
     "lastName": "Urbanek",
     "title": "Senior Lecturer II",
@@ -6244,11 +6475,11 @@
     "phone": "617.287.6874"
   },
   {
-    "firstName": "Nelson",
-    "lastName": "Lande",
-    "title": "Senior Lecturer III",
-    "email": "np.lande@umb.edu",
-    "phone": "617.287.6537"
+    "firstName": "Soren",
+    "lastName": "Whited",
+    "title": "Associate Lecturer",
+    "email": "Soren.Whited@umb.edu",
+    "phone": null
   },
   {
     "firstName": "Steven",
@@ -6256,6 +6487,13 @@
     "title": "Professor",
     "email": "Steven.Levine@umb.edu",
     "phone": "617.287.7245"
+  },
+  {
+    "firstName": "Nelson",
+    "lastName": "Lande",
+    "title": "Senior Lecturer III",
+    "email": "np.lande@umb.edu",
+    "phone": "617.287.6537"
   },
   {
     "firstName": "Peter",
@@ -6305,13 +6543,6 @@
     "title": "Associate Professor",
     "email": "Lisa.Rivera@umb.edu",
     "phone": "617.287.6528"
-  },
-  {
-    "firstName": "Soren",
-    "lastName": "Whited",
-    "title": "Associate Lecturer",
-    "email": "Soren.Whited@umb.edu",
-    "phone": null
   },
   {
     "firstName": "Brian",
@@ -6377,6 +6608,13 @@
     "phone": null
   },
   {
+    "firstName": "Vijaya",
+    "lastName": "Rani",
+    "title": "Assoc Lecturer A",
+    "email": "Vijaya.Rani@umb.edu",
+    "phone": null
+  },
+  {
     "firstName": "Mohamed",
     "lastName": "Gharbi",
     "title": null,
@@ -6419,6 +6657,13 @@
     "phone": null
   },
   {
+    "firstName": "Thomas",
+    "lastName": "Endicott",
+    "title": "Senior Lecturer",
+    "email": "Thomas.Endicott@umb.edu",
+    "phone": null
+  },
+  {
     "firstName": "Yassine",
     "lastName": "Ait El Aoud",
     "title": "Director",
@@ -6438,13 +6683,6 @@
     "title": "Associate Professor",
     "email": "Stephen.Arnason@umb.edu",
     "phone": "617.287.6068"
-  },
-  {
-    "firstName": "Thomas",
-    "lastName": "Endicott",
-    "title": "Senior Lecturer",
-    "email": "Thomas.Endicott@umb.edu",
-    "phone": null
   },
   {
     "firstName": "Kara",
@@ -6645,9 +6883,9 @@
   {
     "firstName": "Paul",
     "lastName": "Watanabe",
-    "title": "Professor",
-    "email": "Paul.Watanabe@umb.edu",
-    "phone": "617.287.5652"
+    "title": null,
+    "email": null,
+    "phone": null
   },
   {
     "firstName": "Simone",
@@ -6676,6 +6914,20 @@
     "title": "Senior Lecturer II",
     "email": "Tracy.Dunne@umb.edu",
     "phone": "617.287.6350"
+  },
+  {
+    "firstName": "Mariela",
+    "lastName": "Jimenez",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
+    "firstName": "Sarah",
+    "lastName": "Yang",
+    "title": null,
+    "email": null,
+    "phone": null
   },
   {
     "firstName": "Carolyn",
@@ -6708,6 +6960,13 @@
   {
     "firstName": "Jenna",
     "lastName": "Macri",
+    "title": "Assoc Lecturer A",
+    "email": "Jenna.Macri001@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Ellie",
+    "lastName": "Pritchard",
     "title": null,
     "email": null,
     "phone": null
@@ -6717,6 +6976,13 @@
     "lastName": "Vogel",
     "title": "Assistant Professor",
     "email": "Sarah.Vogel@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Nicholas",
+    "lastName": "Pierorazio",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -6762,10 +7028,24 @@
     "phone": null
   },
   {
+    "firstName": "Jordan",
+    "lastName": "Cherry",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
     "firstName": "Marcus",
     "lastName": "Patterson",
     "title": "Senior Lecturer",
     "email": "Marcus.Patterson@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Jeremiah Theresse",
+    "lastName": "Sabas",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -6785,8 +7065,15 @@
   {
     "firstName": "Saniya",
     "lastName": "Soni",
-    "title": null,
-    "email": null,
+    "title": "Assoc Lecturer A",
+    "email": "Saniya.Soni001@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "David",
+    "lastName": "Gorman",
+    "title": "Lecturer",
+    "email": "David.Gorman@umb.edu",
     "phone": null
   },
   {
@@ -6825,6 +7112,13 @@
     "phone": null
   },
   {
+    "firstName": "Devin",
+    "lastName": "Atallah",
+    "title": "Associate Professor",
+    "email": "Devin.Atallah@umb.edu",
+    "phone": null
+  },
+  {
     "firstName": "Miloslava",
     "lastName": "Kozmova",
     "title": "Senior Lecturer",
@@ -6860,13 +7154,6 @@
     "phone": null
   },
   {
-    "firstName": "David",
-    "lastName": "Gorman",
-    "title": "Lecturer",
-    "email": "David.Gorman@umb.edu",
-    "phone": null
-  },
-  {
     "firstName": "Erik",
     "lastName": "Blaser",
     "title": "Professor",
@@ -6874,8 +7161,29 @@
     "phone": "617.287.6350"
   },
   {
+    "firstName": "Parimah Sadat",
+    "lastName": "Emadi Safavi",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
     "firstName": "Cassandra",
     "lastName": "Hartsgrove",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
+    "firstName": "Vivian",
+    "lastName": "Ciaramitaro",
+    "title": "Associate Professor",
+    "email": "Vivian.Ciaramitaro@umb.edu",
+    "phone": "617.287.6393"
+  },
+  {
+    "firstName": "Sarah",
+    "lastName": "Hayes-Skelton",
     "title": null,
     "email": null,
     "phone": null
@@ -6895,27 +7203,6 @@
     "phone": "617.287.6393"
   },
   {
-    "firstName": "Vivian",
-    "lastName": "Ciaramitaro",
-    "title": "Associate Professor",
-    "email": "Vivian.Ciaramitaro@umb.edu",
-    "phone": "617.287.6393"
-  },
-  {
-    "firstName": "Sarah",
-    "lastName": "Hayes-Skelton",
-    "title": null,
-    "email": null,
-    "phone": null
-  },
-  {
-    "firstName": "Devin",
-    "lastName": "Atallah",
-    "title": "Associate Professor",
-    "email": "Devin.Atallah@umb.edu",
-    "phone": null
-  },
-  {
     "firstName": "Susanna",
     "lastName": "Gallor",
     "title": "Senior Lecturer",
@@ -6925,7 +7212,7 @@
   {
     "firstName": "Damon",
     "lastName": "Pryor",
-    "title": "Associate Lecturer",
+    "title": "Assoc Lecturer A",
     "email": "Damon.Pryor@umb.edu",
     "phone": null
   },
@@ -6986,6 +7273,13 @@
     "phone": null
   },
   {
+    "firstName": "Patricia",
+    "lastName": "Janulewicz Lloyd",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
     "firstName": "Patrick",
     "lastName": "Maloney",
     "title": "Assoc Lecturer A",
@@ -7021,11 +7315,11 @@
     "phone": null
   },
   {
-    "firstName": "Fahimeh",
-    "lastName": "Rahmanniyaychomachaei",
-    "title": "Assistant Professor",
-    "email": "Fahimeh.Chomachaei@umb.edu",
-    "phone": "617.287.7730"
+    "firstName": "Eric",
+    "lastName": "Moschella",
+    "title": "Asst Dir. of Tutoring Programs",
+    "email": "Eric.Moschella@umb.edu",
+    "phone": "617.287.7563"
   },
   {
     "firstName": "Meesh",
@@ -7033,6 +7327,20 @@
     "title": "Senior Lecturer III",
     "email": "Meesh.McCarthy@umb.edu",
     "phone": "617.287.6570"
+  },
+  {
+    "firstName": "Gina",
+    "lastName": "Tigri",
+    "title": "Dir",
+    "email": "Gina.Tigri@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Helen",
+    "lastName": "Lee",
+    "title": "Associate Lecturer",
+    "email": "Helen.Lee@umb.edu",
+    "phone": null
   },
   {
     "firstName": "Bryan",
@@ -7077,6 +7385,20 @@
     "phone": null
   },
   {
+    "firstName": "Evan",
+    "lastName": "Witherby",
+    "title": "Research Assistant - Hourly",
+    "email": "Evan.Witherby001@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Berline",
+    "lastName": "Thermidor",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
     "firstName": "Daniel",
     "lastName": "Finn",
     "title": "Senior Lecturer",
@@ -7088,6 +7410,20 @@
     "lastName": "Okigbo",
     "title": "Assistant Professor",
     "email": "Karen.Okigbo@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Vega Martinez",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
+    "firstName": "Eralp",
+    "lastName": "Karduz",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
@@ -7112,8 +7448,22 @@
     "phone": "617.287.3954"
   },
   {
-    "firstName": "Jonathan",
-    "lastName": "Vega Martinez",
+    "firstName": "Amelia",
+    "lastName": "Paterno",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
+    "firstName": "Jack",
+    "lastName": "Leatherman",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
+    "firstName": "Carol",
+    "lastName": "Marsinelli",
     "title": null,
     "email": null,
     "phone": null
@@ -7123,13 +7473,6 @@
     "lastName": "Stewart",
     "title": "Associate Professor",
     "email": "Evan.Stewart@umb.edu",
-    "phone": null
-  },
-  {
-    "firstName": "Evan",
-    "lastName": "Witherby",
-    "title": null,
-    "email": null,
     "phone": null
   },
   {
@@ -7156,13 +7499,6 @@
   {
     "firstName": "Kaley",
     "lastName": "Whipkey",
-    "title": null,
-    "email": null,
-    "phone": null
-  },
-  {
-    "firstName": "Jack",
-    "lastName": "Leatherman",
     "title": null,
     "email": null,
     "phone": null
@@ -7205,6 +7541,13 @@
   {
     "firstName": "Ayanna",
     "lastName": "Miller-Smith",
+    "title": null,
+    "email": null,
+    "phone": null
+  },
+  {
+    "firstName": "Claire",
+    "lastName": "Venables",
     "title": null,
     "email": null,
     "phone": null
@@ -7301,25 +7644,11 @@
     "phone": "617.287.6250"
   },
   {
-    "firstName": "Eralp",
-    "lastName": "Karduz",
-    "title": null,
-    "email": null,
-    "phone": null
-  },
-  {
     "firstName": "Amani",
     "lastName": "El Jack",
     "title": "Associate Professor",
     "email": "Amani.Eljack@umb.edu",
     "phone": "617.287.6783"
-  },
-  {
-    "firstName": "Claire",
-    "lastName": "Venables",
-    "title": null,
-    "email": null,
-    "phone": null
   },
   {
     "firstName": "Christopher",
@@ -7427,6 +7756,13 @@
     "phone": "617.287.7550"
   },
   {
+    "firstName": "Maria",
+    "lastName": "Cisterna Gold",
+    "title": "Associate Professor",
+    "email": "Maria.Cisterna@umb.edu",
+    "phone": "617.287.7550"
+  },
+  {
     "firstName": "Grayson",
     "lastName": "Powell",
     "title": "Associate Lecturer",
@@ -7464,7 +7800,7 @@
   {
     "firstName": "Michael",
     "lastName": "Vincent",
-    "title": "Professional - Hourly",
+    "title": "Associate Lecturer",
     "email": "Michael.Vincent@umb.edu",
     "phone": null
   },
@@ -7527,7 +7863,7 @@
   {
     "firstName": "Anindita",
     "lastName": "Sengupta",
-    "title": "Director",
+    "title": "Assoc Lecturer A",
     "email": "Anindita.Sengupta@umb.edu",
     "phone": null
   },
@@ -7543,6 +7879,13 @@
     "lastName": "Park",
     "title": "Associate Lecturer",
     "email": "Annie.Park@umb.edu",
+    "phone": null
+  },
+  {
+    "firstName": "Candace",
+    "lastName": "Famiglietti",
+    "title": null,
+    "email": null,
     "phone": null
   },
   {
